@@ -4,17 +4,22 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    public int column;
-    public int row;
-    public int targetX;
-    public int targetY;
-    public bool isMatched = false;
-    private GameHandler board;
-    private GameObject otherDot;
-    private Vector2 firstTouchPosition;
-    private Vector2 finalTouchPosition;
-    private Vector2 tempPosition;
-    public float swipeAngle = 0;
+    [Header("Board Variables")]
+    public int column; // 현재 가로 위치
+    public int row; // 현재 세로 위치
+    public int prevColumn; // 이전 가로 위치
+    public int prevRow; // 이전 세로 위치
+    public int targetX; // 가로 비교값
+    public int targetY; // 세로 비교값
+    public bool isMatched = false; // 매치되었는지 확인
+
+    private GameHandler board; // 현재 게임의 블럭들을 저장
+    private GameObject otherPiece; // 위치를 바꾼 블럭
+    private Vector2 firstTouchPosition; // 초기 마우스 좌표
+    private Vector2 finalTouchPosition; // 마지막 마우스 좌표
+    private Vector2 tempPosition; // 이동할 좌표를 저장
+    public float swipeAngle = 0; // 누른 방향으로 각도 계산
+    public float swipeResist = 1f; // 누른 상태에서 
 
     void Start()
     {
@@ -23,131 +28,174 @@ public class Block : MonoBehaviour
         targetY = (int)transform.position.y;
         row = targetY;
         column = targetX;
+        prevRow = row;
+        prevColumn = column;
     }
 
     void Update()
     {
         FindMatches();
-
+        // 블럭이 매치되었을 때
         if(isMatched)
         {
             SpriteRenderer mySprite = GetComponent<SpriteRenderer>();
             mySprite.color = new Color(1f, 1f, 1f, .2f);
         }
 
+        // 현재 위치를 수시로 변경
         targetX = column;
         targetY = row;
 
+        // 좌우
         if(Mathf.Abs(targetX - transform.position.x) > 0.1)
         {
-            //move Towards the target
+            // 대상으로 이동
             tempPosition = new Vector2(targetX, transform.position.y);
+            // 이동하는 모습을 표현
             transform.position = Vector2.Lerp(transform.position, tempPosition, 0.4f);
         }
 
         else
         {
-            // directly set the position
+            // 위치를 변경
             tempPosition = new Vector2(targetX, transform.position.y);
             transform.position = tempPosition;
-            board.allDots[column, row] = this.gameObject;
+            board.allPieces[column, row] = this.gameObject;
         }
 
+        // 상하
         if (Mathf.Abs(targetY - transform.position.y) > 0.1)
         {
-            //move Towards the target
             tempPosition = new Vector2(transform.position.x, targetY);
             transform.position = Vector2.Lerp(transform.position, tempPosition, 0.4f);
         }
 
         else
         {
-            // directly set the position
             tempPosition = new Vector2(transform.position.x, targetY);
             transform.position = tempPosition;
-            board.allDots[column, row] = gameObject;
+            board.allPieces[column, row] = gameObject;
         }
+    }
 
+    public IEnumerator CheckMove()
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        if(otherPiece != null)
+        {
+            // 매치가 안된 블럭은 다시 되돌린다.
+            if(!isMatched && !otherPiece.GetComponent<Block>().isMatched)
+            {
+                otherPiece.GetComponent<Block>().row = row;
+                otherPiece.GetComponent<Block>().column = column;
+                row = prevRow;
+                column = prevColumn;
+            }
+            else
+            {
+                board.DestroyMatches();
+            }
+
+            otherPiece = null;
+        }
+       
     }
 
     private void OnMouseDown()
     {
+        // 클릭한 기점으로 마우스 좌표 저장
         firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
     }
 
     private void OnMouseUp()
     {
+        // 놓았을 때 마우스 좌표 저장
         finalTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         CalculateAngle();
     }
 
     private void CalculateAngle()
     {
-        swipeAngle = Mathf.Atan2(finalTouchPosition.y - firstTouchPosition.y, finalTouchPosition.x - firstTouchPosition.x) * 180 / Mathf.PI;
-        Debug.Log(swipeAngle);
-        MovePieces();
+        if (Mathf.Abs(finalTouchPosition.y - firstTouchPosition.y) > swipeResist ||
+           Mathf.Abs(finalTouchPosition.y - firstTouchPosition.y) > swipeResist)
+        {
+            // degree 각도로 변환
+            swipeAngle = Mathf.Atan2(finalTouchPosition.y - firstTouchPosition.y, finalTouchPosition.x - firstTouchPosition.x) * 180 / Mathf.PI;
+            //Debug.Log(swipeAngle);
+            MovePieces();
+        }
     }
 
     private void MovePieces()
-    {   // Right Swipe
-        if(swipeAngle > -45 && swipeAngle <= 45 &&
-            column < board.width - 1)
+    {   
+        // 두 블럭의 위치를 변경
+        // 오른쪽
+        if((swipeAngle > -45 && swipeAngle <= 45) && column < board.width - 1)
         {
-            otherDot = board.allDots[column + 1, row];
-            otherDot.GetComponent<Block>().column -= 1;
+            otherPiece = board.allPieces[column + 1, row];
+            otherPiece.GetComponent<Block>().column -= 1;
             column += 1;
         }
-        // Up Swipe
-        else if (swipeAngle > 45 && swipeAngle <= 135 &&
-            row < board.height - 1)
+
+        // 위
+        else if ((swipeAngle > 45 && swipeAngle <= 135) && row < board.height - 1)
         {
-            otherDot = board.allDots[column, row + 1];
-            otherDot.GetComponent<Block>().row -= 1;
+            otherPiece = board.allPieces[column, row + 1];
+            otherPiece.GetComponent<Block>().row -= 1;
             row += 1;
         }
-        // Left Swipe
-        else if ((swipeAngle > 135 || swipeAngle <= -135) &&
-            column > 0)
+
+        // 왼쪽
+        else if ((swipeAngle > 135 || swipeAngle <= -135) && column > 0)
         {
-            otherDot = board.allDots[column - 1, row];
-            otherDot.GetComponent<Block>().column += 1;
+            otherPiece = board.allPieces[column - 1, row];
+            otherPiece.GetComponent<Block>().column += 1;
             column -= 1;
         }
-        // Down Swipe
-        else if ((swipeAngle < -45 && swipeAngle >= -135) &&
-            row > 0)
+
+        // 밑
+        else if ((swipeAngle < -45 && swipeAngle >= -135) && row > 0)
         {
-            otherDot = board.allDots[column, row - 1];
-            otherDot.GetComponent<Block>().row += 1;
+            otherPiece = board.allPieces[column, row - 1];
+            otherPiece.GetComponent<Block>().row += 1;
             row -= 1;
         }
 
+        StartCoroutine(CheckMove());
     }
 
     private void FindMatches()
     {
+        // 열에 해당하는 블럭을 검사
         if(column > 0 && column < board.width -1)
         {
-            GameObject leftBlock1 = board.allDots[column - 1, row];
-            GameObject rightBlock1 = board.allDots[column + 1, row];
-            if(leftBlock1.tag == this.gameObject.tag && rightBlock1.tag == gameObject.tag)
+            GameObject leftBlock1 = board.allPieces[column - 1, row];
+            GameObject rightBlock1 = board.allPieces[column + 1, row];
+            if (leftBlock1 != null && rightBlock1 != null)
             {
-                leftBlock1.GetComponent<Block>().isMatched = true;
-                rightBlock1.GetComponent<Block>().isMatched = true;
-                isMatched = true;
+                if (leftBlock1.tag == this.gameObject.tag && rightBlock1.tag == gameObject.tag)
+                {
+                    leftBlock1.GetComponent<Block>().isMatched = true;
+                    rightBlock1.GetComponent<Block>().isMatched = true;
+                    isMatched = true;
+                }
             }
         }
 
-        if (row > 0 && row < board.width - 1)
+        // 행에 해당하는 블럭을 검사
+        if (row > 0 && row < board.height - 1)
         {
-            GameObject upBlock1 = board.allDots[column, row + 1];
-            GameObject downBlock1 = board.allDots[column, row - 1];
-            if (upBlock1.tag == this.gameObject.tag && downBlock1.tag == gameObject.tag)
+            GameObject upBlock1 = board.allPieces[column, row + 1];
+            GameObject downBlock1 = board.allPieces[column, row - 1];
+            if (upBlock1 != null && downBlock1 != null)
             {
-                upBlock1.GetComponent<Block>().isMatched = true;
-                downBlock1.GetComponent<Block>().isMatched = true;
-                isMatched = true;
+                if (upBlock1.tag == this.gameObject.tag && downBlock1.tag == gameObject.tag)
+                {
+                    upBlock1.GetComponent<Block>().isMatched = true;
+                    downBlock1.GetComponent<Block>().isMatched = true;
+                    isMatched = true;
+                }
             }
         }
     }
