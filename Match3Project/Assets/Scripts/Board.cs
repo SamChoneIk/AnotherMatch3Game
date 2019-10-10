@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum GameState
 {
@@ -11,18 +12,18 @@ public enum GameState
 public class Board : MonoBehaviour
 {
     public GameState currState = GameState.move; // 현재 게임 상태
+
     public int width; // 보드의 넓이
     public int height; // 보드의 높이
     public int offSet; // 블럭이 시작되는 높이
-    public GameObject piecePrefab; // 블럭 모델
-    public GameObject[] pieces; // 블럭들을 저장
-    public GameObject[,] allPieces;
 
-    private BlockPiece[,] board;
+    public GameObject piecePrefab; // 블럭 모델
+    public Sprite[] pieces; // 블럭들을 저장
+    public GameObject[,] allPieces;
 
     void Start()
     {
-        board = new BlockPiece[width, height]; // 보드를 생성
+        //board = new BlockPiece[width, height]; // 보드를 생성
         allPieces = new GameObject[width, height]; // 보드 안에 넣을 블럭들을 생성
         Init();
     }
@@ -33,45 +34,49 @@ public class Board : MonoBehaviour
         {
             for (int row = 0; row < height; ++row)
             {
-                Vector2 tempPos = new Vector2(column, row + offSet); // 현재 위치를 가져옴
-                //GameObject index = Instantiate(piecePrefab, tempPosition, Quaternion.identity); //as GameObject;
-                //index.transform.parent = this.transform;
-                //index.name = "[ " + column + " , " + row + " ] ";
-
+                // 현재 위치를 가져옴
+                Vector2 tempPos = new Vector2(column, row + offSet);
+                // 임의의 색상 색출
+                int value = Random.Range(0, pieces.Length);
                 // 같은 색상 누적 값
                 int maxIterations = 0;
-                // 임의의 색상 색출
-                int color = Random.Range(0, pieces.Length);
 
-                while (MatchesAt(column, row, pieces[color]) && maxIterations < 100)
+                GameObject go = Instantiate(piecePrefab, tempPos, Quaternion.identity);
+
+                Block piece = go.GetComponent<Block>();
+                piece.Init(row, column, value);
+                while (MatchesAt(column, row, piece) && maxIterations < 100)
                 {
                     // 상하좌우로 3 블럭이 매치가 된 경우 다른 색상으로 변경
-                    color = Random.Range(0, pieces.Length);
+                    value = Random.Range(0, pieces.Length);
                     maxIterations++;
                     //Debug.Log(maxIterations);
                 }
-
                 maxIterations = 0;
 
-                GameObject piece = Instantiate(pieces[color], tempPos, Quaternion.identity);
-                piece.GetComponent<Block>().row = row;
-                piece.GetComponent<Block>().column = column;
+                SpriteRenderer sprite = go.GetComponent<SpriteRenderer>();
+                sprite.sprite = pieces[value];
 
-                piece.transform.parent = transform;
-                piece.name = "[ " + column + " , " + row + " ] ";
-                allPieces[column, row] = piece;
+                go.transform.parent = transform;
+                go.name = "[ " + column + " , " + row + " ] ";
+                allPieces[column, row] = go;
             }
         }
     }
 
+    public Block GetBlock(int column, int row)
+    {
+        return allPieces[column, row].GetComponent<Block>();
+    }
+
     // 같은 색상 블럭 검사
-    private bool MatchesAt(int column, int row, GameObject piece)
+    private bool MatchesAt(int column, int row, Block piece)
     {
         if (column > 1 && row > 1)
         {
             if (allPieces[column - 1, row] != null && allPieces[column - 2, row] != null)
             {
-                if (allPieces[column - 1, row].tag == piece.tag && allPieces[column - 2, row].tag == piece.tag)
+                if (GetBlock(column - 1, row).value == piece.value && GetBlock(column - 2, row).value == piece.value)
                 {
                     return true;
                 }
@@ -79,7 +84,7 @@ public class Board : MonoBehaviour
 
             if (allPieces[column, row - 1] != null && allPieces[column, row - 2] != null)
             {
-                if (allPieces[column, row - 1].tag == piece.tag && allPieces[column, row - 2].tag == piece.tag)
+                if (GetBlock(column, row - 1).value == piece.value && GetBlock(column, row - 2).value == piece.value)
                 {
                     return true;
                 }
@@ -92,7 +97,7 @@ public class Board : MonoBehaviour
             {
                 if (allPieces[column, row - 1] != null && allPieces[column, row - 2] != null)
                 {
-                    if (allPieces[column, row - 1].tag == piece.tag && allPieces[column, row - 2].tag == piece.tag)
+                    if (GetBlock(column, row - 1).value == piece.value && GetBlock(column, row - 2).value == piece.value)
                     {
                         return true;
                     }
@@ -102,7 +107,7 @@ public class Board : MonoBehaviour
             {
                 if (allPieces[column - 1, row] != null && allPieces[column - 2, row] != null)
                 {
-                    if (allPieces[column - 1, row].tag == piece.tag && allPieces[column - 2, row].tag == piece.tag)
+                    if (GetBlock(column - 1, row).value == piece.value && GetBlock(column - 2, row).value == piece.value)
                     {
                         return true;
                     }
@@ -158,6 +163,7 @@ public class Board : MonoBehaviour
                     allPieces[column, row] = null;
                 }
             }
+
             nullCount = 0;
         }
 
@@ -177,14 +183,14 @@ public class Board : MonoBehaviour
                     Vector2 tempPos = new Vector2(column, row + offSet);
                     int color = Random.Range(0, pieces.Length);
 
-                    GameObject piece = Instantiate(pieces[color], tempPos, Quaternion.identity);
+                    GameObject go = Instantiate(piecePrefab, tempPos, Quaternion.identity);
 
-                    piece.transform.parent = transform;
-                    piece.name = "[ " + column + " , " + row + " ] ";
+                    go.transform.parent = transform;
+                    go.name = "[ " + column + " , " + row + " ] ";
 
-                    allPieces[column, row] = piece;
-                    piece.GetComponent<Block>().row = row;
-                    piece.GetComponent<Block>().column = column;
+                    allPieces[column, row] = go;
+                    go.GetComponent<Block>().row = row;
+                    go.GetComponent<Block>().column = column;
                 }
             }
         }

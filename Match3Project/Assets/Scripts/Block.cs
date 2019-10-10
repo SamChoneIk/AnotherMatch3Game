@@ -5,6 +5,7 @@ using UnityEngine;
 public class Block : MonoBehaviour
 {
     [Header("Board Variables")]
+    public int value = 0;
     public int column; // 현재 가로 위치
     public int row; // 현재 세로 위치
     public int prevColumn; // 이전 가로 위치
@@ -21,20 +22,33 @@ public class Block : MonoBehaviour
     public float swipeAngle = 0; // 누른 방향으로 각도 계산
     public float swipeResist = 1f; // 누른 상태에서 
 
-    void Start()
+    public void Init(int r, int c, int v)
     {
         board = FindObjectOfType<Board>();
+        row = r;
+        column = c;
+        value = v;
+    }
+
+    public void ChangedPieceValue(int v)
+    {
+        value = v;
+    }
+
+    /*void Start()
+    {
         //targetX = (int)transform.position.x;
         //targetY = (int)transform.position.y;
         //row = targetY;
         //column = targetX;
         //prevRow = row;
         //prevColumn = column;
-    }
+    }*/
 
     void Update()
     {
         FindMatches();
+
         // 블럭이 매치되었을 때
         if(isMatched)
         {
@@ -112,6 +126,7 @@ public class Block : MonoBehaviour
     {
         if (board.currState == GameState.move)
         {
+            Debug.Log("asdsa");
             // 클릭한 기점으로 마우스 좌표 저장
             firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
@@ -121,6 +136,7 @@ public class Block : MonoBehaviour
     {
         if (board.currState == GameState.move)
         {
+            Debug.Log("asdsa");
             // 놓았을 때 기점으로 마우스 좌표 저장
             finalTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             CalculateAngle();
@@ -196,11 +212,11 @@ public class Block : MonoBehaviour
         // 열에 해당하는 블럭을 검사
         if(column > 0 && column < board.width -1)
         {
-            GameObject leftBlock1 = board.allPieces[column - 1, row];
-            GameObject rightBlock1 = board.allPieces[column + 1, row];
+            Block leftBlock1 = board.GetBlock(column - 1, row);
+            Block rightBlock1 = board.GetBlock(column + 1, row);
             if (leftBlock1 != null && rightBlock1 != null)
             {
-                if (leftBlock1.tag == this.gameObject.tag && rightBlock1.tag == gameObject.tag)
+                if (leftBlock1.value == value && rightBlock1.value == value)
                 {
                     leftBlock1.GetComponent<Block>().isMatched = true;
                     rightBlock1.GetComponent<Block>().isMatched = true;
@@ -212,11 +228,11 @@ public class Block : MonoBehaviour
         // 행에 해당하는 블럭을 검사
         if (row > 0 && row < board.height - 1)
         {
-            GameObject upBlock1 = board.allPieces[column, row + 1];
-            GameObject downBlock1 = board.allPieces[column, row - 1];
+            Block upBlock1 = board.GetBlock(column, row + 1);
+            Block downBlock1 = board.GetBlock(column, row - 1);
             if (upBlock1 != null && downBlock1 != null)
             {
-                if (upBlock1.tag == this.gameObject.tag && downBlock1.tag == gameObject.tag)
+                if (upBlock1.value == value && downBlock1.value == value)
                 {
                     upBlock1.GetComponent<Block>().isMatched = true;
                     downBlock1.GetComponent<Block>().isMatched = true;
