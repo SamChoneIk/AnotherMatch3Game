@@ -13,7 +13,7 @@ public class Block : MonoBehaviour
     public int targetY; // 세로 비교값
     public bool isMatched = false; // 매치되었는지 확인
 
-    private GameHandler board; // 현재 게임의 블럭들을 저장
+    private Board board; // 현재 게임의 블럭들을 저장
     private GameObject otherPiece; // 위치를 바꾼 블럭
     private Vector2 firstTouchPosition; // 초기 마우스 좌표
     private Vector2 finalTouchPosition; // 마지막 마우스 좌표
@@ -23,13 +23,13 @@ public class Block : MonoBehaviour
 
     void Start()
     {
-        board = FindObjectOfType<GameHandler>();
-        targetX = (int)transform.position.x;
-        targetY = (int)transform.position.y;
-        row = targetY;
-        column = targetX;
-        prevRow = row;
-        prevColumn = column;
+        board = FindObjectOfType<Board>();
+        //targetX = (int)transform.position.x;
+        //targetY = (int)transform.position.y;
+        //row = targetY;
+        //column = targetX;
+        //prevRow = row;
+        //prevColumn = column;
     }
 
     void Update()
@@ -51,8 +51,10 @@ public class Block : MonoBehaviour
         {
             // 대상으로 이동
             tempPosition = new Vector2(targetX, transform.position.y);
-            // 이동하는 모습을 표현
-            transform.position = Vector2.Lerp(transform.position, tempPosition, 0.4f);
+            // 이동하는 움직임을 표현
+            transform.position = Vector2.Lerp(transform.position, tempPosition, 0.6f);
+            if(board.allPieces[column, row] != this.gameObject)
+                board.allPieces[column, row] = this.gameObject;
         }
 
         else
@@ -60,27 +62,27 @@ public class Block : MonoBehaviour
             // 위치를 변경
             tempPosition = new Vector2(targetX, transform.position.y);
             transform.position = tempPosition;
-            board.allPieces[column, row] = this.gameObject;
         }
 
         // 상하
         if (Mathf.Abs(targetY - transform.position.y) > 0.1)
         {
             tempPosition = new Vector2(transform.position.x, targetY);
-            transform.position = Vector2.Lerp(transform.position, tempPosition, 0.4f);
+            transform.position = Vector2.Lerp(transform.position, tempPosition, 0.6f);
+            if (board.allPieces[column, row] != this.gameObject)
+                board.allPieces[column, row] = this.gameObject;
         }
 
         else
         {
             tempPosition = new Vector2(transform.position.x, targetY);
             transform.position = tempPosition;
-            board.allPieces[column, row] = gameObject;
         }
     }
 
     public IEnumerator CheckMove()
     {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.4f);
 
         if(otherPiece != null)
         {
@@ -91,7 +93,12 @@ public class Block : MonoBehaviour
                 otherPiece.GetComponent<Block>().column = column;
                 row = prevRow;
                 column = prevColumn;
+
+                // 현재 게임 상태를 활성화한다.
+                yield return new WaitForSeconds(0.5f);
+                board.currState = GameState.move;
             }
+
             else
             {
                 board.DestroyMatches();
@@ -99,31 +106,42 @@ public class Block : MonoBehaviour
 
             otherPiece = null;
         }
-       
     }
 
     private void OnMouseDown()
     {
-        // 클릭한 기점으로 마우스 좌표 저장
-        firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (board.currState == GameState.move)
+        {
+            // 클릭한 기점으로 마우스 좌표 저장
+            firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        }
     }
 
     private void OnMouseUp()
     {
-        // 놓았을 때 마우스 좌표 저장
-        finalTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        CalculateAngle();
+        if (board.currState == GameState.move)
+        {
+            // 놓았을 때 기점으로 마우스 좌표 저장
+            finalTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            CalculateAngle();
+        }
     }
 
     private void CalculateAngle()
     {
         if (Mathf.Abs(finalTouchPosition.y - firstTouchPosition.y) > swipeResist ||
-           Mathf.Abs(finalTouchPosition.y - firstTouchPosition.y) > swipeResist)
+           Mathf.Abs(finalTouchPosition.x - firstTouchPosition.x) > swipeResist)
         {
             // degree 각도로 변환
             swipeAngle = Mathf.Atan2(finalTouchPosition.y - firstTouchPosition.y, finalTouchPosition.x - firstTouchPosition.x) * 180 / Mathf.PI;
             //Debug.Log(swipeAngle);
             MovePieces();
+            board.currState = GameState.wait;
+        }
+
+        else
+        {
+            board.currState = GameState.move;
         }
     }
 
@@ -134,6 +152,8 @@ public class Block : MonoBehaviour
         if((swipeAngle > -45 && swipeAngle <= 45) && column < board.width - 1)
         {
             otherPiece = board.allPieces[column + 1, row];
+            prevRow = row;
+            prevColumn = column;
             otherPiece.GetComponent<Block>().column -= 1;
             column += 1;
         }
@@ -142,6 +162,8 @@ public class Block : MonoBehaviour
         else if ((swipeAngle > 45 && swipeAngle <= 135) && row < board.height - 1)
         {
             otherPiece = board.allPieces[column, row + 1];
+            prevRow = row;
+            prevColumn = column;
             otherPiece.GetComponent<Block>().row -= 1;
             row += 1;
         }
@@ -150,6 +172,8 @@ public class Block : MonoBehaviour
         else if ((swipeAngle > 135 || swipeAngle <= -135) && column > 0)
         {
             otherPiece = board.allPieces[column - 1, row];
+            prevRow = row;
+            prevColumn = column;
             otherPiece.GetComponent<Block>().column += 1;
             column -= 1;
         }
@@ -158,6 +182,8 @@ public class Block : MonoBehaviour
         else if ((swipeAngle < -45 && swipeAngle >= -135) && row > 0)
         {
             otherPiece = board.allPieces[column, row - 1];
+            prevRow = row;
+            prevColumn = column;
             otherPiece.GetComponent<Block>().row += 1;
             row -= 1;
         }
