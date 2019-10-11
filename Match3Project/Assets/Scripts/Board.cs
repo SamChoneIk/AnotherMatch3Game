@@ -14,14 +14,19 @@ public class Board : MonoBehaviour
     public int width; // 보드의 넓이
     public int height; // 보드의 높이
     public int offSet; // 블럭이 시작되는 높이
-    public GameObject piecePrefab; // 블럭 모델
+    //public GameObject piecePrefab; // 블럭 모델
     public GameObject[] pieces; // 블럭들을 저장
     public GameObject[,] allPieces;
+    public GameObject destroyEffect;
+    public Piece currPiece;
+
+    private FindMatches findMatches;
 
     private BlockPiece[,] board;
 
     void Start()
     {
+        findMatches = FindObjectOfType<FindMatches>();
         board = new BlockPiece[width, height]; // 보드를 생성
         allPieces = new GameObject[width, height]; // 보드 안에 넣을 블럭들을 생성
         Init();
@@ -54,8 +59,8 @@ public class Board : MonoBehaviour
                 maxIterations = 0;
 
                 GameObject piece = Instantiate(pieces[color], tempPos, Quaternion.identity);
-                piece.GetComponent<Block>().row = row;
-                piece.GetComponent<Block>().column = column;
+                piece.GetComponent<Piece>().row = row;
+                piece.GetComponent<Piece>().column = column;
 
                 piece.transform.parent = transform;
                 piece.name = "[ " + column + " , " + row + " ] ";
@@ -116,8 +121,17 @@ public class Board : MonoBehaviour
     // 블럭을 삭제
     private void DestroyMatchesAt(int column, int row)
     {
-        if (allPieces[column, row].GetComponent<Block>().isMatched)
+        if (allPieces[column, row].GetComponent<Piece>().isMatched)
         {
+            // 다수의 블럭이 매치되면 아이템 생성
+            if(findMatches.currMatches.Count == 4 || findMatches.currMatches.Count == 7)
+            {
+                findMatches.CheckBombs();
+            }
+
+            findMatches.currMatches.Remove(allPieces[column, row]);
+            GameObject particle = Instantiate(destroyEffect, allPieces[column, row].transform.position, Quaternion.identity);
+            Destroy(particle, 0.5f);
             Destroy(allPieces[column, row]);
             allPieces[column, row] = null;
         }
@@ -154,7 +168,7 @@ public class Board : MonoBehaviour
 
                 else if (nullCount > 0)
                 {
-                    allPieces[column, row].GetComponent<Block>().row -= nullCount;
+                    allPieces[column, row].GetComponent<Piece>().row -= nullCount;
                     allPieces[column, row] = null;
                 }
             }
@@ -183,8 +197,8 @@ public class Board : MonoBehaviour
                     piece.name = "[ " + column + " , " + row + " ] ";
 
                     allPieces[column, row] = piece;
-                    piece.GetComponent<Block>().row = row;
-                    piece.GetComponent<Block>().column = column;
+                    piece.GetComponent<Piece>().row = row;
+                    piece.GetComponent<Piece>().column = column;
                 }
             }
         }
@@ -199,7 +213,7 @@ public class Board : MonoBehaviour
             {
                 if (allPieces[column, row] != null)
                 {
-                    if (allPieces[column, row].GetComponent<Block>().isMatched)
+                    if (allPieces[column, row].GetComponent<Piece>().isMatched)
                         return true;
                 }
             }
@@ -211,16 +225,16 @@ public class Board : MonoBehaviour
     private IEnumerator FillBoard()
     {
         RefillBoard();
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.4f);
 
         while(MatchesOnBoard())
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.4f);
             DestroyMatches();
         }
-
-        yield return new WaitForSeconds(0.5f);
+        findMatches.currMatches.Clear();
+        currPiece = null;
+        yield return new WaitForSeconds(0.4f);
         currState = GameState.move;
-
     }
 }

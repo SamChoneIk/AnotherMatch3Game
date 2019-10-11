@@ -213,10 +213,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1648959660}
   - component: {fileID: 1648959659}
+  - component: {fileID: 1648959661}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -236,14 +237,14 @@ MonoBehaviour:
   width: 7
   height: 10
   offSet: 10
-  piecePrefab: {fileID: 6547884108314905743, guid: 05d34066c054dc145b6f9f03430b5812,
-    type: 3}
   pieces:
   - {fileID: 8935675836690888477, guid: 174cdb0d0645b2043b790878c50b0f15, type: 3}
   - {fileID: 6705503633472641000, guid: 200040c52dd44dc488076d39c08030c1, type: 3}
   - {fileID: 2733237768057547149, guid: 03e1a41aae583fb4e95ade3440cda9b9, type: 3}
   - {fileID: 2723855098586726495, guid: d6f8246b944d25c4c973f2056d1ad64c, type: 3}
   - {fileID: 1616092092797326436, guid: 2be76df65d2090a4fb8d6b52eb1a75c2, type: 3}
+  destroyEffect: {fileID: 4832982301766824523, guid: 273cb8b2502e77649b858110a7d66016,
+    type: 3}
 --- !u!4 &1648959660
 Transform:
   m_ObjectHideFlags: 0
@@ -258,3 +259,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1648959661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1648959658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3a026c27b754cd429f0e0138d99cba9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currMatches: []
