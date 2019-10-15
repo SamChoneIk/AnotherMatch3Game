@@ -16,7 +16,7 @@ public class Tile : MonoBehaviour
     {
         if (hitPoint <= 0)
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 
