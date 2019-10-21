@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class CamPos : MonoBehaviour
 {
-    private Board board;
+    private BoardManager board;
     public float offset;
     public float aspectratio = 0.625f;
     public float padding = 2f;
 
     void Start()
     {
-        board = FindObjectOfType<Board>();
+        board = FindObjectOfType<BoardManager>();
 
         if (board != null)
             CameraPositioning(board.width, board.height);
