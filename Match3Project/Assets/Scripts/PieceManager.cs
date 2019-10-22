@@ -22,13 +22,18 @@ public class PieceManager : MonoBehaviour
     private GameObject selectPiece;
     private PieceManager swapPiece;
 
-    public void InitPiece(int v, int r, int c)
+    public void SetPiece(int v, int r, int c)
     {
         board = FindObjectOfType<BoardManager>();
 
         value = v;
         row = r;
         column = c;
+    }
+
+    public void SetPosition()
+    {
+        transform.position = new Vector2(row, column);
     }
 
     private void OnMouseDown()
@@ -38,6 +43,9 @@ public class PieceManager : MonoBehaviour
 
     private void OnMouseUp()
     {
+        if (board.currState == BoardState.WORK)
+            return;
+
         endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         CalculratePiece();
     }
@@ -84,7 +92,6 @@ public class PieceManager : MonoBehaviour
         else
         {
             board.currState = BoardState.ORDER;
-            Debug.Log("asd");
         }
     }
     private void SetPostionPiece(int row, int column, PieceManager piece)
