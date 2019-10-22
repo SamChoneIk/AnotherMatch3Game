@@ -8,8 +8,10 @@ public class PieceManager : MonoBehaviour
     public int row;
     public int column;
 
-    private int oriRow;
-    private int oriColumn;
+    public bool isMatched = false;
+
+    private int prevRow;
+    private int prevColumn;
 
     private float accumTime = 0;
 
@@ -18,7 +20,7 @@ public class PieceManager : MonoBehaviour
 
     private BoardManager board;
     private GameObject selectPiece;
-    private GameObject swapPiece;
+    private PieceManager swapPiece;
 
     public void InitPiece(int v, int r, int c)
     {
@@ -32,7 +34,6 @@ public class PieceManager : MonoBehaviour
     private void OnMouseDown()
     {
         startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        selectPiece = gameObject;
     }
 
     private void OnMouseUp()
@@ -48,62 +49,60 @@ public class PieceManager : MonoBehaviour
 
         if (Mathf.Abs(dir.y) > Mathf.Abs(dir.x))
         {
-            if (dir.y > 0)
-            {
-                MovedPiece(Vector2.up);
-                Debug.Log("up");
-            }
-
-            if (dir.y < 0)
-            {
-                MovedPiece(Vector2.down);
-                Debug.Log("down");
-            }
+            MoveToPiece(dir.y > 0 ? Vector2.up : Vector2.down);
         }
 
         else if (Mathf.Abs(dir.y) < Mathf.Abs(dir.x))
         {
-            if (dir.x > 0)
-            {
-                MovedPiece(Vector2.right);
-                Debug.Log("right");
-            }
-
-            if (dir.x < 0)
-            {
-                MovedPiece(Vector2.left);
-                Debug.Log("left");
-            }
+            MoveToPiece(dir.x > 0 ? Vector2.right : Vector2.left);
         }
     }
-    
-    private void MovedPiece(Vector2 direction)
+
+    private void MoveToPiece(Vector2 direction)
     {
-        swapPiece = board.board[row + (int)direction.x, column + (int)direction.y];
+        if (board.boardIndex[row + (int)direction.x, column + (int)direction.y] != null)
+        {
+            swapPiece = board.boardIndex[row + (int)direction.x, column + (int)direction.y].GetComponent<PieceManager>();
 
-        oriRow = row;
-        oriColumn = column;
+            prevRow = row;
+            prevColumn = column;
 
-        swapPiece.GetComponent<PieceManager>().row += -1 * (int)direction.x;
-        swapPiece.GetComponent<PieceManager>().column += -1 * (int)direction.y;
+            swapPiece.row += -1 * (int)direction.x;
+            swapPiece.column += -1 * (int)direction.y;
 
-        row += (int)direction.x;
-        column += (int)direction.y;
+            row += (int)direction.x;
+            column += (int)direction.y;
 
-        StartCoroutine(MovePiece());
-        //board.currState = BoardState.ORDER;
+            SetPostionPiece(swapPiece.row, swapPiece.column, swapPiece);
+            SetPostionPiece(row, column, this);
+
+            Debug.Log("Move Complete");
+
+            board.currState = BoardState.WORK;
+        }
+
+        else
+        {
+            board.currState = BoardState.ORDER;
+            Debug.Log("asd");
+        }
+    }
+    private void SetPostionPiece(int row, int column, PieceManager piece)
+    {
+        piece.transform.position = new Vector2(row, column);
+        board.boardIndex[row, column] = piece.gameObject;
+        piece.name = "[" + row + " , " + column + "]";
     }
     
-    IEnumerator MovePiece()
+    IEnumerator MovePiece(PieceManager swapPiece)
     {
         while (accumTime < board.duration)
         {
             accumTime += Time.deltaTime / board.duration;
-            gameObject.transform.position = Vector2.Lerp(gameObject.transform.position, swapPiece.transform.position, accumTime);
+            transform.position = Vector2.Lerp(transform.position, swapPiece.transform.position, accumTime);
 
             Debug.Log(accumTime);
             yield return null;
         }
-        Debug.Log("asds");
     }
 }
