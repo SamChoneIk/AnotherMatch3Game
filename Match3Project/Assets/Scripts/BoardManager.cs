@@ -17,9 +17,12 @@ public class BoardManager : MonoBehaviour
 
     public GameObject[,] boardIndex;
     public GameObject disPieces;
+    public float waitTime = 0.16f;
 
     public List<PieceManager> matchedPieces;
     public List<PieceManager> disabledPieces;
+
+    public PieceManager selectPiece;
 
     [Header("Piece Parts")]
     public GameObject piecePrefab;
@@ -28,18 +31,34 @@ public class BoardManager : MonoBehaviour
     void Start()
     {
         boardIndex = new GameObject[width, height];
+
         matchedPieces = new List<PieceManager>();
         disabledPieces = new List<PieceManager>();
+
         CreateBoard();
         FindAllBoard();
     }
 
     void Update()
     {
-        if (currState == BoardState.WORK)
+        if (matchedPieces.Count > 0)
+            MatchedPieceDisabled();
+
+        else
+            currState = BoardState.ORDER;
+
+        /*if (currState == BoardState.ORDER)
         {
-            FindAllBoard();
+            return;
         }
+
+
+        else
+        {
+            //selectPiece.TurnBackPiece();
+            //Debug.Log(Time.time);
+            //currState = BoardState.ORDER;
+        }*/
     }
 
     private void CreateBoard()
@@ -56,13 +75,11 @@ public class BoardManager : MonoBehaviour
 
                 piece.SetPiece(pieceValue, row, column);
 
-                SpriteRenderer spritePiece = pieceGo.GetComponent<SpriteRenderer>();
-                spritePiece.sprite = pieceSprite[pieceValue];
+                pieceGo.GetComponent<SpriteRenderer>().sprite = pieceSprite[piece.value];
 
                 pieceGo.transform.parent = transform;
                 pieceGo.name = "[" + row + " , " + column + "]";
                 boardIndex[row, column] = pieceGo;
-
             }
         }
 
@@ -79,69 +96,63 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void FindAllBoard()
+    public void FindAllBoard()
     {
         for (int column = 0; column < height; ++column)
         {
             for (int row = 0; row < width; ++row)
             {
-                if (boardIndex[row, column] == null)
-                    continue;
-
-                PieceManager currPiece = GetPiece(row, column);
-
-                if (currPiece != null)
+                if (boardIndex[row, column] != null)
                 {
-                    if (row > 0 && row < width - 1)
+                    PieceManager currPiece = GetPiece(row, column);
+
+                    if (currPiece != null)
                     {
-                        if (boardIndex[row + 1, column] != null && boardIndex[row - 1, column] != null)
+                        if (row > 0 && row < width - 1)
                         {
-                            PieceManager rightPiece = GetPiece(row + 1, column);
-                            PieceManager leftPiece = GetPiece(row - 1, column);
-
-                            if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
+                            if (boardIndex[row + 1, column] != null && boardIndex[row - 1, column] != null)
                             {
-                                if (!matchedPieces.Contains(currPiece))
-                                    matchedPieces.Add(currPiece);
+                                PieceManager rightPiece = GetPiece(row + 1, column);
+                                PieceManager leftPiece = GetPiece(row - 1, column);
 
-                                if (!matchedPieces.Contains(rightPiece))
-                                    matchedPieces.Add(rightPiece);
+                                if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
+                                {
+                                    if (!matchedPieces.Contains(currPiece))
+                                        matchedPieces.Add(currPiece);
 
-                                if (!matchedPieces.Contains(leftPiece))
-                                    matchedPieces.Add(leftPiece);
+                                    if (!matchedPieces.Contains(rightPiece))
+                                        matchedPieces.Add(rightPiece);
+
+                                    if (!matchedPieces.Contains(leftPiece))
+                                        matchedPieces.Add(leftPiece);
+                                }
                             }
                         }
-                    }
 
-                    if (column > 0 && column < height - 1)
-                    {
-                        if (boardIndex[row, column + 1] != null && boardIndex[row, column - 1] != null)
+                        if (column > 0 && column < height - 1)
                         {
-                            PieceManager upPiece = GetPiece(row, column + 1);
-                            PieceManager downPiece = GetPiece(row, column - 1);
-
-                            if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
+                            if (boardIndex[row, column + 1] != null && boardIndex[row, column - 1] != null)
                             {
-                                if (!matchedPieces.Contains(currPiece))
-                                    matchedPieces.Add(currPiece);
+                                PieceManager upPiece = GetPiece(row, column + 1);
+                                PieceManager downPiece = GetPiece(row, column - 1);
 
-                                if (!matchedPieces.Contains(upPiece))
-                                    matchedPieces.Add(upPiece);
+                                if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
+                                {
+                                    if (!matchedPieces.Contains(currPiece))
+                                        matchedPieces.Add(currPiece);
 
-                                if (!matchedPieces.Contains(downPiece))
-                                    matchedPieces.Add(downPiece);
+                                    if (!matchedPieces.Contains(upPiece))
+                                        matchedPieces.Add(upPiece);
+
+                                    if (!matchedPieces.Contains(downPiece))
+                                        matchedPieces.Add(downPiece);
+                                }
                             }
                         }
                     }
                 }
             }
         }
-
-        if (matchedPieces.Count > 0)
-            MatchedPieceDisabled();
-
-        else
-            currState = BoardState.ORDER;
     }
 
     private void MatchedPieceDisabled()
@@ -158,12 +169,12 @@ public class BoardManager : MonoBehaviour
             piece.gameObject.SetActive(false);
             disabledPieces.Add(piece);
         }
-
-        StartCoroutine(FallingPiecesCo());
         matchedPieces.Clear();
+
+        StartCoroutine(FallingPieces());
     }
 
-    IEnumerator FallingPiecesCo()
+    IEnumerator FallingPieces()
     {
         for (int column = 0; column < height; ++column)
         {
@@ -175,13 +186,13 @@ public class BoardManager : MonoBehaviour
                     {
                         if (boardIndex[row, i] != null)
                         {
-                            PieceManager piece = GetPiece(row, i);
-                            piece.column = column;
-                            piece.SetPosition();
-                            boardIndex[row, column] = piece.gameObject;
+                            yield return new WaitForSeconds(waitTime);
+
+                            PieceManager piece = GetPiece(row, i); // 빈자리의 위에 있는 피스
+                            piece.SetPositionPiece(row, column); // 떨어질 곳으로 위치 변경
                             boardIndex[row, i] = null;
 
-                            yield return new WaitForSeconds(0.64f);
+                            yield return new WaitForSeconds(waitTime);
 
                             break;
                         }
@@ -196,39 +207,39 @@ public class BoardManager : MonoBehaviour
             {
                 if (boardIndex[row, column] == null)
                 {
-                    while (boardIndex[row, height - 1] == null)
-                    {
-                        PieceManager piece = EnabledPiece(row);
+                    PieceManager enabledPiece = EnabledPiece(row);
 
-                        piece.column = column;
-                        piece.SetPosition();
+                    yield return new WaitForSeconds(waitTime);
 
-                        boardIndex[row, column] = piece.gameObject;
+                    enabledPiece.SetPiece(enabledPiece.value, row, column);
+                    enabledPiece.SetPosition();
 
-                        if (boardIndex[row, height - 1] != null)
-                            break;
+                    enabledPiece.name = "[" + enabledPiece.row + " , " + enabledPiece.column + "]";
+                    boardIndex[row, column] = enabledPiece.gameObject;
 
-                        boardIndex[row, height - 1] = null;
-
-                        yield return new WaitForSeconds(0.64f);
-                    }
+                    yield return new WaitForSeconds(waitTime);
                 }
             }
         }
-        currState = BoardState.ORDER;
+
+        FindAllBoard();
     }
 
-    public PieceManager EnabledPiece(int row)
+    private PieceManager EnabledPiece(int row)
     {
         PieceManager piece = disabledPieces[0];
+        piece.gameObject.SetActive(true);
 
-        piece.transform.parent = transform;
         piece.SetPiece(Random.Range(0, pieceSprite.Length), row, height - 1);
+        piece.SetPosition();
+
+        piece.GetComponent<SpriteRenderer>().sprite = pieceSprite[piece.value];
+        piece.transform.parent = transform;
+
+        disabledPieces.RemoveAt(0);
 
         return piece;
     }
-
-
 
     private PieceManager GetPiece(int row, int column)
     {

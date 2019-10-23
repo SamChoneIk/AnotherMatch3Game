@@ -164,12 +164,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currState: 1
-  width: 4
-  height: 6
-  duration: 0.5
+  width: 6
+  height: 9
+  duration: 0.6
   disPieces: {fileID: 721989247}
+  waitTime: 0.08
   matchedPieces: []
   disabledPieces: []
+  selectPiece: {fileID: 0}
   piecePrefab: {fileID: 8935675836690888477, guid: f162842921417e94c807fe1167e223c0,
     type: 3}
   pieceSprite:
@@ -232,7 +234,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -256,7 +258,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 448528616}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 3.5, z: -10}
+  m_LocalPosition: {x: 2.5, y: 4, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

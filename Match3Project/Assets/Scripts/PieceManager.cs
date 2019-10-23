@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PieceManager : MonoBehaviour
 {
@@ -8,7 +6,8 @@ public class PieceManager : MonoBehaviour
     public int row;
     public int column;
 
-    public bool isMatched = false;
+    public bool pieceTuning = false;
+    public bool isMoving = false;
 
     private int prevRow;
     private int prevColumn;
@@ -19,8 +18,29 @@ public class PieceManager : MonoBehaviour
     private Vector2 endPos;
 
     private BoardManager board;
-    private GameObject selectPiece;
-    private PieceManager swapPiece;
+    public PieceManager targetPiece;
+
+    private void Update()
+    {
+        if (isMoving)
+        {
+            SetPositionPiece(row, column);
+            isMoving = false;
+            board.FindAllBoard();
+            //MovingPiece();
+        }
+
+       /* if(pieceTuning)
+        {
+            row = prevRow;
+            column = prevColumn;
+
+            targetPiece.row = targetPiece.prevRow;
+            targetPiece.column = targetPiece.prevColumn;
+
+            //MovingPiece();
+        }*/
+    }
 
     public void SetPiece(int v, int r, int c)
     {
@@ -43,15 +63,15 @@ public class PieceManager : MonoBehaviour
 
     private void OnMouseUp()
     {
-        if (board.currState == BoardState.WORK)
-            return;
-
         endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         CalculratePiece();
     }
 
     private void CalculratePiece()
     {
+        if (board.currState == BoardState.WORK)
+            return;
+
         Vector2 dir = (endPos - startPos).normalized;
         Debug.Log(dir);
 
@@ -66,50 +86,69 @@ public class PieceManager : MonoBehaviour
         }
     }
 
+    private void MovingPiece()
+    {
+        //Debug.Log(gameObject.name + " is Time : " + Time.time);
+        accumTime += Time.deltaTime / board.duration;
+
+        transform.position = Vector2.Lerp(transform.position, targetPiece.transform.position, accumTime);
+
+        if (Vector2.Distance(transform.position, targetPiece.transform.position) < 0.1f)
+        {
+            accumTime = 0f;
+
+            if (isMoving)
+            {
+                isMoving = false;
+                SetPositionPiece(targetPiece.row, targetPiece.column);
+            }
+
+            if (pieceTuning)
+            {
+                pieceTuning = false;
+                SetPositionPiece(row, column);
+            }
+        }
+    }
+
     private void MoveToPiece(Vector2 direction)
     {
         if (board.boardIndex[row + (int)direction.x, column + (int)direction.y] != null)
         {
-            swapPiece = board.boardIndex[row + (int)direction.x, column + (int)direction.y].GetComponent<PieceManager>();
+            targetPiece = board.boardIndex[row + (int)direction.x, column + (int)direction.y].GetComponent<PieceManager>();
+            targetPiece.targetPiece = this;
 
             prevRow = row;
             prevColumn = column;
 
-            swapPiece.row += -1 * (int)direction.x;
-            swapPiece.column += -1 * (int)direction.y;
+            targetPiece.prevRow = targetPiece.row;
+            targetPiece.prevColumn = targetPiece.column;
 
             row += (int)direction.x;
             column += (int)direction.y;
 
-            SetPostionPiece(swapPiece.row, swapPiece.column, swapPiece);
-            SetPostionPiece(row, column, this);
+            targetPiece.row += -1 * (int)direction.x;
+            targetPiece.column += -1 * (int)direction.y;
 
+            //  board.selectPiece = this;
+
+            isMoving = true;
+            targetPiece.isMoving = true;
+
+            
             Debug.Log("Move Complete");
-
-            board.currState = BoardState.WORK;
         }
 
         else
         {
-            board.currState = BoardState.ORDER;
+            //board.currState = BoardState.ORDER;
         }
     }
-    private void SetPostionPiece(int row, int column, PieceManager piece)
-    {
-        piece.transform.position = new Vector2(row, column);
-        board.boardIndex[row, column] = piece.gameObject;
-        piece.name = "[" + row + " , " + column + "]";
-    }
-    
-    IEnumerator MovePiece(PieceManager swapPiece)
-    {
-        while (accumTime < board.duration)
-        {
-            accumTime += Time.deltaTime / board.duration;
-            transform.position = Vector2.Lerp(transform.position, swapPiece.transform.position, accumTime);
 
-            Debug.Log(accumTime);
-            yield return null;
-        }
+    public void SetPositionPiece(int row, int column)
+    {
+        transform.position = new Vector2(row, column);
+        board.boardIndex[row, column] = gameObject;
+        name = "[" + row + " , " + column + "]";
     }
 }
