@@ -22,8 +22,6 @@ public class BoardManager : MonoBehaviour
     public List<PieceManager> matchedPieces;
     public List<PieceManager> disabledPieces;
 
-    public PieceManager selectPiece;
-
     [Header("Piece Parts")]
     public GameObject piecePrefab;
     public Sprite[] pieceSprite;
@@ -36,29 +34,24 @@ public class BoardManager : MonoBehaviour
         disabledPieces = new List<PieceManager>();
 
         CreateBoard();
-        FindAllBoard();
     }
 
     void Update()
     {
-        if (matchedPieces.Count > 0)
-            MatchedPieceDisabled();
-
-        else
-            currState = BoardState.ORDER;
-
-        /*if (currState == BoardState.ORDER)
+        // debug board Checking
+        if (Input.GetMouseButtonDown(1))
         {
-            return;
+            FindAllBoard();
         }
 
-
-        else
+        if (currState == BoardState.WORK)
         {
-            //selectPiece.TurnBackPiece();
-            //Debug.Log(Time.time);
-            //currState = BoardState.ORDER;
-        }*/
+            if (matchedPieces.Count > 0)
+                MatchedPieceDisabled();
+
+            else
+                currState = BoardState.ORDER;
+        }
     }
 
     private void CreateBoard()
@@ -153,13 +146,16 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
+        currState = BoardState.WORK;
     }
 
     private void MatchedPieceDisabled()
     {
         foreach (var piece in matchedPieces)
         {
+            //Debug.Log($"disabledPieces {piece.row} , {piece.column}");
             boardIndex[piece.row, piece.column] = null;
+            
             piece.transform.parent = disPieces.transform;
             piece.transform.localPosition = Vector2.zero;
 
@@ -171,10 +167,10 @@ public class BoardManager : MonoBehaviour
         }
         matchedPieces.Clear();
 
-        StartCoroutine(FallingPieces());
+        StartCoroutine(FallingPiecesCo());
     }
 
-    IEnumerator FallingPieces()
+    IEnumerator FallingPiecesCo()
     {
         for (int column = 0; column < height; ++column)
         {
@@ -188,8 +184,11 @@ public class BoardManager : MonoBehaviour
                         {
                             yield return new WaitForSeconds(waitTime);
 
-                            PieceManager piece = GetPiece(row, i); // 빈자리의 위에 있는 피스
-                            piece.SetPositionPiece(row, column); // 떨어질 곳으로 위치 변경
+                            PieceManager fallPiece = GetPiece(row, i); // 빈자리의 위에 있는 피스
+
+                            fallPiece.column = column;
+                            fallPiece.SetPositionPiece();
+
                             boardIndex[row, i] = null;
 
                             yield return new WaitForSeconds(waitTime);
@@ -201,47 +200,54 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        for (int column = 0; column < height; ++column)
+       for (int column = 0; column < height; ++column)
         {
             for (int row = 0; row < width; ++row)
             {
                 if (boardIndex[row, column] == null)
                 {
-                    PieceManager enabledPiece = EnabledPiece(row);
-
                     yield return new WaitForSeconds(waitTime);
 
-                    enabledPiece.SetPiece(enabledPiece.value, row, column);
-                    enabledPiece.SetPosition();
+                    PieceManager enabledPiece = EnabledPiece(row, height - 1);
 
-                    enabledPiece.name = "[" + enabledPiece.row + " , " + enabledPiece.column + "]";
-                    boardIndex[row, column] = enabledPiece.gameObject;
+                    enabledPiece.column = column;
+
+
+                    //enabledPiece.transform.position = new Vector2(row, enabledPiece.column);
+                    // enabledPiece.name = "[" + row + " , " + column + "]";
+                    //boardIndex[row, column] = enabledPiece.gameObject;
+
+
+                    enabledPiece.SetPositionPiece();
+
+                    if (boardIndex[row, height - 1] != null)
+                        continue;
+
+                    boardIndex[row, height - 1] = null;
 
                     yield return new WaitForSeconds(waitTime);
                 }
             }
         }
-
-        FindAllBoard();
     }
 
-    private PieceManager EnabledPiece(int row)
+    private PieceManager EnabledPiece(int row, int column)
     {
         PieceManager piece = disabledPieces[0];
-        piece.gameObject.SetActive(true);
 
-        piece.SetPiece(Random.Range(0, pieceSprite.Length), row, height - 1);
-        piece.SetPosition();
+        piece.SetPiece(Random.Range(0, pieceSprite.Length), row, column);
 
         piece.GetComponent<SpriteRenderer>().sprite = pieceSprite[piece.value];
         piece.transform.parent = transform;
+
+        piece.gameObject.SetActive(true);
 
         disabledPieces.RemoveAt(0);
 
         return piece;
     }
 
-    private PieceManager GetPiece(int row, int column)
+    public PieceManager GetPiece(int row, int column)
     {
         return boardIndex[row, column].GetComponent<PieceManager>();
     }

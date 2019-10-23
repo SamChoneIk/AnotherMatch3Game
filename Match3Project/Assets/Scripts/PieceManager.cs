@@ -6,9 +6,6 @@ public class PieceManager : MonoBehaviour
     public int row;
     public int column;
 
-    public bool pieceTuning = false;
-    public bool isMoving = false;
-
     private int prevRow;
     private int prevColumn;
 
@@ -20,32 +17,13 @@ public class PieceManager : MonoBehaviour
     private BoardManager board;
     public PieceManager targetPiece;
 
-    private void Update()
+    private void Awake()
     {
-        if (isMoving)
-        {
-            SetPositionPiece(row, column);
-            isMoving = false;
-            board.FindAllBoard();
-            //MovingPiece();
-        }
-
-       /* if(pieceTuning)
-        {
-            row = prevRow;
-            column = prevColumn;
-
-            targetPiece.row = targetPiece.prevRow;
-            targetPiece.column = targetPiece.prevColumn;
-
-            //MovingPiece();
-        }*/
+        board = FindObjectOfType<BoardManager>();
     }
 
     public void SetPiece(int v, int r, int c)
     {
-        board = FindObjectOfType<BoardManager>();
-
         value = v;
         row = r;
         column = c;
@@ -73,7 +51,6 @@ public class PieceManager : MonoBehaviour
             return;
 
         Vector2 dir = (endPos - startPos).normalized;
-        Debug.Log(dir);
 
         if (Mathf.Abs(dir.y) > Mathf.Abs(dir.x))
         {
@@ -86,36 +63,11 @@ public class PieceManager : MonoBehaviour
         }
     }
 
-    private void MovingPiece()
-    {
-        //Debug.Log(gameObject.name + " is Time : " + Time.time);
-        accumTime += Time.deltaTime / board.duration;
-
-        transform.position = Vector2.Lerp(transform.position, targetPiece.transform.position, accumTime);
-
-        if (Vector2.Distance(transform.position, targetPiece.transform.position) < 0.1f)
-        {
-            accumTime = 0f;
-
-            if (isMoving)
-            {
-                isMoving = false;
-                SetPositionPiece(targetPiece.row, targetPiece.column);
-            }
-
-            if (pieceTuning)
-            {
-                pieceTuning = false;
-                SetPositionPiece(row, column);
-            }
-        }
-    }
-
     private void MoveToPiece(Vector2 direction)
     {
         if (board.boardIndex[row + (int)direction.x, column + (int)direction.y] != null)
         {
-            targetPiece = board.boardIndex[row + (int)direction.x, column + (int)direction.y].GetComponent<PieceManager>();
+            targetPiece = board.GetPiece(row + (int)direction.x, column + (int)direction.y);
             targetPiece.targetPiece = this;
 
             prevRow = row;
@@ -130,12 +82,9 @@ public class PieceManager : MonoBehaviour
             targetPiece.row += -1 * (int)direction.x;
             targetPiece.column += -1 * (int)direction.y;
 
-            //  board.selectPiece = this;
+            SetPositionPiece();
+            targetPiece.SetPositionPiece();
 
-            isMoving = true;
-            targetPiece.isMoving = true;
-
-            
             Debug.Log("Move Complete");
         }
 
@@ -145,7 +94,20 @@ public class PieceManager : MonoBehaviour
         }
     }
 
-    public void SetPositionPiece(int row, int column)
+    private void MovingPiece()
+    {
+        //Debug.Log(gameObject.name + " is Time : " + Time.time);
+        accumTime += Time.deltaTime / board.duration;
+
+        transform.position = Vector2.Lerp(transform.position, targetPiece.transform.position, accumTime);
+
+        if (Vector2.Distance(transform.position, targetPiece.transform.position) < 0.1f)
+        {
+            accumTime = 0f;
+        }
+    }
+
+    public void SetPositionPiece()
     {
         transform.position = new Vector2(row, column);
         board.boardIndex[row, column] = gameObject;

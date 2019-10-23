@@ -165,21 +165,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currState: 1
   width: 6
-  height: 9
+  height: 8
   duration: 0.6
   disPieces: {fileID: 721989247}
   waitTime: 0.08
   matchedPieces: []
   disabledPieces: []
-  selectPiece: {fileID: 0}
   piecePrefab: {fileID: 8935675836690888477, guid: f162842921417e94c807fe1167e223c0,
     type: 3}
   pieceSprite:
-  - {fileID: 21300000, guid: 8e844542340f7284a984941e95149bf0, type: 3}
-  - {fileID: 21300000, guid: 46e02bf7ff09cdb4db91ea006daa150b, type: 3}
   - {fileID: 21300000, guid: 380eeb482b85519418118928b193a396, type: 3}
-  - {fileID: 21300000, guid: 63c7208a3eac5e241afbdaf9594f85a0, type: 3}
+  - {fileID: 21300000, guid: 46e02bf7ff09cdb4db91ea006daa150b, type: 3}
+  - {fileID: 21300000, guid: 8e844542340f7284a984941e95149bf0, type: 3}
   - {fileID: 21300000, guid: 29aa665c5b288bc4a87fb9979cb4a975, type: 3}
+  - {fileID: 21300000, guid: 63c7208a3eac5e241afbdaf9594f85a0, type: 3}
   - {fileID: 21300000, guid: 9e059a4de16dd224fb9207ef9f17140e, type: 3}
 --- !u!1 &448528616
 GameObject:
