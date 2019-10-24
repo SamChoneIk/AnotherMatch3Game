@@ -8,24 +8,20 @@ public class PieceCtrl : MonoBehaviour
 
     public int row;
     public int column;
-
     public int prevRow;
     public int prevColumn;
 
-	private float accumTime = 0;
+    public float dragRegist = 0.2f;
 
-	private bool isMoving;
-	private bool tunning;
+	public bool isMoving;
 
+    public Vector2 movePos;
     private Vector2 startPos;
     private Vector2 endPos;
-	private Vector2 movePos;
-
-	private Vector2 zeroPos = Vector2.zero;
 
     private BoardManager board;
 	private SpriteRenderer pieceSprite;
-    public PieceCtrl targetPiece;
+    public PieceCtrl target;
 
 	public void Awake()
 	{
@@ -34,44 +30,14 @@ public class PieceCtrl : MonoBehaviour
 
 	public void InitPiece(int v, int r, int c, BoardManager b)
 	{
-		value = v;
+        if (board == null)
+            board = b;
+
+        value = v;
 		row = r;
 		column = c;
 
-		if (board == null)
-			board = b;
-
 		pieceSprite.sprite = board.pieceSprites[value];
-	}
-
-	private void Update()
-	{
-		if(isMoving && targetPiece != null)
-		{
-			movePos = new Vector2(row, column);
-
-			accumTime += Time.deltaTime / board.duration;
-			transform.position = Vector2.Lerp(transform.position, movePos, accumTime);
-
-			if (Vector2.Distance(transform.position, movePos) == 0f)
-			{
-				accumTime = 0;
-				SetPositionPiece();
-
-				if (board.FollowUpBoardAllCheck())
-				{
-					board.currState = BoardState.WORK;
-				}
-
-				else
-				{
-
-				}
-
-				targetPiece = null;
-				isMoving = false;
-			}
-		}
 	}
 
 	private void OnMouseDown()
@@ -87,15 +53,15 @@ public class PieceCtrl : MonoBehaviour
 
     private void CalculratePiece()
     {
-		if (board.currState != BoardState.WORK)
+		if (board.currState == BoardState.ORDER)
 		{
 			Vector2 dir = (endPos - startPos).normalized;
 
 			if (Mathf.Abs(dir.y) > Mathf.Abs(dir.x))
-				MoveToPiece(dir.y > 0 ? Vector2.up : Vector2.down);
+				MoveToPiece(dir.y > dragRegist ? Vector2.up : Vector2.down);
 
 			else if (Mathf.Abs(dir.y) < Mathf.Abs(dir.x))
-				MoveToPiece(dir.x > 0 ? Vector2.right : Vector2.left);
+				MoveToPiece(dir.x > dragRegist ? Vector2.right : Vector2.left);
 		}
     }
 
@@ -104,25 +70,42 @@ public class PieceCtrl : MonoBehaviour
         if (board.boardIndex[row + (int)direction.x, column + (int)direction.y] != null)
         {
 			// 블럭이 참조할 대상
-            targetPiece = board.GetPiece(row + (int)direction.x, column + (int)direction.y);
-            targetPiece.targetPiece = this;
+            target = board.GetPiece(row + (int)direction.x, column + (int)direction.y);
+            target.target = this;
 
 			// 블럭 이전 위치 값 초기화
             prevRow = row;
             prevColumn = column;
-            targetPiece.prevRow = targetPiece.row;
-            targetPiece.prevColumn = targetPiece.column;
+            target.prevRow = target.row;
+            target.prevColumn = target.column;
 
 			// 블럭 현재 위치 값 초기화
             row += (int)direction.x;
             column += (int)direction.y;
-            targetPiece.row += -1 * (int)direction.x;
-            targetPiece.column += -1 * (int)direction.y;
+            target.row += -1 * (int)direction.x;
+            target.column += -1 * (int)direction.y;
 
-			// 블럭을 움직임
-			isMoving = true;
-			targetPiece.isMoving = true;
+            movePos = new Vector2(row, column);
+            target.movePos = new Vector2(target.row, target.column);
+
+            // 블럭을 움직임
+            isMoving = true;
+            target.isMoving = true;
+
+            board.selectPiece = this;
+            board.targetPiece = target;
 		}
+    }
+
+    public void movedPiece(float t)
+    {
+        transform.position = Vector2.Lerp(transform.position, movePos, t);
+
+        if (Vector2.Distance(transform.position, movePos) == 0f)
+        {
+            SetPositionPiece();
+            isMoving = false;
+        }
     }
 
     public void SetPositionPiece()

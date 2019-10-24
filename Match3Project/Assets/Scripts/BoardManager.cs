@@ -20,7 +20,8 @@ public class BoardManager : MonoBehaviour
 
     public GameObject[,] boardIndex;
     public GameObject disPieces;
-	public GameObject selectPiece;
+    public PieceCtrl selectPiece;
+    public PieceCtrl targetPiece;
 
     public List<PieceCtrl> matchedPieces;
     public List<PieceCtrl> disabledPieces;
@@ -41,15 +42,34 @@ public class BoardManager : MonoBehaviour
 	}
 
     void Update()
-	{ 
+	{
+        if (selectPiece != null && targetPiece != null && currState == BoardState.ORDER)
+        {
+            accumTime += Time.deltaTime / duration;
+
+
+            selectPiece.SetPositionPiece();
+            targetPiece.SetPositionPiece();
+
+            selectPiece.isMoving = false;
+            targetPiece.isMoving = false;
+
+
+            if (!selectPiece.isMoving && !targetPiece.isMoving)
+            {
+                accumTime = 0f;
+                currState = BoardState.WORK;
+            }
+        }
+
         if (currState == BoardState.WORK)
         {
-			FindAllBoard();
-			Debug.Log($"Board Checking Start Time {Time.time}");
+            //Debug.Log($"Board Checking Update Time {Time.time}");
+            FindAllBoard();
 
-			if (matchedPieces.Count > 0)
+            if (matchedPieces.Count > 0)
 			{
-				Debug.Log("Find match");
+				//Debug.Log("Find match");
 				MatchedPieceDisabled();
 			}
 
@@ -174,13 +194,14 @@ public class BoardManager : MonoBehaviour
         {
             //Debug.Log($"disabledPieces {piece.row} , {piece.column}");
             boardIndex[piece.row, piece.column] = null;
-            
             piece.transform.parent = disPieces.transform;
 			piece.InitPiece(0, 0, 0, this);
 
             piece.name = "DisPiece";
             piece.gameObject.SetActive(false);
             disabledPieces.Add(piece);
+
+            
         }
         matchedPieces.Clear();
 
@@ -268,8 +289,16 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-		if (!FollowUpBoardAllCheck())
-			currState = BoardState.ORDER;
+        // yield return new WaitForSeconds(waitTime);
+
+        DebugBoardChecking();
+
+        if (FollowUpBoardAllCheck())
+            currState = BoardState.WORK;
+
+        else
+            currState = BoardState.ORDER;
+        
 	}
 
 	public bool FollowUpBoardAllCheck()
@@ -314,6 +343,19 @@ public class BoardManager : MonoBehaviour
 
 		return false;
 	}
+
+    public void DebugBoardChecking()
+    {
+        for (int column = 0; column < height; ++column)
+        {
+            for (int row = 0; row < width; ++row)
+            {
+                if (boardIndex[row, column] == null)
+                    Debug.Log("[" + row + " , " + column + "] = is Null!!");
+
+            }
+        }
+    }
 
     private PieceCtrl EnabledPiece(int row, int column)
     {
