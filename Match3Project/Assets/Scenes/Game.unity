@@ -163,22 +163,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01786417f8d98bd4c9110f131fa049d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currState: 1
+  currState: 0
   width: 6
   height: 8
-  duration: 0.6
+  waitTime: 0.02
+  duration: 0.04
+  accumTime: 0
   disPieces: {fileID: 721989247}
-  waitTime: 0.08
+  selectPiece: {fileID: 0}
   matchedPieces: []
   disabledPieces: []
   piecePrefab: {fileID: 8935675836690888477, guid: f162842921417e94c807fe1167e223c0,
     type: 3}
-  pieceSprite:
+  pieceSprites:
   - {fileID: 21300000, guid: 380eeb482b85519418118928b193a396, type: 3}
-  - {fileID: 21300000, guid: 46e02bf7ff09cdb4db91ea006daa150b, type: 3}
-  - {fileID: 21300000, guid: 8e844542340f7284a984941e95149bf0, type: 3}
-  - {fileID: 21300000, guid: 29aa665c5b288bc4a87fb9979cb4a975, type: 3}
   - {fileID: 21300000, guid: 63c7208a3eac5e241afbdaf9594f85a0, type: 3}
+  - {fileID: 21300000, guid: 29aa665c5b288bc4a87fb9979cb4a975, type: 3}
+  - {fileID: 21300000, guid: 8e844542340f7284a984941e95149bf0, type: 3}
+  - {fileID: 21300000, guid: 46e02bf7ff09cdb4db91ea006daa150b, type: 3}
   - {fileID: 21300000, guid: 9e059a4de16dd224fb9207ef9f17140e, type: 3}
 --- !u!1 &448528616
 GameObject:
