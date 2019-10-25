@@ -38,47 +38,76 @@ public class BoardManager : MonoBehaviour
 
         CreateBoard();
         FindAllBoard();
+
+        transform.SetSiblingIndex(0);
     }
 
     void Update()
     {
+        // debug Array checking
+        if (Input.GetMouseButtonDown(1))
+            DebugBoardChecking();
+
         if (selectPiece != null && targetPiece != null)
         {
-            if (selectPiece.currState == BlockState.WAIT &&
-            targetPiece.currState == BlockState.WAIT &&
-            currState == BoardState.WORK)
+            if (selectPiece.currState == BlockState.MOVE || targetPiece.currState == BlockState.MOVE)
             {
+                currState = BoardState.WORK;
+
+                if (selectPiece.isTunning && targetPiece.isTunning)
+                    Debug.Log("tunning2");
+
+                selectPiece.MovedPiece();
+                targetPiece.MovedPiece();
+            }
+
+            if(selectPiece.currState == BlockState.WAIT && targetPiece.currState == BlockState.WAIT)
+            {
+                if (selectPiece.isTunning && targetPiece.isTunning)
+                    Debug.Log("tunning3");
+
                 SetPiece(selectPiece);
                 SetPiece(targetPiece);
 
-                selectPiece = null;
-                targetPiece = null;
-
-                FindAllBoard();
-            }
-        }
-    }
-
-    public void BoardStateCtrl(BoardState state)
-    {
-        currState = state;
-
-        switch (currState)
-        {
-            case BoardState.ORDER:
-                break;
-
-            case BoardState.WORK:
+                if (selectPiece.isTunning && targetPiece.isTunning)
                 {
-                    if (selectPiece != null && targetPiece != null)
-                    {
-                        selectPiece.currState = BlockState.MOVE;
-                        targetPiece.currState = BlockState.MOVE;
-                    }
+                    selectPiece.isTunning = false;
+                    targetPiece.isTunning = false;
 
-                    MatchedPieceDisabled();
-                    break;
+                    selectPiece = null;
+                    targetPiece = null;
+
+                    currState = BoardState.ORDER;
+                    Debug.Log("tunning4");
+                    return;
                 }
+
+                if (FollowUpBoardAllCheck())
+                {
+                    selectPiece = null;
+                    targetPiece = null;
+
+                    FindAllBoard();
+                }
+
+                else
+                {
+                    Debug.Log("tunning1");
+                    selectPiece.row = selectPiece.prevRow;
+                    selectPiece.column = selectPiece.prevColumn;
+
+                    targetPiece.row = targetPiece.prevRow;
+                    targetPiece.column = targetPiece.prevColumn;
+
+                    selectPiece.isTunning = true;
+                    targetPiece.isTunning = true;
+
+                    selectPiece.currState = BlockState.MOVE;
+                    targetPiece.currState = BlockState.MOVE;
+
+                    return;
+                }
+            }
         }
     }
 
@@ -96,7 +125,7 @@ public class BoardManager : MonoBehaviour
                 pieceGo.transform.parent = transform;
                 pieceGo.name = "[" + row + " , " + column + "]";
 
-                boardIndex[row, column] = pieceGo;
+                boardIndex[piece.row, piece.column] = pieceGo;
             }
         }
 
@@ -174,10 +203,10 @@ public class BoardManager : MonoBehaviour
         }
 
         if (matchedPieces.Count > 0)
-            BoardStateCtrl(BoardState.WORK);
+            MatchedPieceDisabled();
 
         else
-            BoardStateCtrl(BoardState.ORDER);
+            currState = BoardState.ORDER;
     }
 
     private void MatchedPieceDisabled()
@@ -239,7 +268,7 @@ public class BoardManager : MonoBehaviour
 
                             fallPiece.transform.position = new Vector2(row, column);
                             fallPiece.name = "[" + row + " , " + column + "]";
-                            boardIndex[row, column] = fallPiece.gameObject;
+                            boardIndex[fallPiece.row, fallPiece.column] = fallPiece.gameObject;
 
                             boardIndex[row, i] = null;
 
@@ -273,7 +302,7 @@ public class BoardManager : MonoBehaviour
 
                     enabledPiece.transform.position = new Vector2(row, column);
                     enabledPiece.name = "[" + row + " , " + column + "]";
-                    boardIndex[row, column] = enabledPiece.gameObject;
+                    boardIndex[enabledPiece.row, enabledPiece.column] = enabledPiece.gameObject;
 
                     if (boardIndex[row, height - 1] != null)
 						continue;
@@ -287,7 +316,7 @@ public class BoardManager : MonoBehaviour
             FindAllBoard();
 
         else
-            BoardStateCtrl(BoardState.ORDER);
+            currState = BoardState.ORDER;
     }
 
 	public bool FollowUpBoardAllCheck()
@@ -339,8 +368,10 @@ public class BoardManager : MonoBehaviour
         {
             for (int row = 0; row < width; ++row)
             {
-                if (boardIndex[row, column] == null)
-                    Debug.Log("[" + row + " , " + column + "] = is Null!!");
+                /*if (boardIndex[row, column].GetComponent<Block>().value == GetPiece(row, column).value)
+                    Debug.Log("[" + row + " , " + column + "] = " + GetPiece(row, column).value);*/
+
+                Debug.Log("[" + row + " , " + column + "] = " + boardIndex[row, column].GetComponent<Block>().value);
             }
         }
     }
@@ -369,5 +400,20 @@ public class BoardManager : MonoBehaviour
         piece.transform.position = new Vector2(piece.row, piece.column);
         piece.name = "[" + piece.row + " , " + piece.column + "]";
         boardIndex[piece.row, piece.column] = piece.gameObject;
+
+        /*if (boardIndex[selectPiece.row, selectPiece.column] != selectPiece.gameObject)
+            boardIndex[selectPiece.row, selectPiece.column] = selectPiece.gameObject;*/
+    }
+
+    private void DeadLockingCheck()
+    {
+        for (int column = 0; column < height; ++column)
+        {
+            for (int row = 0; row < width; ++row)
+            {
+                
+
+            }
+        }
     }
 }

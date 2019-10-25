@@ -166,38 +166,14 @@ MonoBehaviour:
   currState: 1
   width: 6
   height: 8
-  blockDuration: 0.64
+  blockDuration: 0.8
   boardDuration: 0.08
   accumTime: 0
   disPieces: {fileID: 721989247}
   selectPiece: {fileID: 0}
   targetPiece: {fileID: 0}
   matchedPieces: []
-  disabledPieces:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  disabledPieces: []
   piecePrefab: {fileID: 8935675836690888477, guid: f162842921417e94c807fe1167e223c0,
     type: 3}
   pieceSprites:
@@ -314,7 +290,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 721989247}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.28, y: 5.95, z: -1.3824495}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

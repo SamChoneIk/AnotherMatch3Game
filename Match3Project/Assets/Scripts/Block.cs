@@ -19,10 +19,10 @@ public class Block : MonoBehaviour
     public int prevColumn;
 
     public float accumTime = 0f;
-
     public float dragRegist = 0.5f;
 
     public bool isTunning = false;
+    public bool isMoving = false;
 
     private Vector2 startPos;
     private Vector2 endPos;
@@ -36,22 +36,6 @@ public class Block : MonoBehaviour
     {
         pieceSprite = GetComponent<SpriteRenderer>();
     }
-
-    private void Update()
-    {
-        switch (currState)
-        {
-            case BlockState.WAIT:
-                break;
-
-            case BlockState.MOVE:
-                {
-                    MovedPiece();
-                    break;
-                }
-        }
-    }
-
 
     public void InitPiece(int v, int r, int c, BoardManager b)
     {
@@ -116,62 +100,14 @@ public class Block : MonoBehaviour
             target.column += -1 * (int)direction.y;
 
             // 블럭을 움직임
+            currState = BlockState.MOVE;
+            target.currState = BlockState.MOVE;
+
             board.selectPiece = this;
             board.targetPiece = target;
-
-            board.BoardStateCtrl(BoardState.WORK);
         }
     }
-
-    IEnumerator MovedPieceCo()
-    {
-        moveToPos = new Vector2(row, column);
-
-        while (Vector2.Distance(transform.position, moveToPos) > 0.2f)
-        {
-            accumTime += Time.deltaTime / board.blockDuration;
-            transform.position = Vector2.Lerp(transform.position, moveToPos, accumTime);
-        }
-
-            accumTime = 0f;
-
-            currState = BlockState.WAIT;
-            Debug.Log(gameObject.name + " moved Complete");
-
-
-            /*  if (!isTunning)
-              {
-                  if (board.FollowUpBoardAllCheck())
-                  {
-                      currState = BlockState.WAIT;
-                      board.FindAllBoard();
-                  }
-
-                  else
-                  {
-                      row = prevRow;
-                      column = prevColumn;
-
-                      isTunning = true;
-                      target = null;
-
-                      return;
-                  }
-              }
-
-              else
-              {
-                  prevRow = 0;
-                  prevColumn = 0;
-
-                  isTunning = false;
-
-                  currState = BlockState.WAIT;
-                  return;
-              }*/
-        
-    }
-
+   
     public void MovedPiece()
     {
         moveToPos = new Vector2(row, column);
@@ -181,41 +117,26 @@ public class Block : MonoBehaviour
         if (Vector2.Distance(transform.position, moveToPos) < 0.2f)
         {
             accumTime = 0f;
-
             currState = BlockState.WAIT;
-            Debug.Log(gameObject.name + " moved Complete");
-
-
-          /*  if (!isTunning)
-            {
-                if (board.FollowUpBoardAllCheck())
-                {
-                    currState = BlockState.WAIT;
-                    board.FindAllBoard();
-                }
-
-                else
-                {
-                    row = prevRow;
-                    column = prevColumn;
-
-                    isTunning = true;
-                    target = null;
-
-                    return;
-                }
-            }
-
-            else
-            {
-                prevRow = 0;
-                prevColumn = 0;
-
-                isTunning = false;
-
-                currState = BlockState.WAIT;
-                return;
-            }*/
+            //Debug.Log(gameObject.name + " moved Complete");
         }
     }
+
+    /*IEnumerator MovedPieceCo()
+    {
+        moveToPos = new Vector2(row, column);
+
+        while (Vector2.Distance(transform.position, moveToPos) > 0.2f)
+        {
+            accumTime += Time.deltaTime / board.blockDuration;
+            transform.position = Vector2.Lerp(transform.position, moveToPos, accumTime);
+
+            yield return null;
+        }
+        accumTime = 0f;
+
+        currState = BlockState.WAIT;
+        Debug.Log(gameObject.name + " moved Complete");
+    }*/
+
 }
