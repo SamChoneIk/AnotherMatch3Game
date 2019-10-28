@@ -58,10 +58,10 @@ public class Block : MonoBehaviour
         if(currState == BlockState.MOVE)
         {
             accumTime += Time.deltaTime / board.blockDuration;
-            if (Mathf.Abs(row - transform.position.x) > 0.1f || Mathf.Abs(column - transform.position.y) > 0.1f)
-            {
+
+            if (Mathf.Abs(row - transform.position.x) > 0.1f || 
+                Mathf.Abs(column - transform.position.y) > 0.1f)
                 transform.position = Vector2.Lerp(transform.position, moveToPos, accumTime);
-            }
 
             else
             {
@@ -92,6 +92,7 @@ public class Block : MonoBehaviour
     {
         if (board.currState == BoardState.ORDER && currState == BlockState.WAIT)
         {
+            
             Vector2 dir = (endPos - startPos).normalized;
 
             if (Mathf.Abs(dir.y) > Mathf.Abs(dir.x))
@@ -104,8 +105,7 @@ public class Block : MonoBehaviour
 
     private void MoveToPiece(Vector2 direction)
     {
-        if ((row + direction.x) < board.width &&
-            (column + direction.y) < board.height &&
+        if ((row + direction.x) < board.width && (column + direction.y) < board.height &&
             board.boardIndex[row + (int)direction.x, column + (int)direction.y] != null)
         {
             // 블럭이 참조할 대상

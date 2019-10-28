@@ -6,6 +6,7 @@ public enum BoardState
 {
     ORDER,
     WORK,
+    SETUP,
 }
 
 public class BoardManager : MonoBehaviour
@@ -27,6 +28,8 @@ public class BoardManager : MonoBehaviour
     [Header("Piece Parts")]
     public GameObject piecePrefab;
     public Sprite[] pieceSprites;
+
+    private float waitTime = 0;
 
     void Start()
     {
@@ -71,14 +74,44 @@ public class BoardManager : MonoBehaviour
             else
                 Debug.Log(DeadLockCheck());
         }
+
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            PieceRegenerate();
+        }
     }
 
     void Update()
-    {
+    { 
+        if(currState == BoardState.ORDER)
+        {
+            waitTime += Time.deltaTime;
+
+            if (waitTime > 5f)
+            {
+                if(DeadLockCheck())
+                {
+                    PieceRegenerate();
+                    Debug.Log("is DeadLock !!");
+                }
+
+                else
+                {
+                    // hint effect
+                    waitTime = 0;
+                }
+            }
+        }
+
         if (currState == BoardState.WORK)
         {
+            waitTime = 0;
+
             if (selectPiece != null && targetPiece != null)
             {
+                if(selectPiece.currState == BlockState.MOVE && targetPiece.currState == BlockState.MOVE)
+                    return;
+
                 if (selectPiece.currState == BlockState.WAIT && targetPiece.currState == BlockState.WAIT)
                 {
                     if (selectPiece.isTunning && targetPiece.isTunning)
@@ -89,10 +122,12 @@ public class BoardManager : MonoBehaviour
                         selectPiece = null;
                         targetPiece = null;
 
+                        currState = BoardState.ORDER;
+
                         return;
                     }
 
-                    if(IndexCheck())
+                    if (IndexCheck())
                     {
                         selectPiece = null;
                         targetPiece = null;
@@ -130,15 +165,24 @@ public class BoardManager : MonoBehaviour
         {
             for (int row = 0; row < width; ++row)
             {
+                int value = Random.Range(0, pieceSprites.Length);
+
                 GameObject pieceGo = Instantiate(piecePrefab, new Vector2(row, column), Quaternion.identity);
                 Block piece = pieceGo.GetComponent<Block>();
-
-                piece.InitPiece(Random.Range(0, pieceSprites.Length), row, column, this);
+                piece.InitPiece(value, row, column, this);
 
                 pieceGo.transform.parent = transform;
                 pieceGo.name = "[" + row + " , " + column + "]";
 
                 boardIndex[piece.row, piece.column] = pieceGo;
+
+                while (IndexCheck())
+                {
+                    value = Random.Range(0, pieceSprites.Length);
+                    piece.value = value;
+                }
+
+                piece.InitPiece(value, piece.row, piece.column, this);
             }
         }
 
@@ -215,46 +259,37 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        MatchedPieceDisabled();
+        if (matchedPiece.Count > 0)
+            MatchedPieceDisabled();
+
+        else
+            currState = BoardState.ORDER;
     }
 
     private void MatchedPieceDisabled()
     {
-        if (matchedPiece.Count > 0)
+        foreach (var piece in matchedPiece)
         {
-            foreach (var piece in matchedPiece)
-            {
-                boardIndex[piece.row, piece.column] = null;
+            boardIndex[piece.row, piece.column] = null;
 
-                piece.target = null;
+            piece.target = null;
 
-                piece.InitPiece(0, 0, 0, this);
+            piece.InitPiece(0, 0, 0, this);
 
-                piece.name = "DefaultPiece";
-                piece.transform.parent = disabledPieces.transform;
-                piece.transform.position = new Vector2(piece.row, piece.column);
+            piece.name = "DefaultPiece";
+            piece.transform.parent = disabledPieces.transform;
+            piece.transform.position = new Vector2(piece.row, piece.column);
 
-                piece.gameObject.SetActive(false);
-                disabledPiece.Add(piece);
-            }
-            matchedPiece.Clear();
-
-            selectPiece = null;
-            targetPiece = null;
-
-            //StartCoroutine(FallingPieces());
-            FallPieces();
+            piece.gameObject.SetActive(false);
+            disabledPiece.Add(piece);
         }
 
-        else
-        {
-            if (DeadLockCheck())
-            {
-                Debug.Log("is dead lock!");
-            }
-            
-            currState = BoardState.ORDER;
-        }
+        matchedPiece.Clear();
+
+        selectPiece = null;
+        targetPiece = null;
+
+        FallPieces();
     }
 
     private void FallPieces()
@@ -300,7 +335,13 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        FindMatchedIndex();
+        if(IndexCheck())
+        {
+            FindMatchedIndex();
+        }
+
+        else { 
+}
     }
 
     private Block EnabledPiece(int row, int column)
@@ -315,64 +356,6 @@ public class BoardManager : MonoBehaviour
         disabledPiece.RemoveAt(0);
 
         return enabledPiece;
-    }
-
-    public bool IndexCheck()
-    {
-        for (int column = 0; column < height; ++column)
-        {
-            for (int row = 0; row < width; ++row)
-            {
-                if (boardIndex[row, column] != null)
-                {
-                    Block currPiece = GetPiece(row, column);
-
-                    if (currPiece != null)
-                    {
-                        if (row > 0 && row < width - 1)
-                        {
-                            if (boardIndex[row + 1, column] != null && boardIndex[row - 1, column] != null)
-                            {
-                                Block rightPiece = GetPiece(row + 1, column);
-                                Block leftPiece = GetPiece(row - 1, column);
-
-                                if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
-                                    return true;
-                            }
-                        }
-
-                        if (column > 0 && column < height - 1)
-                        {
-                            if (boardIndex[row, column + 1] != null && boardIndex[row, column - 1] != null)
-                            {
-                                Block upPiece = GetPiece(row, column + 1);
-                                Block downPiece = GetPiece(row, column - 1);
-
-                                if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
-                                    return true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public Block GetPiece(int row, int column)
-    {
-        return boardIndex[row, column].GetComponent<Block>();
-    }
-
-    public void SetPiece(Block piece)
-    {
-        piece.transform.position = new Vector2(piece.row, piece.column + offset);
-        piece.name = "[" + piece.row + " , " + piece.column + "]";
-        boardIndex[piece.row, piece.column] = piece.gameObject;
-
-        /*if (boardIndex[selectPiece.row, selectPiece.column] != selectPiece.gameObject)
-            boardIndex[selectPiece.row, selectPiece.column] = selectPiece.gameObject;*/
     }
 
     private bool DeadLockCheck()
@@ -429,13 +412,16 @@ public class BoardManager : MonoBehaviour
             {
                 if (boardIndex[row, column] != null)
                 {
+                    int value = Random.Range(0, pieceSprites.Length);
+
                     Block piece = GetPiece(row, column);
                     piece.gameObject.SetActive(false);
 
-                    piece.InitPiece(Random.Range(0, pieceSprites.Length), piece.row, piece.column, this);
+                    piece.InitPiece(value, piece.row, piece.column, this);
+
                     piece.transform.position = new Vector2(piece.row, piece.column + offset);
                     piece.moveToPos = new Vector2(piece.row, piece.column);
-                    
+
                     piece.currState = BlockState.WAIT;
 
                     refillPieces.Add(piece);
@@ -450,9 +436,59 @@ public class BoardManager : MonoBehaviour
         }
 
         refillPieces.Clear();
+
+        FindMatchedIndex();
     }
 
-    public void DebugBoardChecking(bool isPos = false)
+    private bool IndexCheck()
+    {
+        for (int column = 0; column < height; ++column)
+        {
+            for (int row = 0; row < width; ++row)
+            {
+                if (boardIndex[row, column] != null)
+                {
+                    Block currPiece = GetPiece(row, column);
+
+                    if (currPiece != null)
+                    {
+                        if (row > 0 && row < width - 1)
+                        {
+                            if (boardIndex[row + 1, column] != null && boardIndex[row - 1, column] != null)
+                            {
+                                Block rightPiece = GetPiece(row + 1, column);
+                                Block leftPiece = GetPiece(row - 1, column);
+
+                                if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
+                                    return true;
+                            }
+                        }
+
+                        if (column > 0 && column < height - 1)
+                        {
+                            if (boardIndex[row, column + 1] != null && boardIndex[row, column - 1] != null)
+                            {
+                                Block upPiece = GetPiece(row, column + 1);
+                                Block downPiece = GetPiece(row, column - 1);
+
+                                if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
+                                    return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public Block GetPiece(int row, int column)
+    {
+        return boardIndex[row, column].GetComponent<Block>();
+    }
+
+    private void DebugBoardChecking(bool isPos = false)
     {
         for (int column = 0; column < height; ++column)
         {
