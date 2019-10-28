@@ -166,14 +166,14 @@ MonoBehaviour:
   currState: 1
   width: 6
   height: 8
-  blockDuration: 0.8
-  boardDuration: 0.08
-  accumTime: 0
-  disPieces: {fileID: 721989247}
+  offset: 5
+  blockDuration: 0.4
+  boardDuration: 0.4
+  disabledPieces: {fileID: 721989247}
   selectPiece: {fileID: 0}
   targetPiece: {fileID: 0}
-  matchedPieces: []
-  disabledPieces: []
+  matchedPiece: []
+  disabledPiece: []
   piecePrefab: {fileID: 8935675836690888477, guid: f162842921417e94c807fe1167e223c0,
     type: 3}
   pieceSprites:

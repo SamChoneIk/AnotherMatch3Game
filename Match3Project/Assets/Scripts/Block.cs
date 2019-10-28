@@ -11,6 +11,7 @@ public enum BlockState
 public class Block : MonoBehaviour
 {
     public BlockState currState = BlockState.WAIT;
+
     public int value;
 
     public int row;
@@ -22,15 +23,15 @@ public class Block : MonoBehaviour
     public float dragRegist = 0.5f;
 
     public bool isTunning = false;
-    public bool isMoving = false;
 
     private Vector2 startPos;
     private Vector2 endPos;
 
     private BoardManager board;
     private SpriteRenderer pieceSprite;
+
     public Block target;
-    private Vector2 moveToPos;
+    public Vector2 moveToPos;
 
     private void Awake()
     {
@@ -50,6 +51,30 @@ public class Block : MonoBehaviour
         column = c;
 
         pieceSprite.sprite = board.pieceSprites[value];
+    }
+
+    private void Update()
+    {
+        if(currState == BlockState.MOVE)
+        {
+            accumTime += Time.deltaTime / board.blockDuration;
+            if (Mathf.Abs(row - transform.position.x) > 0.1f || Mathf.Abs(column - transform.position.y) > 0.1f)
+            {
+                transform.position = Vector2.Lerp(transform.position, moveToPos, accumTime);
+            }
+
+            else
+            {
+                if (board.boardIndex[row, column] != gameObject)
+                    board.boardIndex[row, column] = gameObject;
+
+                gameObject.name = "[" + row + " , " + column + "]";
+                transform.position = moveToPos;
+                accumTime = 0f;
+
+                currState = BlockState.WAIT;
+            }
+        }
     }
 
     private void OnMouseDown()
@@ -99,45 +124,19 @@ public class Block : MonoBehaviour
             target.row += -1 * (int)direction.x;
             target.column += -1 * (int)direction.y;
 
+            moveToPos = new Vector2(row, column);
+            target.moveToPos = new Vector2(target.row, target.column);
+
             // 블럭을 움직임
             currState = BlockState.MOVE;
             target.currState = BlockState.MOVE;
 
             board.selectPiece = this;
             board.targetPiece = target;
+
+            board.currState = BoardState.WORK;
         }
     }
-
-    public void MovedPiece()
-    {
-        moveToPos = new Vector2(row, column);
-        accumTime += Time.deltaTime / board.blockDuration;
-
-        transform.position = Vector2.Lerp(transform.position, moveToPos, accumTime);
-        if (Vector2.Distance(transform.position, moveToPos) < 0.2f)
-        {
-            accumTime = 0f;
-            currState = BlockState.WAIT;
-            //Debug.Log(gameObject.name + " moved Complete");
-        }
-    }
-
-    /*IEnumerator MovedPieceCo()
-    {
-        moveToPos = new Vector2(row, column);
-
-        while (Vector2.Distance(transform.position, moveToPos) > 0.2f)
-        {
-            accumTime += Time.deltaTime / board.blockDuration;
-            transform.position = Vector2.Lerp(transform.position, moveToPos, accumTime);
-
-            yield return null;
-        }
-        accumTime = 0f;
-
-        currState = BlockState.WAIT;
-        Debug.Log(gameObject.name + " moved Complete");
-    }*/
 
     private void AllClearPiece()
     {
@@ -150,6 +149,5 @@ public class Block : MonoBehaviour
         prevColumn = 0;
 
         isTunning = false;
-        isMoving = false;
     }
 }
