@@ -107,7 +107,7 @@ public class Block : MonoBehaviour
             board.targetPiece = target;
         }
     }
-   
+
     public void MovedPiece()
     {
         moveToPos = new Vector2(row, column);
@@ -139,4 +139,17 @@ public class Block : MonoBehaviour
         Debug.Log(gameObject.name + " moved Complete");
     }*/
 
+    private void AllClearPiece()
+    {
+        currState = BlockState.WAIT;
+        value = 0;
+
+        row = 0;
+        column = 0;
+        prevRow = 0;
+        prevColumn = 0;
+
+        isTunning = false;
+        isMoving = false;
+    }
 }
