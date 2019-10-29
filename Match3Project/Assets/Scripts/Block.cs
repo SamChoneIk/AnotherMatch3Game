@@ -20,7 +20,7 @@ public class Block : MonoBehaviour
     public int prevColumn;
 
     public float accumTime = 0f;
-    public float dragRegist = 0.5f;
+    public float dragRegist = 2f;
 
     public bool isTunning = false;
 
@@ -51,6 +51,8 @@ public class Block : MonoBehaviour
         column = c;
 
         pieceSprite.sprite = board.pieceSprites[value];
+
+        currState = BlockState.WAIT;
     }
 
     private void Update()
@@ -59,8 +61,7 @@ public class Block : MonoBehaviour
         {
             accumTime += Time.deltaTime / board.blockDuration;
 
-            if (Mathf.Abs(row - transform.position.x) > 0.1f || 
-                Mathf.Abs(column - transform.position.y) > 0.1f)
+            if (Mathf.Abs(row - transform.position.x) > 0.1f || Mathf.Abs(column - transform.position.y) > 0.1f)
                 transform.position = Vector2.Lerp(transform.position, moveToPos, accumTime);
 
             else
@@ -92,13 +93,17 @@ public class Block : MonoBehaviour
     {
         if (board.currState == BoardState.ORDER && currState == BlockState.WAIT)
         {
-            Vector2 dir = (endPos - startPos).normalized;
+            Vector2 dir = (endPos - startPos);
+            Debug.Log(dir);
 
-            if (Mathf.Abs(dir.y) > Mathf.Abs(dir.x))
-                MoveToPiece(dir.y > dragRegist ? Vector2.up : Vector2.down);
+            if (Mathf.Abs(dir.x) > dragRegist || Mathf.Abs(dir.y) > dragRegist)
+            {
+                if (Mathf.Abs(dir.y) > Mathf.Abs(dir.x))
+                    MoveToPiece(dir.y > 0 ? Vector2.up : Vector2.down);
 
-            else if (Mathf.Abs(dir.y) < Mathf.Abs(dir.x))
-                MoveToPiece(dir.x > dragRegist ? Vector2.right : Vector2.left);
+                else if (Mathf.Abs(dir.y) < Mathf.Abs(dir.x))
+                    MoveToPiece(dir.x > 0 ? Vector2.right : Vector2.left);
+            }
         }
     }
 

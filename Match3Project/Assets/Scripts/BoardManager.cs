@@ -205,13 +205,15 @@ public class BoardManager : MonoBehaviour
 
     private void CreateBoard()
     {
+        List<Block> initPieces = new List<Block>();
+
         for (int column = 0; column < height; ++column)
         {
             for (int row = 0; row < width; ++row)
             {
                 int value = Random.Range(0, pieceSprites.Length);
 
-                GameObject pieceGo = Instantiate(piecePrefab, new Vector2(row, column), Quaternion.identity);
+                GameObject pieceGo = Instantiate(piecePrefab, new Vector2(row, column + offset), Quaternion.identity);
                 Block piece = pieceGo.GetComponent<Block>();
                 piece.InitPiece(value, row, column, this);
 
@@ -227,6 +229,9 @@ public class BoardManager : MonoBehaviour
                 }
 
                 piece.InitPiece(value, piece.row, piece.column, this);
+                piece.moveToPos = new Vector2(piece.row, piece.column);
+
+                initPieces.Add(piece);
             }
         }
 
@@ -243,6 +248,13 @@ public class BoardManager : MonoBehaviour
             pieceGo.SetActive(false);
             disabledPiece.Add(piece);
         }
+
+        foreach(var piece in initPieces)
+        {
+            piece.currState = BlockState.MOVE;
+        }
+
+        initPieces.Clear();
     }
 
     public void FindMatchedIndex()
@@ -343,6 +355,13 @@ public class BoardManager : MonoBehaviour
     {
         for (int column = 0; column < height; ++column)
         {
+            while (!IndexCheck(true))
+            {
+                //Debug.Log("Piece Moving " + Time.time);
+                //yield return new WaitForSeconds(waitTime);
+                yield return null;
+            }
+
             for (int row = 0; row < width; ++row)
             {
                 if (boardIndex[row, column] == null)
@@ -360,6 +379,8 @@ public class BoardManager : MonoBehaviour
 
                             boardIndex[row, i] = null;
                             fallPiece.currState = BlockState.MOVE;
+
+
                             break;
                         }
                     }
@@ -369,6 +390,12 @@ public class BoardManager : MonoBehaviour
 
         for (int column = 0; column < height; ++column)
         {
+            while (!IndexCheck(true))
+            {
+                //Debug.Log("Piece Moving " + Time.time);
+                //yield return new WaitForSeconds(waitTime);
+                yield return null;
+            }
             for (int row = 0; row < width; ++row)
             {
                 if (boardIndex[row, column] == null)
@@ -385,7 +412,8 @@ public class BoardManager : MonoBehaviour
         while (!IndexCheck(true))
         {
             Debug.Log("Piece Moving " + Time.time);
-            yield return new WaitForSeconds(waitTime);
+            //yield return new WaitForSeconds(waitTime);
+            yield return null;
         }
        // yield return new WaitForSeconds(waitTime);
 
@@ -469,8 +497,6 @@ public class BoardManager : MonoBehaviour
 
                     piece.transform.position = new Vector2(piece.row, piece.column + offset);
                     piece.moveToPos = new Vector2(piece.row, piece.column);
-
-                    piece.currState = BlockState.WAIT;
 
                     refillPieces.Add(piece);
                 }
