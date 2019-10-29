@@ -29,7 +29,7 @@ public class Block : MonoBehaviour
 
     private BoardManager board;
     private SpriteRenderer pieceSprite;
-
+    
     public Block target;
     public Vector2 moveToPos;
 
@@ -92,7 +92,6 @@ public class Block : MonoBehaviour
     {
         if (board.currState == BoardState.ORDER && currState == BlockState.WAIT)
         {
-            
             Vector2 dir = (endPos - startPos).normalized;
 
             if (Mathf.Abs(dir.y) > Mathf.Abs(dir.x))

@@ -14,8 +14,9 @@ public class BoardManager : MonoBehaviour
     [Header("Board State")]
     public BoardState currState = BoardState.WORK;
     public int width, height, offset;
+
+    public float waitTime = 0.08f;
     public float blockDuration;
-    public float boardDuration;
 
     public GameObject[,] boardIndex;
     public GameObject disabledPieces;
@@ -29,7 +30,7 @@ public class BoardManager : MonoBehaviour
     public GameObject piecePrefab;
     public Sprite[] pieceSprites;
 
-    private float waitTime = 0;
+    private float checkTime;
 
     void Start()
     {
@@ -40,8 +41,6 @@ public class BoardManager : MonoBehaviour
 
         CreateBoard();
         FindMatchedIndex();
-
-        //transform.SetSiblingIndex(0);
     }
 
     private void DebugSystem()
@@ -85,9 +84,9 @@ public class BoardManager : MonoBehaviour
     { 
         if(currState == BoardState.ORDER)
         {
-            waitTime += Time.deltaTime;
+            checkTime += Time.deltaTime;
 
-            if (waitTime > 5f)
+            if (checkTime > 5f)
             {
                 if(DeadLockCheck())
                 {
@@ -98,18 +97,63 @@ public class BoardManager : MonoBehaviour
                 else
                 {
                     // hint effect
-                    waitTime = 0;
+                    checkTime = 0;
                 }
             }
         }
 
         if (currState == BoardState.WORK)
         {
-            waitTime = 0;
+            checkTime = 0;
 
             if (selectPiece != null && targetPiece != null)
             {
-                if(selectPiece.currState == BlockState.MOVE && targetPiece.currState == BlockState.MOVE)
+                if(!IndexCheck(true))
+                    return;
+
+                else
+                {
+                    if (selectPiece.isTunning && targetPiece.isTunning)
+                    {
+                        selectPiece.isTunning = false;
+                        targetPiece.isTunning = false;
+
+                        selectPiece = null;
+                        targetPiece = null;
+
+                        currState = BoardState.ORDER;
+
+                        return;
+                    }
+
+                    if (IndexCheck())
+                    {
+                        selectPiece = null;
+                        targetPiece = null;
+
+                        FindMatchedIndex();
+                    }
+
+                    else
+                    {
+                        selectPiece.row = selectPiece.prevRow;
+                        selectPiece.column = selectPiece.prevColumn;
+
+                        targetPiece.row = targetPiece.prevRow;
+                        targetPiece.column = targetPiece.prevColumn;
+
+                        selectPiece.moveToPos = new Vector2(selectPiece.prevRow, selectPiece.prevColumn);
+                        targetPiece.moveToPos = new Vector2(targetPiece.prevRow, targetPiece.prevColumn);
+
+                        selectPiece.isTunning = true;
+                        targetPiece.isTunning = true;
+
+                        selectPiece.currState = BlockState.MOVE;
+                        targetPiece.currState = BlockState.MOVE;
+                    }
+                }
+
+              /*  if(selectPiece.currState == BlockState.MOVE && targetPiece.currState == BlockState.MOVE)
                     return;
 
                 if (selectPiece.currState == BlockState.WAIT && targetPiece.currState == BlockState.WAIT)
@@ -152,7 +196,7 @@ public class BoardManager : MonoBehaviour
                         selectPiece.currState = BlockState.MOVE;
                         targetPiece.currState = BlockState.MOVE;
                     }
-                }
+                }*/
             }
         }
 
@@ -219,7 +263,7 @@ public class BoardManager : MonoBehaviour
                             {
                                 Block rightPiece = GetPiece(row + 1, column);
                                 Block leftPiece = GetPiece(row - 1, column);
-
+                                
                                 if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
                                 {
                                     if (!matchedPiece.Contains(currPiece))
@@ -260,7 +304,10 @@ public class BoardManager : MonoBehaviour
         }
 
         if (matchedPiece.Count > 0)
+        {
+            Debug.Log("matched");
             MatchedPieceDisabled();
+        }
 
         else
             currState = BoardState.ORDER;
@@ -289,10 +336,10 @@ public class BoardManager : MonoBehaviour
         selectPiece = null;
         targetPiece = null;
 
-        FallPieces();
+        StartCoroutine(FallPieces());
     }
 
-    private void FallPieces()
+    IEnumerator FallPieces()
     {
         for (int column = 0; column < height; ++column)
         {
@@ -335,13 +382,14 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        if(IndexCheck())
+        while (!IndexCheck(true))
         {
-            FindMatchedIndex();
+            Debug.Log("Piece Moving " + Time.time);
+            yield return new WaitForSeconds(waitTime);
         }
+       // yield return new WaitForSeconds(waitTime);
 
-        else { 
-}
+        FindMatchedIndex();
     }
 
     private Block EnabledPiece(int row, int column)
@@ -440,7 +488,7 @@ public class BoardManager : MonoBehaviour
         FindMatchedIndex();
     }
 
-    private bool IndexCheck()
+    private bool IndexCheck(bool moveCheck = false)
     {
         for (int column = 0; column < height; ++column)
         {
@@ -450,29 +498,40 @@ public class BoardManager : MonoBehaviour
                 {
                     Block currPiece = GetPiece(row, column);
 
-                    if (currPiece != null)
+                    // Piece Moving Check
+                    if (moveCheck)
                     {
-                        if (row > 0 && row < width - 1)
-                        {
-                            if (boardIndex[row + 1, column] != null && boardIndex[row - 1, column] != null)
-                            {
-                                Block rightPiece = GetPiece(row + 1, column);
-                                Block leftPiece = GetPiece(row - 1, column);
+                        if (currPiece.currState == BlockState.MOVE)
+                            return false;
+                    }
 
-                                if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
-                                    return true;
+                    // Piece Color Value Check
+                    else
+                    {
+                        if (currPiece != null)
+                        {
+                            if (row > 0 && row < width - 1)
+                            {
+                                if (boardIndex[row + 1, column] != null && boardIndex[row - 1, column] != null)
+                                {
+                                    Block rightPiece = GetPiece(row + 1, column);
+                                    Block leftPiece = GetPiece(row - 1, column);
+
+                                    if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
+                                        return true;
+                                }
                             }
-                        }
 
-                        if (column > 0 && column < height - 1)
-                        {
-                            if (boardIndex[row, column + 1] != null && boardIndex[row, column - 1] != null)
+                            if (column > 0 && column < height - 1)
                             {
-                                Block upPiece = GetPiece(row, column + 1);
-                                Block downPiece = GetPiece(row, column - 1);
+                                if (boardIndex[row, column + 1] != null && boardIndex[row, column - 1] != null)
+                                {
+                                    Block upPiece = GetPiece(row, column + 1);
+                                    Block downPiece = GetPiece(row, column - 1);
 
-                                if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
-                                    return true;
+                                    if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
+                                        return true;
+                                }
                             }
                         }
                     }
@@ -480,7 +539,11 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        return false;
+        if (moveCheck)
+            return true;
+
+        else
+            return false;
     }
 
     public Block GetPiece(int row, int column)

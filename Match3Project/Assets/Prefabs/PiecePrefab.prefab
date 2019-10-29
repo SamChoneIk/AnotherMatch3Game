@@ -129,3 +129,4 @@ MonoBehaviour:
   dragRegist: 0.5
   isTunning: 0
   target: {fileID: 0}
+  moveToPos: {x: 0, y: 0}
