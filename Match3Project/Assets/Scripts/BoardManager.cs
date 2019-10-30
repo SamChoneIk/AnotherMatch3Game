@@ -26,7 +26,7 @@ public class BoardManager : MonoBehaviour
 
     public List<Block> matchedPiece;
     public List<Block> disabledPiece;
-    public List<Block> ItemPiece;
+    public List<Block> itemPiece;
 
     [Header("Piece Parts")]
     public GameObject piecePrefab;
@@ -240,14 +240,14 @@ public class BoardManager : MonoBehaviour
 
                                 if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
                                 {
+                                    if (!matchedPiece.Contains(leftPiece))
+                                        matchedPiece.Add(leftPiece);
+
                                     if (!matchedPiece.Contains(currPiece))
                                         matchedPiece.Add(currPiece);
 
                                     if (!matchedPiece.Contains(rightPiece))
                                         matchedPiece.Add(rightPiece);
-
-                                    if (!matchedPiece.Contains(leftPiece))
-                                        matchedPiece.Add(leftPiece);
                                 }
                             }
                         }
@@ -261,14 +261,14 @@ public class BoardManager : MonoBehaviour
 
                                 if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
                                 {
+                                    if (!matchedPiece.Contains(downPiece))
+                                        matchedPiece.Add(downPiece);
+
                                     if (!matchedPiece.Contains(currPiece))
                                         matchedPiece.Add(currPiece);
 
                                     if (!matchedPiece.Contains(upPiece))
                                         matchedPiece.Add(upPiece);
-
-                                    if (!matchedPiece.Contains(downPiece))
-                                        matchedPiece.Add(downPiece);
                                 }
                             }
                         }
@@ -277,48 +277,118 @@ public class BoardManager : MonoBehaviour
             }
         }
 
+
         if (matchedPiece.Count > 0)
         {
-            Debug.Log("matched");
-            GetItemAtMatchedPiece(matchedPiece);
+            //Debug.Log("matched");
+            //GetItemAtMatchedPiece(matchedPiece);
+            //ItemCheck();
             MatchedPieceDisabled();
         }
 
         else
-            currState = BoardState.ORDER;
+        currState = BoardState.ORDER;
     }
 
     private void ItemCheck()
     {
-        int r = 0;
-        int c = 0;
-
-        foreach(var piece in matchedPiece)
+        matchedPiece.Sort(delegate (Block a, Block b)
         {
-            for (int i = 1; ; ++i)
+            if (a.row > b.row)
+                return 1;
+
+            else if (a.row < b.row)
+                return -1;
+
+            else
+                return 0;
+        });
+
+        int count = 0;
+
+        foreach (var piece in matchedPiece)
+        {
+            if (itemPiece.Count == 0)
+                itemPiece.Add(piece);
+
+            if(itemPiece[0].column == piece.column)
+                ++count;
+
+            else
             {
-                    Block rightDirPiece = piece.row >= 0 ? GetPiece(piece.row + i, piece.column) : null;
-                    if (rightDirPiece != null && matchedPiece.Contains(rightDirPiece))
-                {
-                    r++;
-                }
-                        
-                
-                    Block leftDirPiece = piece.row < width - 1 ? GetPiece(piece.row - i, piece.column) : null;
-                    if (leftDirPiece != null &&matchedPiece.Contains(leftDirPiece))
-                        r++;
+                itemPiece[1].value = 7;
 
-                Block upDirPiece = piece.column < height - 1 ? GetPiece(piece.row, piece.column + i) : null;
-                if (upDirPiece != null && matchedPiece.Contains(upDirPiece))
-                    c++;
-
-                Block downDirPiece = piece.column >= 0 ? GetPiece(piece.row, piece.column + i) : null;
-                if (downDirPiece != null && matchedPiece.Contains(downDirPiece))
-                    c++;
+                itemPiece.Clear();
+                itemPiece.Add(piece);
             }
         }
     }
 
+    private void PieceDirCheck(Block piece)
+    {
+        int vertical = 0;
+        int horizontal = 0;
+
+        Vector2[] direction =
+        {
+            Vector2.up,
+            Vector2.right,
+            Vector2.down,
+            Vector2.left
+        };
+
+        foreach (var dir in direction)
+        {
+            for (int i = 1; ; ++i)
+            {
+                if (piece.row + (dir.x * i) < 0 || piece.row + (dir.x * i) > width - 1 ||
+                   piece.column + (dir.y * i) < 0 || piece.column + (dir.y * i) > height - 1)
+                    break;
+
+                Block checkPiece = GetPiece(piece.row + ((int)dir.x * i), piece.column + ((int)dir.y * i));
+
+                if (!matchedPiece.Contains(checkPiece) || itemPiece.Contains(checkPiece))
+                    break;
+
+                if (matchedPiece.Contains(checkPiece))
+                {
+                    if (dir == Vector2.up || dir == Vector2.down)
+                        ++vertical;
+
+                    if (dir == Vector2.right || dir == Vector2.left)
+                        ++horizontal;
+
+                    itemPiece.Add(checkPiece);
+                }
+            }
+        }
+
+        if (vertical >= 2 && horizontal >= 2)
+        {
+            itemPiece[itemPiece.Count / 2].crossBomb = true;
+            Debug.Log("crossBomb");
+            return;
+        }
+
+        if (vertical >= 3)
+        {
+            itemPiece[itemPiece.Count / 2].columnBomb = true;
+            Debug.Log("rowBomb");
+            return;
+        }
+
+        if (horizontal >= 3)
+        {
+            itemPiece[itemPiece.Count / 2].rowBomb = true;
+            Debug.Log("columnBomb");
+            return;
+        }
+
+        else
+        {
+            itemPiece.Clear();
+        }
+    }
 
     private void GetItemAtMatchedPiece(List<Block> pieces)
     {
@@ -484,7 +554,7 @@ public class BoardManager : MonoBehaviour
             disabledPiece.Add(piece);
         }
 
-        matchedPiece.Clear();
+        //matchedPiece.Clear();
 
         selectPiece = null;
         targetPiece = null;
