@@ -24,11 +24,16 @@ public class Block : MonoBehaviour
 
     public bool isTunning = false;
 
+    public bool rowBomb = false;
+    public bool columnBomb = false;
+    public bool crossBomb = false;
+
     private Vector2 startPos;
     private Vector2 endPos;
 
     private BoardManager board;
     private SpriteRenderer pieceSprite;
+    //private ParticleSystem particle;
     
     public Block target;
     public Vector2 moveToPos;
@@ -80,13 +85,17 @@ public class Block : MonoBehaviour
 
     private void OnMouseDown()
     {
-        startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (board.currState == BoardState.ORDER && currState == BlockState.WAIT)
+            startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
 
     private void OnMouseUp()
     {
-        endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        CalculratePiece();
+        if (board.currState == BoardState.ORDER && currState == BlockState.WAIT)
+        {
+            endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            CalculratePiece();
+        }
     }
 
     private void CalculratePiece()
@@ -94,7 +103,6 @@ public class Block : MonoBehaviour
         if (board.currState == BoardState.ORDER && currState == BlockState.WAIT)
         {
             Vector2 dir = (endPos - startPos);
-            Debug.Log(dir);
 
             if (Mathf.Abs(dir.x) > dragRegist || Mathf.Abs(dir.y) > dragRegist)
             {
