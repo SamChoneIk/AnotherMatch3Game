@@ -24,9 +24,8 @@ public class Block : MonoBehaviour
 
     public bool isTunning = false;
 
-    public bool rowBomb = false;
-    public bool columnBomb = false;
-    public bool crossBomb = false;
+    public bool rowMatched = false;
+    public bool columnsMatched = false;
 
     private Vector2 startPos;
     private Vector2 endPos;
@@ -68,6 +67,7 @@ public class Block : MonoBehaviour
 
             if (Mathf.Abs(row - transform.position.x) > 0.1f || Mathf.Abs(column - transform.position.y) > 0.1f)
                 transform.position = Vector2.Lerp(transform.position, moveToPos, accumTime);
+               //transform.position = Vector2.MoveTowards(transform.position, moveToPos, 0.2f);
 
             else
             {
