@@ -88,14 +88,14 @@ public class BoardManager : MonoBehaviour
     }
 
     void Update()
-    { 
-        if(currState == BoardState.ORDER)
+    {
+        if (currState == BoardState.ORDER)
         {
             checkTime += Time.deltaTime;
 
             if (checkTime > 5f)
             {
-                if(DeadLockCheck())
+                if (DeadLockCheck())
                 {
                     PieceRegenerate();
                     Debug.Log("is DeadLock !!");
@@ -115,7 +115,7 @@ public class BoardManager : MonoBehaviour
 
             if (selectPiece != null && targetPiece != null)
             {
-                if(!IndexCheck(true))
+                if (!IndexCheck(true))
                     return;
 
                 else
@@ -211,7 +211,7 @@ public class BoardManager : MonoBehaviour
             disabledPiece.Add(piece);
         }
 
-        foreach(var piece in initPieces)
+        foreach (var piece in initPieces)
         {
             piece.currState = BlockState.MOVE;
         }
@@ -309,68 +309,32 @@ public class BoardManager : MonoBehaviour
             currState = BoardState.ORDER;
     }
 
-   
-
-    private void Checkingitems()
-    {
-        int rows = 0;
-        int columns = 0;
-
-        for(int i = 0; i < rowMatchedPiece.Count; ++i)
-        {
-            if((i+1) > rowMatchedPiece.Count)
-            {
-                break;
-            }
-
-             if(rowMatchedPiece[i].column == rowMatchedPiece[i+1].column)
-            {
-                ++rows;
-                itemPieces.Add(rowMatchedPiece[i]);
-                Debug.Log(rows);
-            }
-        }
-    }
-
-
     private void CheckingBomb()
     {
+        if (matchedPiece.Count <= 3)
+            return;
+
+        int idx = 0;
         int rows = 0;
         int columns = 0;
 
         for (int column = 0; column < height; ++column)
         {
+            rows = 0;
             for (int row = 0; row < width; ++row)
             {
-                Block piece = GetPiece(row, column);
+                //Debug.Log("index " + "[" + row + " , " + column + "] = " + idx);
 
-                if (matchedPiece.Contains(piece) && !itemPieces.Contains(piece))
+                if (boardIndex[row, column] == matchedPiece[idx].gameObject)
                 {
-                    for(int i = 0; i < matchedPiece.Count ; ++i)
-                    {
-                        Block check = matchedPiece[i];
+                    ++rows;
+                    idx = idx != matchedPiece.Count - 1 ? ++idx : matchedPiece.Count - 1;
+                }
 
-                        if (piece.column == check.column)
-                        {
-                            ++rows;
-                            itemPieces.Add(check);
-                            Debug.Log(rows);
-                        }
-
-                        if(piece.row == check.row)
-                        {
-                            ++column;
-                            itemPieces.Add(check);
-
-                        }
-
-                        else
-                            continue;
-                    }
-
+                else
+                {
                     if (rows > 3)
                     {
-                        matchedPiece.Remove(itemPieces[itemPieces.Count/2]);
                         Debug.Log("Generate Row Bomb");
                     }
 
@@ -378,310 +342,65 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
-    }
 
-/*
-    private void CheckingItem()
-    {
-        int rows = 0;
-        int columns = 0;
+        idx = 0;
 
-        for (int column = 0; column < height; ++column)
+        for (int row = 0; row < width; ++row)
         {
-            for (int row = 0; row < width; ++row)
+            columns = 0;
+            for (int column = 0; column < height; ++column)
             {
-                if (boardIndex[row, column] != null)
+                //Debug.Log("index " + "[" + row + " , " + column + "] = " + idx);
+
+                if (boardIndex[row, column] == matchedPiece[idx].gameObject)
                 {
-                    Block currPiece = GetPiece(row, column);
-
-                    if (currPiece != null)
-                    {
-                        if (row > 0 && row < width - 1)
-                        {
-                            if (boardIndex[row + 1, column] != null && boardIndex[row - 1, column] != null)
-                            {
-                                Block rightPiece = GetPiece(row + 1, column);
-                                Block leftPiece = GetPiece(row - 1, column);
-
-                                if (rightPiece.rowMatched || leftPiece.rowMatched || currPiece.rowMatched)
-                                {
-                                    if (!rightPiece.rowMatched)
-                                    {
-                                        rows = !leftPiece.rowMatched ? rows += 1 : rows += 2;
-                                    }
-
-                                    else if (!leftPiece.rowMatched)
-                                    {
-                                        rows = !rightPiece.rowMatched ? rows += 1 : rows += 2;
-                                    }
-
-                                    else if (!currPiece.rowMatched)
-                                    {
-                                        rows = !leftPiece.rowMatched ? rows += 1 : rows += 2;
-                                    }
-
-                                    else
-                                    {
-                                        rows += 3;
-                                    }
-                                }
-                            }
-                        }
-
-                        if (column > 0 && column < height - 1)
-                        {
-                            if (boardIndex[row, column + 1] != null && boardIndex[row, column - 1] != null)
-                            {
-                                Block upPiece = GetPiece(row, column + 1);
-                                Block downPiece = GetPiece(row, column - 1);
-
-
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-        private void ItemCheck()
-        {
-            int i = 0;
-            int rows = 0;
-            int columns = 0;
-
-            //PieceListSort(matchedPiece);
-
-           while(matchedPiece.Count > i)
-            {
-                Debug.Log(matchedPiece[i].row+ 1);
-
-                if (matchedPiece[i].row + 1 > width - 1 && matchedPiece.Count < i + 1)
-                {
-                    ++i;
-                    continue;
-                }
-
-                if (matchedPiece[i].column == matchedPiece[i + 1].column &&
-                    matchedPiece[i].row + 1 == matchedPiece[i + 1].row)
-                {
-                    ++rows;
-                    itemPieces.Add(matchedPiece[i]);
+                    ++columns;
+                    idx = idx != matchedPiece.Count - 1 ? ++idx : matchedPiece.Count - 1;
                 }
 
                 else
                 {
-                    if (rows > 2)
-                        Debug.Log("create Row Item");
+                    if (columns > 3)
+                    {
+                        Debug.Log("Generate Column Bomb");
+                    }
 
-                    else
-                        rows = 0;
+                    columns = 0;
                 }
-
-                ++i;
             }
-
-            //i = 0;
-
-
         }
 
-        private void PieceCheck(Block piece)
+        foreach(var piece in matchedPiece)
         {
-            List<Block> otherPiece = new List<Block>();
-
-            int r = 0;
-            int c = 0;
-
-            Vector2[] direction =
+           if( CrossbombCheck(piece))
             {
-                 Vector2.up,
-                 Vector2.right,
-                 Vector2.down,
-                 Vector2.left
-             };
-
-            foreach(var dir in direction)
-            {
-                for (int i = 1; ; ++i)
-                {
-                    if (piece.row     + ((int)dir.x * i) > width - 1  ||
-                       piece.column + (int)(dir.y * i) > height - 1 ||
-                       piece.row      + ((int)dir.x * i) < 0              ||
-                       piece.column + ((int)dir.y * i) < 0)
-                        break;
-
-                    Block check = GetPiece(piece.row + ((int)dir.x * i), piece.column + ((int)dir.y * i));
-
-                    if (boardIndex[piece.row + ((int)dir.x * i), piece.column + ((int)dir.y * i)] != check.gameObject || itemPieces.Contains(check))
-                        break;
-
-                    if (dir == Vector2.up || dir == Vector2.down && boardIndex[piece.row + ((int)dir.x * i) + 1, piece.column + ((int)dir.y * i)])
-                        otherPiece.Add(check);
-
-                    if (dir == Vector2.up || dir == Vector2.down)
-                    {
-                        Debug.Log($"current Column [{c}]");
-                        itemPieces.Add(check);
-                        ++c;
-                    }
-
-                    else if (dir == Vector2.right || dir == Vector2.left)
-                    {
-                        Debug.Log($"current row [{r}]");
-                        itemPieces.Add(check);
-                        ++r;
-                    }
-                }
+                Debug.Log("Generate Cross Bomb");
             }
+        }
+    }
 
-            r = 0;
-            c = 0;
+    private bool CrossbombCheck(Block piece)
+    {
+        int horizontal = 0;
+        int vertical = 0;
 
+        if (piece != null)
+        {
+            foreach (var check in matchedPiece)
+            {
+                if (piece == check)
+                    continue;
+
+                if (piece.row == check.row)
+                    vertical++;
+
+                if (piece.column == check.column)
+                    horizontal++;
+            }
         }
 
-         private void GetItemAtMatchedPiece()
-         {
-            int i = 1;
-            int r = 0;
-            int c = 0;
-
-            Vector2[] direction =
-             {
-                 Vector2.up,
-                 Vector2.right,
-                 Vector2.down,
-                 Vector2.left
-             };
-
-             foreach (var piece in matchedPiece)
-             {
-                foreach (var dir in direction)
-                {
-                    //Debug.Log($"current dir [{dir.x} , {dir.y}]");
-
-                    if (piece.row      + dir.x > width - 1  || 
-                        piece.column + dir.y > height - 1 ||
-                        piece.row      + dir.x < 0              || 
-                        piece.column + dir.y < 0)
-                        continue;
-
-                    if (matchedPiece.Contains(GetPiece(piece.row + (int)dir.x, piece.column + (int)dir.y)))
-                    {
-                        while (piece.row      + (dir.x * i) < width - 1  || 
-                                 piece.column + (dir.y * i) < height - 1 ||
-                                 piece.row      + (dir.x * i) > 0              || 
-                                 piece.column + (dir.y * i) > 0)
-                        {
-                            Block matched = GetPiece(piece.row + (int)dir.x, piece.column + (int)dir.y);
-
-                            if (matchedPiece.Contains(matched))
-                            {
-                                if (!itemPieces.Contains(matched))
-                                {
-                                    if (dir == Vector2.up || dir == Vector2.down)
-                                    {
-                                        Debug.Log($"current Column [{c}]");
-                                        ++c;
-                                    }
-
-                                    else if (dir == Vector2.right || dir == Vector2.left)
-                                    {
-                                        Debug.Log($"current row [{r}]");
-                                        ++r;
-                                    }
-
-                                    itemPieces.Add(matched);
-                                }
-
-                                else
-                                    break;
-                            }
-
-                            ++i;
-                            Debug.Log(i);
-
-
-                        }
-                    }
-                    i = 0;
-                }
-
-                if(r > 2 && c > 2)
-                    Debug.Log("Generate Cross Bomb");
-
-                else if (r > 2)
-                    Debug.Log("Generate Row Bomb");
-
-                else if (c > 2)
-                    Debug.Log("Generate Column Bomb");
-
-                r = 0;
-                c = 0;
-             }
-         }
-
-         private void GetItemAatMatchedPiece(Block piece)
-         {
-             int r = 0;
-             int c = 0;
-
-             Vector2[] direction =
-             {
-                 Vector2.up,
-                 Vector2.right,
-                 Vector2.down,
-                 Vector2.left
-             };
-
-             foreach (var dir in direction)
-             {
-                 Debug.Log($"current dir [{dir.x} , {dir.y}]");
-                 for (int i = 1; ; ++i)
-                 {
-                     if (piece.row + ((int)dir.x * i) > width || 
-                         piece.row + ((int)dir.x * i) < -1 ||
-                         piece.column + ((int)dir.y * i) > height || 
-                         piece.column + ((int)dir.y * i) < -1 ||
-                         piece.rowBomb || piece.columnBomb || piece.crossBomb)
-                         break;
-
-                     Debug.Log($"[{piece.row + ((int)dir.x * i)} , {piece.column + ((int)dir.y * i)}]");
-
-                     if (matchedPiece.Contains(
-                         GetPiece(piece.row + ((int)dir.x * i), piece.column + ((int)dir.y * i))))
-                     { 
-                         if (dir == Vector2.right || dir == Vector2.left)
-                             ++r;
-
-                         if (dir == Vector2.up || dir == Vector2.down)
-                             ++c;
-                     }
-                 }
-             }
-
-             if(r >= 2 && c >= 2)
-             {
-                 selectPiece.crossBomb = true;
-                 Debug.Log("crossBomb");
-                 return;
-             }
-
-             if (r >= 3)
-             {
-                 selectPiece.rowBomb = true;
-                 Debug.Log("rowBomb");
-                 return;
-             }
-
-             if (c >= 3)
-             {
-                 selectPiece.columnBomb = true;
-                 Debug.Log("columnBomb");
-                 return;
-             }
-         }*/
+        return (vertical == 5 || horizontal == 5);
+    }
 
     private void MatchedPieceDisabled()
     {
@@ -941,9 +660,9 @@ public class BoardManager : MonoBehaviour
         return boardIndex[row, column].GetComponent<Block>();
     }
 
-    public void PieceListSort(List<Block> pieces, bool dir = false)
+    public void PieceListSort(List<Block> pieces, bool column = false)
     {
-        if (dir)
+        if (column)
             pieces.Sort(delegate (Block a, Block b)
             {
                 if (a.column > b.column)
