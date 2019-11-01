@@ -24,14 +24,16 @@ public class Block : MonoBehaviour
 
     public bool isTunning = false;
 
-    public bool rowMatched = false;
-    public bool columnsMatched = false;
+    public bool rowBomb = false;
+    public bool columnBomb = false;
+    public bool crossBomb = false;
 
     private Vector2 startPos;
     private Vector2 endPos;
 
     private BoardManager board;
     private SpriteRenderer pieceSprite;
+    private SpriteRenderer itemSprite;
     //private ParticleSystem particle;
     
     public Block target;

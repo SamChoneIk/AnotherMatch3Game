@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4605582977323363674}
   - component: {fileID: 5282764406485657977}
   m_Layer: 0
-  m_Name: Arrow
+  m_Name: Item
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6693159493308825694}
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7690608050232115358}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5282764406485657977
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -68,7 +68,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 97e495a418a992049b60280b31c3c1b4, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8935675836690888477
@@ -209,6 +209,9 @@ MonoBehaviour:
   accumTime: 0
   dragRegist: 0.5
   isTunning: 0
+  rowBomb: 0
+  columnBomb: 0
+  crossBomb: 0
   target: {fileID: 0}
   moveToPos: {x: 0, y: 0}
 --- !u!1001 &3888477942639522870
@@ -341,6 +344,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: CrashEffect
+      objectReference: {fileID: 0}
+    - target: {fileID: 3655280428403481999, guid: f4744167db4991648a211805d5c10ddf,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3655280428403481994, guid: f4744167db4991648a211805d5c10ddf,
         type: 3}

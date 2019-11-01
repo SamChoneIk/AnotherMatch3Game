@@ -243,22 +243,13 @@ public class BoardManager : MonoBehaviour
                                 if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
                                 {
                                     if (!matchedPiece.Contains(leftPiece))
-                                    {
-                                        leftPiece.rowMatched = true;
                                         matchedPiece.Add(leftPiece);
-                                    }
 
                                     if (!matchedPiece.Contains(currPiece))
-                                    {
-                                        currPiece.rowMatched = true;
                                         matchedPiece.Add(currPiece);
-                                    }
 
                                     if (!matchedPiece.Contains(rightPiece))
-                                    {
-                                        rightPiece.rowMatched = true;
                                         matchedPiece.Add(rightPiece);
-                                    }
                                 }
                             }
                         }
@@ -273,22 +264,13 @@ public class BoardManager : MonoBehaviour
                                 if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
                                 {
                                     if (!matchedPiece.Contains(downPiece))
-                                    {
-                                        downPiece.columnsMatched = true;
                                         matchedPiece.Add(downPiece);
-                                    }
 
                                     if (!matchedPiece.Contains(currPiece))
-                                    {
-                                        currPiece.columnsMatched = true;
                                         matchedPiece.Add(currPiece);
-                                    }
 
                                     if (!matchedPiece.Contains(upPiece))
-                                    {
-                                        upPiece.columnsMatched = true;
                                         matchedPiece.Add(upPiece);
-                                    }
                                 }
                             }
                         }
@@ -314,6 +296,8 @@ public class BoardManager : MonoBehaviour
         if (matchedPiece.Count <= 3)
             return;
 
+        CrossbombCheck();
+
         int idx = 0;
         int rows = 0;
         int columns = 0;
@@ -325,21 +309,21 @@ public class BoardManager : MonoBehaviour
             {
                 //Debug.Log("index " + "[" + row + " , " + column + "] = " + idx);
 
+                if (matchedPiece[idx].crossBomb)
+                    break;
+
                 if (boardIndex[row, column] == matchedPiece[idx].gameObject)
                 {
-                    ++rows;
                     idx = idx != matchedPiece.Count - 1 ? ++idx : matchedPiece.Count - 1;
                 }
 
-                else
-                {
-                    if (rows > 3)
-                    {
-                        Debug.Log("Generate Row Bomb");
-                    }
 
-                    rows = 0;
+                if (rows > 3)
+                {
+                    Debug.Log("Generate Row Bomb");
                 }
+
+                rows = 0;
             }
         }
 
@@ -351,6 +335,9 @@ public class BoardManager : MonoBehaviour
             for (int column = 0; column < height; ++column)
             {
                 //Debug.Log("index " + "[" + row + " , " + column + "] = " + idx);
+
+                if(matchedPiece[idx].crossBomb)
+                    break;
 
                 if (boardIndex[row, column] == matchedPiece[idx].gameObject)
                 {
@@ -370,36 +357,38 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        foreach(var piece in matchedPiece)
-        {
-           if( CrossbombCheck(piece))
-            {
-                Debug.Log("Generate Cross Bomb");
-            }
-        }
+
     }
 
-    private bool CrossbombCheck(Block piece)
+    private void CrossbombCheck()
     {
-        int horizontal = 0;
-        int vertical = 0;
+        List<Block> generateItemPiece = new List<Block>();
+        int rows = 0;
+        int columns = 0;
 
-        if (piece != null)
+        foreach (var piece in matchedPiece)
         {
             foreach (var check in matchedPiece)
             {
-                if (piece == check)
+                if (piece == check || check.crossBomb)
                     continue;
 
                 if (piece.row == check.row)
-                    vertical++;
+                    columns++;
 
-                if (piece.column == check.column)
-                    horizontal++;
+                else if (piece.column == check.column)
+                    rows++;
+
+                else
+                {
+                    if (rows > 1 && columns > 1)
+                    {
+                        Debug.Log("Generate Cross Bomb");
+                        piece.crossBomb = true;
+                    }
+                }
             }
         }
-
-        return (vertical == 5 || horizontal == 5);
     }
 
     private void MatchedPieceDisabled()
