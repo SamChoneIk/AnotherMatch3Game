@@ -230,6 +230,7 @@ public class Board : MonoBehaviour
                     }
                 }
             }
+
             else
             {
                 if (currPiece != null)
@@ -242,6 +243,7 @@ public class Board : MonoBehaviour
                             currPiece.MakeAdjacentBomb();
                         }
                     }
+
                     else
                     {
                         if (currPiece.swapPiece != null)

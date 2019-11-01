@@ -28,14 +28,14 @@ public class Block : MonoBehaviour
     public bool columnBomb = false;
     public bool crossBomb = false;
 
+    public SpriteRenderer itemSprite;
+
     private Vector2 startPos;
     private Vector2 endPos;
 
     private BoardManager board;
     private SpriteRenderer pieceSprite;
-    private SpriteRenderer itemSprite;
-    //private ParticleSystem particle;
-    
+
     public Block target;
     public Vector2 moveToPos;
 
@@ -52,6 +52,10 @@ public class Block : MonoBehaviour
         if (target != null)
             target = null;
 
+        rowBomb = false;
+        columnBomb = false;
+        crossBomb = false;
+
         value = v;
         row = r;
         column = c;
@@ -61,9 +65,24 @@ public class Block : MonoBehaviour
         currState = BlockState.WAIT;
     }
 
+    public void AllClearPiece()
+    {
+        board.boardIndex[row, column] = null;
+
+        InitPiece(0, 0, 0, board);
+
+        itemSprite.sprite = null;
+
+        name = "DefaultPiece";
+        transform.parent = board.disabledPieces.transform;
+        transform.position = new Vector2(row, column);
+
+        gameObject.SetActive(false);
+    }
+
     private void Update()
     {
-        if(currState == BlockState.MOVE)
+        if (currState == BlockState.MOVE)
         {
             accumTime += Time.deltaTime / board.blockDuration;
 
@@ -87,6 +106,7 @@ public class Block : MonoBehaviour
 
     private void OnMouseDown()
     {
+        board.selectPiece = this;
         if (board.currState == BoardState.ORDER && currState == BlockState.WAIT)
             startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
@@ -150,18 +170,5 @@ public class Block : MonoBehaviour
 
             board.currState = BoardState.WORK;
         }
-    }
-
-    private void AllClearPiece()
-    {
-        currState = BlockState.WAIT;
-        value = 0;
-
-        row = 0;
-        column = 0;
-        prevRow = 0;
-        prevColumn = 0;
-
-        isTunning = false;
     }
 }
