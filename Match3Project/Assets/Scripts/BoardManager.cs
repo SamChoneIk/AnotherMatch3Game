@@ -257,13 +257,13 @@ public class BoardManager : MonoBehaviour
                                     if (!matchedPiece.Contains(rightPiece))
                                         matchedPiece.Add(rightPiece);
 
-                                    Debug.Log("prev matched Count = " + matchedPiece.Count);
+                                    //Debug.Log("prev matched Count = " + matchedPiece.Count);
 
                                     ItemPieces(leftPiece);
                                     ItemPieces(currPiece);
                                     ItemPieces(rightPiece);
 
-                                    Debug.Log("curr matched Count = " + matchedPiece.Count);
+                                    //Debug.Log("curr matched Count = " + matchedPiece.Count);
                                 }
 
                                 if (currPiece.crossBomb || rightPiece.crossBomb || leftPiece.crossBomb)
@@ -323,12 +323,77 @@ public class BoardManager : MonoBehaviour
 
         if (matchedPiece.Count > 0)
         {
-            CheckingBomb();
+            Checkingboard();
+            //CheckingBomb();
             MatchedPieceDisabled();
         }
 
         else
             currState = BoardState.ORDER;
+    }
+
+    private void Checkingboard()
+    {
+        if (matchedPiece.Count < 3)
+            return;
+
+        List<Block> checkpiece = new List<Block>();
+        int pieceCount = 0;
+        int rows = 0;
+
+        for(int piece = 0; piece < matchedPiece.Count -1; ++piece)
+        {
+            if (checkpiece.Contains(matchedPiece[piece]))
+                continue;
+
+            for (int i = 1; ; ++i)
+            {
+                if (matchedPiece[piece].row + i > width - 1)
+                    break;
+
+                Block check = GetPiece(matchedPiece[piece].row + i, matchedPiece[piece].column);
+
+                if (checkpiece.Contains(check))
+                    continue;
+
+                if (matchedPiece.Contains(check) && matchedPiece[piece].row + i == check.row)
+                {
+                    ++rows;
+                    checkpiece.Add(check);
+                }
+
+                else
+                    break;
+
+                Debug.Log("currCount = " + checkpiece.Count);
+            }
+
+            if (checkpiece.Count > 2)
+            {
+                Debug.Log("generate row");
+                matchedPiece[piece].rowBomb = true;
+                matchedPiece[piece].itemSprite.sprite = ItemSprites[0];
+                matchedPiece.Remove(matchedPiece[piece + 1]);
+                pieceCount = checkpiece.Count;
+            }
+
+            else
+            {
+                if (pieceCount != 0)
+                    checkpiece.RemoveRange(pieceCount - 1, checkpiece.Count - pieceCount);
+
+                Debug.Log("remove after Count = " + checkpiece.Count);
+            }
+        }
+
+       /* for (int column = 0; column < height; ++column)
+        {
+            for (int row = 0; row < width; ++row)
+            {
+                Block piece = 
+
+            }
+        }*/
     }
 
     private void CheckingBomb()
@@ -337,12 +402,11 @@ public class BoardManager : MonoBehaviour
             return;
 
         PieceListSort(matchedPiece);
-
         int rows = 0;
         int columns = 0;
 
         // Cross check
-        if (matchedPiece.Count > 4)
+        /*if (matchedPiece.Count > 4)
         {
             for(int i = 0; i < matchedPiece.Count -1; ++i)
             {
@@ -375,23 +439,28 @@ public class BoardManager : MonoBehaviour
                     matchedPiece.Remove(matchedPiece[i]);
                 }
             }
-        }
+        }*/
 
         // Row check
         for (int i = 0; i < matchedPiece.Count - 1; ++i)
         {
             rows = 0;
-
-            if (matchedPiece[i].crossBomb || matchedPiece[i].rowBomb || matchedPiece[i].columnBomb || itemPiece.Contains(matchedPiece[i]))
+            
+            if (matchedPiece[i].crossBomb || matchedPiece[i].rowBomb || matchedPiece[i].columnBomb)
                 continue;
 
             foreach (var check in matchedPiece)
             {
-                if (matchedPiece[i] == check || check.crossBomb || check.rowBomb || check.columnBomb || itemPiece.Contains(check))
+                if (matchedPiece[i] == check)
                     continue;
 
+                if (check.crossBomb || check.rowBomb || check.columnBomb)
+                    break;
+
                 if (matchedPiece[i].column == check.column)
+                {
                     ++rows;
+                }
             }
 
             Debug.Log("row = " + rows);
@@ -403,35 +472,36 @@ public class BoardManager : MonoBehaviour
                 matchedPiece[i].itemSprite.sprite = ItemSprites[0];
                 matchedPiece.Remove(matchedPiece[i]);
             }
+
         }
 
         // Column check
-        for (int i = 0; i < matchedPiece.Count - 1; ++i)
-        {
-            columns = 0;
+        /* for (int i = 0; i < matchedPiece.Count - 1; ++i)
+         {
+             columns = 0;
 
-            if (matchedPiece[i].crossBomb || matchedPiece[i].rowBomb || matchedPiece[i].columnBomb || itemPiece.Contains(matchedPiece[i]))
-                continue;
+             if (matchedPiece[i].crossBomb || matchedPiece[i].rowBomb || matchedPiece[i].columnBomb || itemPiece.Contains(matchedPiece[i]))
+                 continue;
 
-            foreach (var check in matchedPiece)
-            {
-                if (matchedPiece[i] == check || check.crossBomb || check.rowBomb || check.columnBomb || itemPiece.Contains(check))
-                    continue;
+             foreach (var check in matchedPiece)
+             {
+                 if (matchedPiece[i] == check || check.crossBomb || check.rowBomb || check.columnBomb || itemPiece.Contains(check))
+                     continue;
 
-                if (matchedPiece[i].row == check.row)
-                    ++columns;
-            }
+                 if (matchedPiece[i].row == check.row)
+                     ++columns;
+             }
 
-            Debug.Log("column = " + columns);
+             Debug.Log("column = " + columns);
 
-            if (columns >= 3)
-            {
-                Debug.Log(matchedPiece[i].name + "Generate Column Bomb");
-                matchedPiece[i].columnBomb = true;
-                matchedPiece[i].itemSprite.sprite = ItemSprites[1];
-                matchedPiece.Remove(matchedPiece[i]);
-            }
-        }
+             if (columns >= 3)
+             {
+                 Debug.Log(matchedPiece[i].name + "Generate Column Bomb");
+                 matchedPiece[i].columnBomb = true;
+                 matchedPiece[i].itemSprite.sprite = ItemSprites[1];
+                 matchedPiece.Remove(matchedPiece[i]);
+             }
+         }*/
     }
 
     private void ItemPieces(Block piece)
@@ -485,9 +555,9 @@ public class BoardManager : MonoBehaviour
         foreach (var piece in matchedPiece)
         {
             piece.AllClearPiece();
-
             disabledPiece.Add(piece);
         }
+
         matchedPiece.Clear();
         itemPiece.Clear();
 

@@ -52,10 +52,6 @@ public class Block : MonoBehaviour
         if (target != null)
             target = null;
 
-        rowBomb = false;
-        columnBomb = false;
-        crossBomb = false;
-
         value = v;
         row = r;
         column = c;
@@ -72,6 +68,10 @@ public class Block : MonoBehaviour
         InitPiece(0, 0, 0, board);
 
         itemSprite.sprite = null;
+
+        rowBomb = false;
+        columnBomb = false;
+        crossBomb = false;
 
         name = "DefaultPiece";
         transform.parent = board.disabledPieces.transform;
