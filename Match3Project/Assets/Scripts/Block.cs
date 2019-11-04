@@ -93,7 +93,7 @@ public class Block : MonoBehaviour
                 moveToPos = new Vector2(prevRow, prevColumn);
             }
 
-            accumTime += Time.deltaTime / board.blockDuration;
+            accumTime += board.blockDuration * Time.deltaTime;
 
             if (Mathf.Abs(row - transform.position.x) > 0.1f || Mathf.Abs(column - transform.position.y) > 0.1f)
                 transform.position = Vector2.MoveTowards(transform.position, moveToPos, accumTime);
@@ -114,9 +114,6 @@ public class Block : MonoBehaviour
                     isTunning = false;
                     board.currState = BoardState.ORDER;
                 }
-
-                if (crossBomb)
-                    board.UsedCrossBomb(this);
             }
         }
     }

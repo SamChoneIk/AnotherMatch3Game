@@ -46,6 +46,8 @@ public class BoardManager : MonoBehaviour
         verifyPiece = new List<Block>();
         itemList = new List<Block>();
 
+        //disabledPieces.transform.position = new Vector2(0, height);
+
         CreateBoard();
     }
 
@@ -83,7 +85,27 @@ public class BoardManager : MonoBehaviour
             PieceRegenerate();
 
         // debug Generate Item
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            if (selectPiece != null)
+            {
+                selectPiece.itemSprite.sprite = ItemSprites[0];
+                selectPiece.rowBomb = true;
+            }
+        }
+
+        // debug Generate Item
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            if (selectPiece != null)
+            {
+                selectPiece.itemSprite.sprite = ItemSprites[1];
+                selectPiece.columnBomb = true;
+            }
+        }
+
+        // debug Generate Item
+        if (Input.GetKeyDown(KeyCode.C))
         {
             if (selectPiece != null)
             {
@@ -101,12 +123,12 @@ public class BoardManager : MonoBehaviour
 
             if (selectPiece != null)
             {
-                if (!FIndMovingPiece())
+                if (!FindMovingPiece())
                     return;
 
                 else
                 {
-                    if (FindMatched())
+                    if (FindMatched() || selectPiece.crossBomb)
                         FindMatchedPiece();
 
                     else
@@ -122,7 +144,7 @@ public class BoardManager : MonoBehaviour
 
             else
             {
-                if (FIndMovingPiece())
+                if (FindMovingPiece())
                     return;
 
                 FindMatchedPiece();
@@ -216,22 +238,22 @@ public class BoardManager : MonoBehaviour
                                 Block rightPiece = GetPiece(row + 1, column);
                                 Block leftPiece = GetPiece(row - 1, column);
 
+                                UsedCrossBomb(leftPiece);
+                                UsedCrossBomb(currPiece);
+                                UsedCrossBomb(rightPiece);
+
                                 if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
                                 {
                                     if (!matchedPiece.Contains(leftPiece))
                                         matchedPiece.Add(leftPiece);
 
-                                    UsedItem(leftPiece);
-
                                     if (!matchedPiece.Contains(currPiece))
                                         matchedPiece.Add(currPiece);
-
-                                    UsedItem(currPiece);
 
                                     if (!matchedPiece.Contains(rightPiece))
                                         matchedPiece.Add(rightPiece);
 
-                                    UsedItem(rightPiece);
+                                    UsedItem(rightPiece, currPiece, leftPiece);
                                 }
                             }
                         }
@@ -243,22 +265,22 @@ public class BoardManager : MonoBehaviour
                                 Block upPiece = GetPiece(row, column + 1);
                                 Block downPiece = GetPiece(row, column - 1);
 
+                                UsedCrossBomb(downPiece);
+                                UsedCrossBomb(currPiece);
+                                UsedCrossBomb(upPiece);
+
                                 if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
                                 {
                                     if (!matchedPiece.Contains(downPiece))
                                         matchedPiece.Add(downPiece);
 
-                                    UsedItem(downPiece);
-
                                     if (!matchedPiece.Contains(currPiece))
                                         matchedPiece.Add(currPiece);
-
-                                    UsedItem(currPiece);
 
                                     if (!matchedPiece.Contains(upPiece))
                                         matchedPiece.Add(upPiece);
 
-                                    UsedItem(upPiece);
+                                    UsedItem(upPiece, currPiece, downPiece);
                                 }
                             }
                         }
@@ -294,7 +316,7 @@ public class BoardManager : MonoBehaviour
                 if (verifyPiece.Contains(matchedPiece[i]))
                     continue;
 
-                FIndDirectionMatchedPiece(matchedPiece[i], ref rows, ref cols);
+                FindDirectionMatchedPiece(matchedPiece[i], ref rows, ref cols);
 
                 Debug.Log("rows = " + rows + " & " + "columns = " + cols);
 
@@ -464,7 +486,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void FIndDirectionMatchedPiece(Block piece, ref int rows, ref int cols)
+    private void FindDirectionMatchedPiece(Block piece, ref int rows, ref int cols)
     {
         Vector2[] direction =
         {
@@ -493,7 +515,7 @@ public class BoardManager : MonoBehaviour
 
                     // 검사하는 블럭에 상하좌우에 다른 매치된 블럭이 있을 경우
                     if (FindNeighborPiece(check))
-                        FIndDirectionMatchedPiece(check, ref rows, ref cols);
+                        FindDirectionMatchedPiece(check, ref rows, ref cols);
 
                     // 상하인 경우 cols 증가
                     if (dir == direction[0] || dir == direction[2] && piece)
@@ -548,19 +570,46 @@ public class BoardManager : MonoBehaviour
         return false;
     }
 
-    private void UsedItem(Block piece)
+    private void UsedItem(Block piece1, Block piece2, Block piece3)
     {
-        if (piece.rowBomb)
-            GetRowPieces(piece.column);
+        if (piece1.rowBomb)
+        {
+            piece1.rowBomb = false;
+            GetRowPieces(piece1.column);
+        }
+        if (piece2.rowBomb)
+        {
+            piece2.rowBomb = false;
+            GetRowPieces(piece2.column);
+        }
+        if (piece3.rowBomb)
+        {
+            piece3.rowBomb = false;
+            GetRowPieces(piece3.column);
+        }
 
-        if (piece.columnBomb)
-            GetColumnPieces(piece.row);
+        if (piece1.columnBomb)
+        {
+            piece1.rowBomb = false;
+            GetColumnPieces(piece1.row);
+        }
+        if (piece2.columnBomb)
+        {
+            piece2.rowBomb = false;
+            GetColumnPieces(piece2.row);
+        }
+        if (piece3.columnBomb)
+        {
+            piece3.rowBomb = false;
+            GetColumnPieces(piece3.row);
+        }
     }
 
     public void UsedCrossBomb(Block piece)
     {
         if (piece.crossBomb)
         {
+            piece.crossBomb = false;
             GetRowPieces(piece.column);
             GetColumnPieces(piece.row);
         }
@@ -572,26 +621,54 @@ public class BoardManager : MonoBehaviour
         {
             if (boardIndex[row, column] != null)
             {
-                if (!matchedPiece.Contains(GetPiece(row, column)))
-                    matchedPiece.Add(GetPiece(row, column));
+                Block piece = GetPiece(row, column);
 
-                if (!verifyPiece.Contains(GetPiece(row, column)))
-                    verifyPiece.Add(GetPiece(row, column));
+                if(piece.columnBomb)
+                {
+                    GetColumnPieces(piece.row);
+                    piece.columnBomb = false;
+                }
+
+                if(piece.crossBomb)
+                {
+                    UsedCrossBomb(piece);
+                    piece.crossBomb = false;
+                }
+
+                if (!matchedPiece.Contains(piece))
+                    matchedPiece.Add(piece);
+
+                if (!verifyPiece.Contains(piece))
+                    verifyPiece.Add(piece);
             }
         }
     }
 
     private void GetColumnPieces(int row)
     {
-        for (int column = 0; column < width; ++column)
+        for (int column = 0; column < height; ++column)
         {
             if (boardIndex[row, column] != null)
             {
-                if (!matchedPiece.Contains(GetPiece(row, column)))
-                    matchedPiece.Add(GetPiece(row, column));
+                Block piece = GetPiece(row, column);
 
-                if (!verifyPiece.Contains(GetPiece(row, column)))
-                    verifyPiece.Add(GetPiece(row, column));
+                if (piece.rowBomb)
+                {
+                    GetRowPieces(piece.column);
+                    piece.rowBomb = false;
+                }
+
+                if (piece.crossBomb)
+                {
+                    UsedCrossBomb(piece);
+                    piece.crossBomb = false;
+                }
+
+                if (!matchedPiece.Contains(piece))
+                    matchedPiece.Add(piece);
+
+                if (!verifyPiece.Contains(piece))
+                    verifyPiece.Add(piece);
             }
         }
     }
@@ -608,7 +685,7 @@ public class BoardManager : MonoBehaviour
         verifyPiece.Clear();
         selectPiece = null;
 
-       StartCoroutine(FallPieces());
+        StartCoroutine(FallPieces());
     }
 
     IEnumerator FallPieces()
@@ -631,8 +708,8 @@ public class BoardManager : MonoBehaviour
                             boardIndex[fallPiece.row, fallPiece.column] = fallPiece.gameObject;
 
                             boardIndex[row, i] = null;
-                            fallPiece.currState = BlockState.MOVE;
 
+                            fallPiece.currState = BlockState.MOVE;
                             break;
                         }
                     }
@@ -655,7 +732,7 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        while(!FIndMovingPiece())
+        while(!FindMovingPiece())
         {
             yield return null;
         }
@@ -802,7 +879,7 @@ public class BoardManager : MonoBehaviour
         return false;
     }
 
-    private bool FIndMovingPiece()
+    private bool FindMovingPiece()
     {
         for (int column = 0; column < height; ++column)
         {
