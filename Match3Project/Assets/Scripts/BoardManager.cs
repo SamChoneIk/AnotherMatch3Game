@@ -26,11 +26,10 @@ public class BoardManager : MonoBehaviour
     public GameObject piecePrefab;
 
     public Block selectPiece;
-    public Block targetPiece;
 
     public List<Block> matchedPiece;
     public List<Block> disabledPiece;
-    public List<Block> itemPiece;
+    public List<Block> checkList;
 
     public Sprite[] pieceSprites;
     public Sprite[] ItemSprites;
@@ -43,9 +42,9 @@ public class BoardManager : MonoBehaviour
 
         matchedPiece = new List<Block>();
         disabledPiece = new List<Block>();
+        checkList = new List<Block>();
 
         CreateBoard();
-        //FindMatchedIndex();
     }
 
     private void DebugSystem()
@@ -68,7 +67,6 @@ public class BoardManager : MonoBehaviour
             if (DeadLockCheck())
             {
                 selectPiece = null;
-                targetPiece = null;
 
                 Debug.Log("is DeadLock !!");
 
@@ -95,7 +93,44 @@ public class BoardManager : MonoBehaviour
 
     void Update()
     {
-        if (currState == BoardState.ORDER)
+        if (currState == BoardState.WORK)
+        {
+            checkTime = 0;
+
+            if (selectPiece != null)
+            {
+                if (!FIndMovingPiece())
+                    return;
+
+                else
+                {
+                    if (FindMatchedPiece())
+                    {
+                        selectPiece = null;
+                        FindMatchedIndex();
+                    }
+
+                    else
+                    {
+                        selectPiece.target.isTunning = true;
+                        selectPiece.isTunning = true;
+
+                        selectPiece.target.currState = BlockState.MOVE;
+                        selectPiece.currState = BlockState.MOVE;
+                    }
+                }
+            }
+
+            else
+            {
+                if (!FIndMovingPiece())
+                    return;
+
+                currState = BoardState.ORDER;
+            }
+        }
+
+        else if (currState == BoardState.ORDER)
         {
             checkTime += Time.deltaTime;
 
@@ -115,66 +150,11 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        if (currState == BoardState.WORK)
-        {
-            checkTime = 0;
-
-            if (selectPiece != null && targetPiece != null)
-            {
-                if (!IndexCheck(true))
-                    return;
-
-                else
-                {
-                    if (selectPiece.isTunning && targetPiece.isTunning)
-                    {
-                        selectPiece.isTunning = false;
-                        targetPiece.isTunning = false;
-
-                        selectPiece = null;
-                        targetPiece = null;
-
-                        currState = BoardState.ORDER;
-
-                        return;
-                    }
-
-                    if (IndexCheck())
-                    {
-                        selectPiece = null;
-                        targetPiece = null;
-
-                        FindMatchedIndex();
-                    }
-
-                    else
-                    {
-                        selectPiece.row = selectPiece.prevRow;
-                        selectPiece.column = selectPiece.prevColumn;
-
-                        targetPiece.row = targetPiece.prevRow;
-                        targetPiece.column = targetPiece.prevColumn;
-
-                        selectPiece.moveToPos = new Vector2(selectPiece.prevRow, selectPiece.prevColumn);
-                        targetPiece.moveToPos = new Vector2(targetPiece.prevRow, targetPiece.prevColumn);
-
-                        selectPiece.isTunning = true;
-                        targetPiece.isTunning = true;
-
-                        selectPiece.currState = BlockState.MOVE;
-                        targetPiece.currState = BlockState.MOVE;
-                    }
-                }
-            }
-        }
-
         DebugSystem();
     }
 
     private void CreateBoard()
     {
-        List<Block> initPieces = new List<Block>();
-
         for (int column = 0; column < height; ++column)
         {
             for (int row = 0; row < width; ++row)
@@ -190,7 +170,7 @@ public class BoardManager : MonoBehaviour
 
                 boardIndex[piece.row, piece.column] = pieceGo;
 
-                while (IndexCheck())
+                while (FindMatchedPiece())
                 {
                     value = Random.Range(0, pieceSprites.Length);
                     piece.value = value;
@@ -199,7 +179,7 @@ public class BoardManager : MonoBehaviour
                 piece.InitPiece(value, piece.row, piece.column, this);
                 piece.moveToPos = new Vector2(piece.row, piece.column);
 
-                initPieces.Add(piece);
+                piece.currState = BlockState.MOVE;
             }
         }
 
@@ -216,15 +196,6 @@ public class BoardManager : MonoBehaviour
             pieceGo.SetActive(false);
             disabledPiece.Add(piece);
         }
-
-        foreach (var piece in initPieces)
-        {
-            piece.currState = BlockState.MOVE;
-        }
-
-        initPieces.Clear();
-
-        currState = BoardState.ORDER;
     }
 
     public void FindMatchedIndex()
@@ -256,24 +227,6 @@ public class BoardManager : MonoBehaviour
 
                                     if (!matchedPiece.Contains(rightPiece))
                                         matchedPiece.Add(rightPiece);
-
-                                    //Debug.Log("prev matched Count = " + matchedPiece.Count);
-
-                                    ItemPieces(leftPiece);
-                                    ItemPieces(currPiece);
-                                    ItemPieces(rightPiece);
-
-                                    //Debug.Log("curr matched Count = " + matchedPiece.Count);
-                                }
-
-                                if (currPiece.crossBomb || rightPiece.crossBomb || leftPiece.crossBomb)
-                                {
-                                    if (currPiece.crossBomb)
-                                        CrossBomb(currPiece);
-                                    if (rightPiece.crossBomb)
-                                        CrossBomb(rightPiece);
-                                    if (leftPiece.crossBomb)
-                                        CrossBomb(leftPiece);
                                 }
                             }
                         }
@@ -287,10 +240,6 @@ public class BoardManager : MonoBehaviour
 
                                 if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
                                 {
-                                    // matchedPiece.Union(RowBombPieces(upPiece, currPiece, downPiece));
-                                    // matchedPiece.Union(ColumnBombPieces(upPiece, currPiece, downPiece));
-                                    // matchedPiece.Union(CrossBombPieces(upPiece, currPiece, downPiece));
-
                                     if (!matchedPiece.Contains(downPiece))
                                         matchedPiece.Add(downPiece);
 
@@ -299,20 +248,6 @@ public class BoardManager : MonoBehaviour
 
                                     if (!matchedPiece.Contains(upPiece))
                                         matchedPiece.Add(upPiece);
-
-                                    ItemPieces(downPiece);
-                                    ItemPieces(currPiece);
-                                    ItemPieces(upPiece);
-                                }
-
-                                if (currPiece.crossBomb || upPiece.crossBomb || downPiece.crossBomb)
-                                {
-                                    if (currPiece.crossBomb)
-                                        CrossBomb(currPiece);
-                                    if (upPiece.crossBomb)
-                                        CrossBomb(upPiece);
-                                    if (downPiece.crossBomb)
-                                        CrossBomb(downPiece);
                                 }
                             }
                         }
@@ -323,7 +258,7 @@ public class BoardManager : MonoBehaviour
 
         if (matchedPiece.Count > 0)
         {
-            Checkingboard();
+            //Checkingboard();
             //CheckingBomb();
             MatchedPieceDisabled();
         }
@@ -337,63 +272,200 @@ public class BoardManager : MonoBehaviour
         if (matchedPiece.Count < 3)
             return;
 
-        List<Block> checkpiece = new List<Block>();
-        int pieceCount = 0;
-        int rows = 0;
+        if (matchedPiece.Count > 4)
+            AdjacentBombCheck(ref checkList);
 
-        for(int piece = 0; piece < matchedPiece.Count -1; ++piece)
+        // Row check
+        for (int i = 0; i < matchedPiece.Count - 1; ++i)
         {
-            if (checkpiece.Contains(matchedPiece[piece]))
+            int rows = 0;
+
+            if (matchedPiece[i].crossBomb || matchedPiece[i].rowBomb || matchedPiece[i].columnBomb)
                 continue;
 
-            for (int i = 1; ; ++i)
+            foreach (var check in matchedPiece)
             {
-                if (matchedPiece[piece].row + i > width - 1)
-                    break;
-
-                Block check = GetPiece(matchedPiece[piece].row + i, matchedPiece[piece].column);
-
-                if (checkpiece.Contains(check))
+                if (matchedPiece[i] == check)
                     continue;
 
-                if (matchedPiece.Contains(check) && matchedPiece[piece].row + i == check.row)
-                {
-                    ++rows;
-                    checkpiece.Add(check);
-                }
-
-                else
+                if (check.crossBomb || check.rowBomb || check.columnBomb)
                     break;
 
-                Debug.Log("currCount = " + checkpiece.Count);
+                if (matchedPiece[i].column == check.column)
+                    ++rows;
+
             }
 
-            if (checkpiece.Count > 2)
+            if (rows >= 3)
             {
-                Debug.Log("generate row");
-                matchedPiece[piece].rowBomb = true;
-                matchedPiece[piece].itemSprite.sprite = ItemSprites[0];
-                matchedPiece.Remove(matchedPiece[piece + 1]);
-                pieceCount = checkpiece.Count;
+                Debug.Log(matchedPiece[i].name + "Generate Row Bomb");
+                matchedPiece[i].rowBomb = true;
+                matchedPiece[i].itemSprite.sprite = ItemSprites[0];
+                matchedPiece.Remove(matchedPiece[i]);
+            }
+
+        }
+    }
+
+    private void AdjacentBombCheck(ref List<Block> checkList)
+    {
+        int rows = 0;
+        int cols = 0;
+        int prevCount = 0;
+
+        for (int i = 0; i < matchedPiece.Count - 1; ++i)
+        {
+            if (checkList.Contains(matchedPiece[i]))
+                continue;
+
+            DirCheck(matchedPiece[i], ref rows, ref cols, ref checkList);
+
+            if (rows >= 2 && cols >= 2)
+            {
+                Block idx = checkList[Mathf.RoundToInt((checkList.Count - prevCount) / 2)];
+                var bombPiece = checkList.Find(p => p == idx);
+                Debug.Log("generate CrossBomb");
+
+                bombPiece.crossBomb = true;
+                bombPiece.itemSprite.sprite = ItemSprites[2];
+                matchedPiece.Remove(bombPiece);
+
+                prevCount = checkList.Count - 1;
             }
 
             else
             {
-                if (pieceCount != 0)
-                    checkpiece.RemoveRange(pieceCount - 1, checkpiece.Count - pieceCount);
+                if (checkList.Count > 1)
+                    checkList.RemoveRange(prevCount, (checkList.Count - 1) - prevCount);
 
-                Debug.Log("remove after Count = " + checkpiece.Count);
+                else
+                    checkList.Clear();
+            }
+
+            rows = 0;
+            cols = 0;
+        }
+    }
+
+    private void DirCheck(Block piece, ref int rows, ref int cols, ref List<Block> checkList)
+    {
+        Vector2[] direction =
+        {
+            Vector2.up,
+            Vector2.right,
+            Vector2.down,
+            Vector2.left
+        };
+
+        foreach (var dir in direction)
+        {
+            for (int i = 1; ; ++i)
+            {
+                if (piece.row + ((int)dir.x * i) > width - 1 || piece.column + ((int)dir.y * i) > height - 1 ||
+                    piece.row + ((int)dir.x * i) < 0         || piece.column + ((int)dir.y * i) < 0)
+                    break;
+
+                Block check = GetPiece(piece.row + ((int)dir.x * i), piece.column + ((int)dir.y * i));
+
+                // 매치된 블럭일 때
+                if (matchedPiece.Contains(check) && !checkList.Contains(check))
+                {
+                    checkList.Add(check);
+
+                    // 검사하는 블럭에 상하좌우에 다른 매치된 블럭이 있을 경우
+                    if (FindNeighborPiece(check, checkList))
+                        DirCheck(check, ref rows, ref cols, ref checkList);
+
+                    // 상하인 경우 cols 증가
+                    if (dir == direction[0] || dir == direction[2])
+                        ++cols; // 체크가 끝난 블럭은 검사에서 제외
+
+                    // 좌우인 경우 rows 증가
+                    else if (dir == direction[1] || dir == direction[3])
+                        ++rows;  // 체크가 끝난 블럭은 검사에서 제외
+                }
+
+                // 블럭이 없으면 즉시 취소
+                else
+                    break;
             }
         }
+    }
 
-       /* for (int column = 0; column < height; ++column)
+    private bool FindNeighborPiece(Block piece, List<Block> checkList)
+    {
+        if (piece.row + 1 < width - 1)
         {
-            for (int row = 0; row < width; ++row)
-            {
-                Block piece = 
+            Block right = GetPiece(piece.row + 1, piece.column);
+            if (matchedPiece.Contains(right) && !checkList.Contains(right))
+                return true;
+        }
 
-            }
-        }*/
+        if (piece.row - 1 > 0)
+        {
+            Block left = GetPiece(piece.row - 1, piece.column);
+            if (matchedPiece.Contains(left) && !checkList.Contains(left))
+                return true;
+        }
+
+        if (piece.column + 1 < height - 1)
+        {
+            Block up = GetPiece(piece.row, piece.column + 1);
+            if (matchedPiece.Contains(up) && !checkList.Contains(up))
+                return true;
+        }
+
+        if (piece.column - 1 > 0)
+        {
+            Block down = GetPiece(piece.row, piece.column - 1);
+            if (matchedPiece.Contains(down) && !checkList.Contains(down))
+                return true;
+        }
+
+            return false;
+    }
+
+    private int isCenterPiece(Block piece)
+    {
+        int count = 0;
+
+        Vector2[] direction =
+   {
+            Vector2.up,
+            Vector2.right,
+            Vector2.down,
+            Vector2.left
+        };
+
+        if (piece.row + 1 < width - 1)
+        {
+            Block right = GetPiece(piece.row + 1, piece.column);
+            if (matchedPiece.Contains(right) && !checkList.Contains(right))
+                ++count;
+        }
+
+        if (piece.row - 1 > 0)
+        {
+            Block left = GetPiece(piece.row - 1, piece.column);
+            if (matchedPiece.Contains(left) && !checkList.Contains(left))
+                ++count;
+        }
+
+        if (piece.column + 1 < height - 1)
+        {
+            Block up = GetPiece(piece.row, piece.column + 1);
+            if (matchedPiece.Contains(up) && !checkList.Contains(up))
+                ++count;
+        }
+
+        if (piece.column - 1 > 0)
+        {
+            Block down = GetPiece(piece.row, piece.column - 1);
+            if (matchedPiece.Contains(down) && !checkList.Contains(down))
+                ++count;
+        }
+
+        return count;
     }
 
     private void CheckingBomb()
@@ -402,6 +474,7 @@ public class BoardManager : MonoBehaviour
             return;
 
         PieceListSort(matchedPiece);
+
         int rows = 0;
         int columns = 0;
 
@@ -441,39 +514,7 @@ public class BoardManager : MonoBehaviour
             }
         }*/
 
-        // Row check
-        for (int i = 0; i < matchedPiece.Count - 1; ++i)
-        {
-            rows = 0;
-            
-            if (matchedPiece[i].crossBomb || matchedPiece[i].rowBomb || matchedPiece[i].columnBomb)
-                continue;
-
-            foreach (var check in matchedPiece)
-            {
-                if (matchedPiece[i] == check)
-                    continue;
-
-                if (check.crossBomb || check.rowBomb || check.columnBomb)
-                    break;
-
-                if (matchedPiece[i].column == check.column)
-                {
-                    ++rows;
-                }
-            }
-
-            Debug.Log("row = " + rows);
-
-            if (rows >= 3)
-            {
-                Debug.Log(matchedPiece[i].name + "Generate Row Bomb");
-                matchedPiece[i].rowBomb = true;
-                matchedPiece[i].itemSprite.sprite = ItemSprites[0];
-                matchedPiece.Remove(matchedPiece[i]);
-            }
-
-        }
+        
 
         // Column check
         /* for (int i = 0; i < matchedPiece.Count - 1; ++i)
@@ -513,7 +554,7 @@ public class BoardManager : MonoBehaviour
             GetColumnPieces(piece.row);
     }
 
-    private void CrossBomb(Block piece)
+    private void CrossBombPieces(Block piece)
     {
         if (piece.crossBomb)
         {
@@ -528,8 +569,6 @@ public class BoardManager : MonoBehaviour
         {
             if (boardIndex[row, column] != null)
             {
-                itemPiece.Add(GetPiece(row, column));
-
                 if (!matchedPiece.Contains(GetPiece(row, column)))
                     matchedPiece.Add(GetPiece(row, column));
             }
@@ -542,8 +581,6 @@ public class BoardManager : MonoBehaviour
         {
             if (boardIndex[row, column] != null)
             {
-                itemPiece.Add(GetPiece(row, column));
-
                 if (!matchedPiece.Contains(GetPiece(row, column)))
                     matchedPiece.Add(GetPiece(row, column));
             }
@@ -559,18 +596,13 @@ public class BoardManager : MonoBehaviour
         }
 
         matchedPiece.Clear();
-        itemPiece.Clear();
-
         selectPiece = null;
-        targetPiece = null;
 
-        StartCoroutine(FallPieces());
+       StartCoroutine(FallPieces());
     }
 
     IEnumerator FallPieces()
     {
-        List<Block> fallPieces = new List<Block>();
-
         for (int column = 0; column < height; ++column)
         {
             for (int row = 0; row < width; ++row)
@@ -590,7 +622,6 @@ public class BoardManager : MonoBehaviour
 
                             boardIndex[row, i] = null;
                             fallPiece.currState = BlockState.MOVE;
-                            fallPieces.Add(fallPiece);
 
                             break;
                         }
@@ -610,18 +641,16 @@ public class BoardManager : MonoBehaviour
                     boardIndex[enabledPiece.row, enabledPiece.column] = enabledPiece.gameObject;
 
                     enabledPiece.currState = BlockState.MOVE;
-                    fallPieces.Add(enabledPiece);
                 }
             }
         }
 
-        while (!IndexCheck(true))
+        while(!FIndMovingPiece())
         {
             yield return null;
         }
-        yield return new WaitForSeconds(waitTime);
 
-        fallPieces.Clear();
+        yield return new WaitForSeconds(waitTime);
 
         FindMatchedIndex();
     }
@@ -640,6 +669,42 @@ public class BoardManager : MonoBehaviour
         return enabledPiece;
     }
 
+    private void PieceRegenerate()
+    {
+        currState = BoardState.WORK;
+
+        for (int column = 0; column < height; ++column)
+        {
+            for (int row = 0; row < width; ++row)
+            {
+                if (boardIndex[row, column] != null)
+                {
+                    int value = Random.Range(0, pieceSprites.Length);
+
+                    Block piece = GetPiece(row, column);
+                    piece.gameObject.SetActive(false);
+
+                    piece.InitPiece(value, piece.row, piece.column, this);
+
+                    while (FindMatchedPiece())
+                    {
+                        value = Random.Range(0, pieceSprites.Length);
+                        piece.value = value;
+                    }
+
+                    piece.InitPiece(value, piece.row, piece.column, this);
+
+                    piece.transform.position = new Vector2(piece.row, piece.column + offset);
+                    piece.moveToPos = new Vector2(piece.row, piece.column);
+
+                    piece.currState = BlockState.MOVE;
+
+                    piece.gameObject.SetActive(true);
+                }
+            }
+        }
+    }
+
     private bool DeadLockCheck()
     {
         for (int column = 0; column < height; ++column)
@@ -650,7 +715,7 @@ public class BoardManager : MonoBehaviour
                 {
                     SwapBoardIndex(row, column, Vector2.right);
 
-                    if (IndexCheck())
+                    if (FindMatchedPiece())
                     {
                         SwapBoardIndex(row, column, Vector2.right);
                         return false;
@@ -663,7 +728,7 @@ public class BoardManager : MonoBehaviour
                 {
                     SwapBoardIndex(row, column, Vector2.up);
 
-                    if (IndexCheck())
+                    if (FindMatchedPiece())
                     {
                         SwapBoardIndex(row, column, Vector2.up);
                         return false;
@@ -684,51 +749,50 @@ public class BoardManager : MonoBehaviour
         boardIndex[row, column] = temp;
     }
 
-    private void PieceRegenerate()
+    private bool FindMatchedPiece()
     {
-        List<Block> refillPieces = new List<Block>();
-
         for (int column = 0; column < height; ++column)
         {
             for (int row = 0; row < width; ++row)
             {
                 if (boardIndex[row, column] != null)
                 {
-                    int value = Random.Range(0, pieceSprites.Length);
+                    Block currPiece = GetPiece(row, column);
 
-                    Block piece = GetPiece(row, column);
-                    piece.gameObject.SetActive(false);
-
-                    piece.InitPiece(value, piece.row, piece.column, this);
-
-                    while (IndexCheck())
+                    if (currPiece != null)
                     {
-                        value = Random.Range(0, pieceSprites.Length);
-                        piece.value = value;
+                        if (row > 0 && row < width - 1)
+                        {
+                            if (boardIndex[row + 1, column] != null && boardIndex[row - 1, column] != null)
+                            {
+                                Block rightPiece = GetPiece(row + 1, column);
+                                Block leftPiece = GetPiece(row - 1, column);
+
+                                if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
+                                    return true;
+                            }
+                        }
+
+                        if (column > 0 && column < height - 1)
+                        {
+                            if (boardIndex[row, column + 1] != null && boardIndex[row, column - 1] != null)
+                            {
+                                Block upPiece = GetPiece(row, column + 1);
+                                Block downPiece = GetPiece(row, column - 1);
+
+                                if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
+                                    return true;
+                            }
+                        }
                     }
-
-                    piece.InitPiece(value, piece.row, piece.column, this);
-
-                    piece.transform.position = new Vector2(piece.row, piece.column + offset);
-                    piece.moveToPos = new Vector2(piece.row, piece.column);
-
-                    refillPieces.Add(piece);
                 }
             }
         }
 
-        foreach (var pieces in refillPieces)
-        {
-            pieces.gameObject.SetActive(true);
-            pieces.currState = BlockState.MOVE;
-        }
-
-        refillPieces.Clear();
-
-        FindMatchedIndex();
+        return false;
     }
 
-    private bool IndexCheck(bool moveCheck = false)
+    private bool FIndMovingPiece()
     {
         for (int column = 0; column < height; ++column)
         {
@@ -739,57 +803,12 @@ public class BoardManager : MonoBehaviour
                     Block currPiece = GetPiece(row, column);
 
                     // Piece Moving Check
-                    if (moveCheck)
-                    {
                         if (currPiece.currState == BlockState.MOVE)
                             return false;
-                    }
-
-                    // Piece Color Value Check
-                    else
-                    {
-                        if (currPiece != null)
-                        {
-                            if (row > 0 && row < width - 1)
-                            {
-                                if (boardIndex[row + 1, column] != null && boardIndex[row - 1, column] != null)
-                                {
-                                    Block rightPiece = GetPiece(row + 1, column);
-                                    Block leftPiece = GetPiece(row - 1, column);
-
-                                    if (currPiece.crossBomb || rightPiece.crossBomb || leftPiece.crossBomb)
-                                        return true;
-
-                                    if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
-                                        return true;
-                                }
-                            }
-
-                            if (column > 0 && column < height - 1)
-                            {
-                                if (boardIndex[row, column + 1] != null && boardIndex[row, column - 1] != null)
-                                {
-                                    Block upPiece = GetPiece(row, column + 1);
-                                    Block downPiece = GetPiece(row, column - 1);
-
-                                    if (currPiece.crossBomb || upPiece.crossBomb || downPiece.crossBomb)
-                                        return true;
-
-                                    if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
-                                        return true;
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
-
-        if (moveCheck)
             return true;
-
-        else
-            return false;
     }
 
     public Block GetPiece(int row, int column)

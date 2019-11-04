@@ -69,6 +69,7 @@ public class Block : MonoBehaviour
 
         itemSprite.sprite = null;
 
+        target = null;
         rowBomb = false;
         columnBomb = false;
         crossBomb = false;
@@ -84,11 +85,18 @@ public class Block : MonoBehaviour
     {
         if (currState == BlockState.MOVE)
         {
+            if(isTunning)
+            {
+                row = prevRow;
+                column = prevColumn;
+
+                moveToPos = new Vector2(prevRow, prevColumn);
+            }
+
             accumTime += Time.deltaTime / board.blockDuration;
 
             if (Mathf.Abs(row - transform.position.x) > 0.1f || Mathf.Abs(column - transform.position.y) > 0.1f)
-                transform.position = Vector2.Lerp(transform.position, moveToPos, accumTime);
-               //transform.position = Vector2.MoveTowards(transform.position, moveToPos, 0.2f);
+                transform.position = Vector2.MoveTowards(transform.position, moveToPos, accumTime);
 
             else
             {
@@ -100,15 +108,23 @@ public class Block : MonoBehaviour
                 accumTime = 0f;
 
                 currState = BlockState.WAIT;
+
+                if (isTunning)
+                {
+                    isTunning = false;
+                    board.currState = BoardState.ORDER;
+                }
             }
         }
     }
 
     private void OnMouseDown()
     {
-        board.selectPiece = this;
         if (board.currState == BoardState.ORDER && currState == BlockState.WAIT)
+        {
+            board.selectPiece = this;
             startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        }
     }
 
     private void OnMouseUp()
@@ -166,7 +182,6 @@ public class Block : MonoBehaviour
             target.currState = BlockState.MOVE;
 
             board.selectPiece = this;
-            board.targetPiece = target;
 
             board.currState = BoardState.WORK;
         }
