@@ -29,7 +29,8 @@ public class BoardManager : MonoBehaviour
 
     public List<Block> matchedPiece;
     public List<Block> disabledPiece;
-    public List<Block> checkList;
+    public List<Block> verifyPiece;
+    public List<Block> itemList;
 
     public Sprite[] pieceSprites;
     public Sprite[] ItemSprites;
@@ -42,7 +43,8 @@ public class BoardManager : MonoBehaviour
 
         matchedPiece = new List<Block>();
         disabledPiece = new List<Block>();
-        checkList = new List<Block>();
+        verifyPiece = new List<Block>();
+        itemList = new List<Block>();
 
         CreateBoard();
     }
@@ -104,11 +106,8 @@ public class BoardManager : MonoBehaviour
 
                 else
                 {
-                    if (FindMatchedPiece())
-                    {
-                        selectPiece = null;
-                        FindMatchedIndex();
-                    }
+                    if (FindMatched())
+                        FindMatchedPiece();
 
                     else
                     {
@@ -123,10 +122,10 @@ public class BoardManager : MonoBehaviour
 
             else
             {
-                if (!FIndMovingPiece())
+                if (FIndMovingPiece())
                     return;
 
-                currState = BoardState.ORDER;
+                FindMatchedPiece();
             }
         }
 
@@ -170,7 +169,7 @@ public class BoardManager : MonoBehaviour
 
                 boardIndex[piece.row, piece.column] = pieceGo;
 
-                while (FindMatchedPiece())
+                while (FindMatched())
                 {
                     value = Random.Range(0, pieceSprites.Length);
                     piece.value = value;
@@ -198,7 +197,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public void FindMatchedIndex()
+    public void FindMatchedPiece()
     {
         for (int column = 0; column < height; ++column)
         {
@@ -222,11 +221,17 @@ public class BoardManager : MonoBehaviour
                                     if (!matchedPiece.Contains(leftPiece))
                                         matchedPiece.Add(leftPiece);
 
+                                    UsedItem(leftPiece);
+
                                     if (!matchedPiece.Contains(currPiece))
                                         matchedPiece.Add(currPiece);
 
+                                    UsedItem(currPiece);
+
                                     if (!matchedPiece.Contains(rightPiece))
                                         matchedPiece.Add(rightPiece);
+
+                                    UsedItem(rightPiece);
                                 }
                             }
                         }
@@ -243,11 +248,17 @@ public class BoardManager : MonoBehaviour
                                     if (!matchedPiece.Contains(downPiece))
                                         matchedPiece.Add(downPiece);
 
+                                    UsedItem(downPiece);
+
                                     if (!matchedPiece.Contains(currPiece))
                                         matchedPiece.Add(currPiece);
 
+                                    UsedItem(currPiece);
+
                                     if (!matchedPiece.Contains(upPiece))
                                         matchedPiece.Add(upPiece);
+
+                                    UsedItem(upPiece);
                                 }
                             }
                         }
@@ -258,8 +269,7 @@ public class BoardManager : MonoBehaviour
 
         if (matchedPiece.Count > 0)
         {
-            //Checkingboard();
-            //CheckingBomb();
+            GenerateItemPiece();
             MatchedPieceDisabled();
         }
 
@@ -267,87 +277,194 @@ public class BoardManager : MonoBehaviour
             currState = BoardState.ORDER;
     }
 
-    private void Checkingboard()
+    private void GenerateItemPiece()
     {
         if (matchedPiece.Count < 3)
             return;
 
-        if (matchedPiece.Count > 4)
-            AdjacentBombCheck(ref checkList);
-
-        // Row check
-        for (int i = 0; i < matchedPiece.Count - 1; ++i)
-        {
-            int rows = 0;
-
-            if (matchedPiece[i].crossBomb || matchedPiece[i].rowBomb || matchedPiece[i].columnBomb)
-                continue;
-
-            foreach (var check in matchedPiece)
-            {
-                if (matchedPiece[i] == check)
-                    continue;
-
-                if (check.crossBomb || check.rowBomb || check.columnBomb)
-                    break;
-
-                if (matchedPiece[i].column == check.column)
-                    ++rows;
-
-            }
-
-            if (rows >= 3)
-            {
-                Debug.Log(matchedPiece[i].name + "Generate Row Bomb");
-                matchedPiece[i].rowBomb = true;
-                matchedPiece[i].itemSprite.sprite = ItemSprites[0];
-                matchedPiece.Remove(matchedPiece[i]);
-            }
-
-        }
-    }
-
-    private void AdjacentBombCheck(ref List<Block> checkList)
-    {
         int rows = 0;
         int cols = 0;
         int prevCount = 0;
 
+        // Cross Bomb
+        if (matchedPiece.Count > 4)
+        {
+            for (int i = 0; i < matchedPiece.Count - 1; ++i)
+            {
+                if (verifyPiece.Contains(matchedPiece[i]))
+                    continue;
+
+                FIndDirectionMatchedPiece(matchedPiece[i], ref rows, ref cols);
+
+                Debug.Log("rows = " + rows + " & " + "columns = " + cols);
+
+                if (rows >= 2 && cols >= 2)
+                {
+                    Block bombPiece = matchedPiece[i];
+
+                    if (selectPiece != null)
+                    {
+                        if (selectPiece.value == matchedPiece[i].value)
+                            bombPiece = selectPiece;
+
+                        if (selectPiece.target != null && selectPiece.target.value == matchedPiece[i].value)
+                            bombPiece = selectPiece.target;
+                    }
+
+                    else
+                        bombPiece = verifyPiece[Random.Range(prevCount, verifyPiece.Count)];
+
+                    Debug.Log("generate CrossBomb");
+
+                    bombPiece.crossBomb = true;
+                    bombPiece.itemSprite.sprite = ItemSprites[2];
+
+                    itemList.Add(bombPiece);
+                    matchedPiece.Remove(bombPiece);
+
+                    prevCount = verifyPiece.Count - 1;
+                }
+
+                else
+                {
+                    if (verifyPiece.Count >= 3)
+                        verifyPiece.RemoveRange(prevCount, (verifyPiece.Count - 1) - prevCount);
+
+                    else
+                        verifyPiece.Clear();
+                }
+
+                rows = 0;
+                cols = 0;
+            }
+        }
+
+        // Row Bomb
         for (int i = 0; i < matchedPiece.Count - 1; ++i)
         {
-            if (checkList.Contains(matchedPiece[i]))
+            if (verifyPiece.Contains(matchedPiece[i]))
                 continue;
 
-            DirCheck(matchedPiece[i], ref rows, ref cols, ref checkList);
-
-            if (rows >= 2 && cols >= 2)
+            for (int r = 1; r < width - 1; ++r)
             {
-                Block idx = checkList[Mathf.RoundToInt((checkList.Count - prevCount) / 2)];
-                var bombPiece = checkList.Find(p => p == idx);
-                Debug.Log("generate CrossBomb");
+                if (matchedPiece[i].row + r > width - 1)
+                    break;
 
-                bombPiece.crossBomb = true;
-                bombPiece.itemSprite.sprite = ItemSprites[2];
+                Block check = GetPiece(matchedPiece[i].row + r, matchedPiece[i].column);
+
+                if (matchedPiece.Contains(check) && matchedPiece[i].value == check.value)
+                {
+                    verifyPiece.Add(check);
+                    rows++;
+                }
+
+                else
+                    break;
+            }
+
+            if (rows >= 3)
+            {
+                Block bombPiece = matchedPiece[i];
+
+                if(selectPiece != null)
+                {
+                    if (selectPiece.value == matchedPiece[i].value)
+                        bombPiece = selectPiece;
+
+                    if (selectPiece.target != null && selectPiece.target.value == matchedPiece[i].value)
+                        bombPiece = selectPiece.target;
+                }
+                
+                else
+                    bombPiece = verifyPiece[Random.Range(prevCount, verifyPiece.Count)];
+
+                Debug.Log("generate RowBomb");
+
+                bombPiece.rowBomb = true;
+                bombPiece.itemSprite.sprite = ItemSprites[0];
+
+                itemList.Add(bombPiece);
                 matchedPiece.Remove(bombPiece);
 
-                prevCount = checkList.Count - 1;
+                prevCount = verifyPiece.Count - 1;
             }
 
             else
             {
-                if (checkList.Count > 1)
-                    checkList.RemoveRange(prevCount, (checkList.Count - 1) - prevCount);
+                if (verifyPiece.Count >= 3)
+                    verifyPiece.RemoveRange(prevCount, (verifyPiece.Count - 1) - prevCount);
 
                 else
-                    checkList.Clear();
+                    verifyPiece.Clear();
             }
 
             rows = 0;
+        }
+
+        // Column Bomb
+        for (int i = 0; i < matchedPiece.Count - 1; ++i)
+        {
+            if (verifyPiece.Contains(matchedPiece[i]))
+                continue;
+
+            for (int c = 1; c < height - 1; ++c)
+            {
+                if (matchedPiece[i].column + c > height - 1)
+                    break;
+
+                Block check = GetPiece(matchedPiece[i].row, matchedPiece[i].column + c);
+
+                if (matchedPiece.Contains(check) && matchedPiece[i].value == check.value)
+                {
+                    verifyPiece.Add(check);
+                    cols++;
+                }
+
+                else
+                    break;
+            }
+
+            if (cols >= 3)
+            {
+                Block bombPiece = matchedPiece[i];
+
+                if (selectPiece != null)
+                {
+                    if (selectPiece.value == matchedPiece[i].value)
+                        bombPiece = selectPiece;
+
+                    if (selectPiece.target != null && selectPiece.target.value == matchedPiece[i].value)
+                        bombPiece = selectPiece.target;
+                }
+
+                else
+                    bombPiece = verifyPiece[Random.Range(prevCount, verifyPiece.Count)];
+
+                Debug.Log("generate ColumnBomb");
+
+                bombPiece.columnBomb = true;
+                bombPiece.itemSprite.sprite = ItemSprites[1];
+
+                itemList.Add(bombPiece);
+                matchedPiece.Remove(bombPiece);
+
+                prevCount = verifyPiece.Count - 1;
+            }
+
+            else
+            {
+                if (verifyPiece.Count >= 3)
+                    verifyPiece.RemoveRange(prevCount, verifyPiece.Count  - prevCount);
+
+                else
+                    verifyPiece.Clear();
+            }
+
             cols = 0;
         }
     }
 
-    private void DirCheck(Block piece, ref int rows, ref int cols, ref List<Block> checkList)
+    private void FIndDirectionMatchedPiece(Block piece, ref int rows, ref int cols)
     {
         Vector2[] direction =
         {
@@ -362,27 +479,29 @@ public class BoardManager : MonoBehaviour
             for (int i = 1; ; ++i)
             {
                 if (piece.row + ((int)dir.x * i) > width - 1 || piece.column + ((int)dir.y * i) > height - 1 ||
-                    piece.row + ((int)dir.x * i) < 0         || piece.column + ((int)dir.y * i) < 0)
+                    piece.row + ((int)dir.x * i) < 0 || piece.column + ((int)dir.y * i) < 0)
                     break;
 
                 Block check = GetPiece(piece.row + ((int)dir.x * i), piece.column + ((int)dir.y * i));
 
                 // 매치된 블럭일 때
-                if (matchedPiece.Contains(check) && !checkList.Contains(check))
+                if (matchedPiece.Contains(check) && !verifyPiece.Contains(check) &&
+                  check.value == piece.value)
                 {
-                    checkList.Add(check);
+                    // 체크가 끝난 블럭은 검사에서 제외
+                    verifyPiece.Add(check);
 
                     // 검사하는 블럭에 상하좌우에 다른 매치된 블럭이 있을 경우
-                    if (FindNeighborPiece(check, checkList))
-                        DirCheck(check, ref rows, ref cols, ref checkList);
+                    if (FindNeighborPiece(check))
+                        FIndDirectionMatchedPiece(check, ref rows, ref cols);
 
                     // 상하인 경우 cols 증가
-                    if (dir == direction[0] || dir == direction[2])
-                        ++cols; // 체크가 끝난 블럭은 검사에서 제외
+                    if (dir == direction[0] || dir == direction[2] && piece)
+                        ++cols;
 
                     // 좌우인 경우 rows 증가
                     else if (dir == direction[1] || dir == direction[3])
-                        ++rows;  // 체크가 끝난 블럭은 검사에서 제외
+                        ++rows;
                 }
 
                 // 블럭이 없으면 즉시 취소
@@ -392,160 +511,44 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private bool FindNeighborPiece(Block piece, List<Block> checkList)
+    private bool FindNeighborPiece(Block piece)
     {
         if (piece.row + 1 < width - 1)
         {
             Block right = GetPiece(piece.row + 1, piece.column);
-            if (matchedPiece.Contains(right) && !checkList.Contains(right))
+            if (matchedPiece.Contains(right) && !verifyPiece.Contains(right) && 
+                piece.value == right.value)
                 return true;
         }
 
         if (piece.row - 1 > 0)
         {
             Block left = GetPiece(piece.row - 1, piece.column);
-            if (matchedPiece.Contains(left) && !checkList.Contains(left))
+            if (matchedPiece.Contains(left) && !verifyPiece.Contains(left) && 
+                piece.value == left.value)
                 return true;
         }
 
         if (piece.column + 1 < height - 1)
         {
             Block up = GetPiece(piece.row, piece.column + 1);
-            if (matchedPiece.Contains(up) && !checkList.Contains(up))
+            if (matchedPiece.Contains(up) && !verifyPiece.Contains(up) && 
+                piece.value == up.value)
                 return true;
         }
 
         if (piece.column - 1 > 0)
         {
             Block down = GetPiece(piece.row, piece.column - 1);
-            if (matchedPiece.Contains(down) && !checkList.Contains(down))
+            if (matchedPiece.Contains(down) && !verifyPiece.Contains(down) &&
+                piece.value == down.value)
                 return true;
         }
 
-            return false;
+        return false;
     }
 
-    private int isCenterPiece(Block piece)
-    {
-        int count = 0;
-
-        Vector2[] direction =
-   {
-            Vector2.up,
-            Vector2.right,
-            Vector2.down,
-            Vector2.left
-        };
-
-        if (piece.row + 1 < width - 1)
-        {
-            Block right = GetPiece(piece.row + 1, piece.column);
-            if (matchedPiece.Contains(right) && !checkList.Contains(right))
-                ++count;
-        }
-
-        if (piece.row - 1 > 0)
-        {
-            Block left = GetPiece(piece.row - 1, piece.column);
-            if (matchedPiece.Contains(left) && !checkList.Contains(left))
-                ++count;
-        }
-
-        if (piece.column + 1 < height - 1)
-        {
-            Block up = GetPiece(piece.row, piece.column + 1);
-            if (matchedPiece.Contains(up) && !checkList.Contains(up))
-                ++count;
-        }
-
-        if (piece.column - 1 > 0)
-        {
-            Block down = GetPiece(piece.row, piece.column - 1);
-            if (matchedPiece.Contains(down) && !checkList.Contains(down))
-                ++count;
-        }
-
-        return count;
-    }
-
-    private void CheckingBomb()
-    {
-        if (matchedPiece.Count <= 3)
-            return;
-
-        PieceListSort(matchedPiece);
-
-        int rows = 0;
-        int columns = 0;
-
-        // Cross check
-        /*if (matchedPiece.Count > 4)
-        {
-            for(int i = 0; i < matchedPiece.Count -1; ++i)
-            {
-                rows = 0;
-                columns = 0;
-
-                if (matchedPiece[i].crossBomb || matchedPiece[i].rowBomb || matchedPiece[i].columnBomb || itemPiece.Contains(matchedPiece[i]))
-                    continue;
-
-                foreach (var check in matchedPiece)
-                {
-                    if (matchedPiece[i] == check || check.crossBomb || check.rowBomb || check.columnBomb ||itemPiece.Contains(check))
-                        continue;
-
-                    if (matchedPiece[i].row == check.row)
-                        ++columns;
-
-                    else if (matchedPiece[i].column == check.column)
-                        ++rows;
-                }
-
-               // Debug.Log("column = " + columns + " & row = " + rows);
-
-                if (rows >= 2 && columns >= 2)
-                {
-
-                    Debug.Log(matchedPiece[i].name + "Generate Cross Bomb");
-                    matchedPiece[i].crossBomb = true;
-                    matchedPiece[i].itemSprite.sprite = ItemSprites[2];
-                    matchedPiece.Remove(matchedPiece[i]);
-                }
-            }
-        }*/
-
-        
-
-        // Column check
-        /* for (int i = 0; i < matchedPiece.Count - 1; ++i)
-         {
-             columns = 0;
-
-             if (matchedPiece[i].crossBomb || matchedPiece[i].rowBomb || matchedPiece[i].columnBomb || itemPiece.Contains(matchedPiece[i]))
-                 continue;
-
-             foreach (var check in matchedPiece)
-             {
-                 if (matchedPiece[i] == check || check.crossBomb || check.rowBomb || check.columnBomb || itemPiece.Contains(check))
-                     continue;
-
-                 if (matchedPiece[i].row == check.row)
-                     ++columns;
-             }
-
-             Debug.Log("column = " + columns);
-
-             if (columns >= 3)
-             {
-                 Debug.Log(matchedPiece[i].name + "Generate Column Bomb");
-                 matchedPiece[i].columnBomb = true;
-                 matchedPiece[i].itemSprite.sprite = ItemSprites[1];
-                 matchedPiece.Remove(matchedPiece[i]);
-             }
-         }*/
-    }
-
-    private void ItemPieces(Block piece)
+    private void UsedItem(Block piece)
     {
         if (piece.rowBomb)
             GetRowPieces(piece.column);
@@ -554,7 +557,7 @@ public class BoardManager : MonoBehaviour
             GetColumnPieces(piece.row);
     }
 
-    private void CrossBombPieces(Block piece)
+    public void UsedCrossBomb(Block piece)
     {
         if (piece.crossBomb)
         {
@@ -571,6 +574,9 @@ public class BoardManager : MonoBehaviour
             {
                 if (!matchedPiece.Contains(GetPiece(row, column)))
                     matchedPiece.Add(GetPiece(row, column));
+
+                if (!verifyPiece.Contains(GetPiece(row, column)))
+                    verifyPiece.Add(GetPiece(row, column));
             }
         }
     }
@@ -583,6 +589,9 @@ public class BoardManager : MonoBehaviour
             {
                 if (!matchedPiece.Contains(GetPiece(row, column)))
                     matchedPiece.Add(GetPiece(row, column));
+
+                if (!verifyPiece.Contains(GetPiece(row, column)))
+                    verifyPiece.Add(GetPiece(row, column));
             }
         }
     }
@@ -596,6 +605,7 @@ public class BoardManager : MonoBehaviour
         }
 
         matchedPiece.Clear();
+        verifyPiece.Clear();
         selectPiece = null;
 
        StartCoroutine(FallPieces());
@@ -652,7 +662,7 @@ public class BoardManager : MonoBehaviour
 
         yield return new WaitForSeconds(waitTime);
 
-        FindMatchedIndex();
+        FindMatchedPiece();
     }
 
     private Block EnabledPiece(int row, int column)
@@ -686,7 +696,7 @@ public class BoardManager : MonoBehaviour
 
                     piece.InitPiece(value, piece.row, piece.column, this);
 
-                    while (FindMatchedPiece())
+                    while (FindMatched())
                     {
                         value = Random.Range(0, pieceSprites.Length);
                         piece.value = value;
@@ -715,7 +725,7 @@ public class BoardManager : MonoBehaviour
                 {
                     SwapBoardIndex(row, column, Vector2.right);
 
-                    if (FindMatchedPiece())
+                    if (FindMatched())
                     {
                         SwapBoardIndex(row, column, Vector2.right);
                         return false;
@@ -728,7 +738,7 @@ public class BoardManager : MonoBehaviour
                 {
                     SwapBoardIndex(row, column, Vector2.up);
 
-                    if (FindMatchedPiece())
+                    if (FindMatched())
                     {
                         SwapBoardIndex(row, column, Vector2.up);
                         return false;
@@ -749,7 +759,7 @@ public class BoardManager : MonoBehaviour
         boardIndex[row, column] = temp;
     }
 
-    private bool FindMatchedPiece()
+    private bool FindMatched()
     {
         for (int column = 0; column < height; ++column)
         {
@@ -876,5 +886,48 @@ public class BoardManager : MonoBehaviour
 
         Debug.Log(sb.ToString());
        // sb.Clear();
+    }
+
+    private int isCenterPiece(Block piece)
+    {
+        int count = 0;
+
+        Vector2[] direction =
+   {
+            Vector2.up,
+            Vector2.right,
+            Vector2.down,
+            Vector2.left
+        };
+
+        if (piece.row + 1 < width - 1)
+        {
+            Block right = GetPiece(piece.row + 1, piece.column);
+            if (matchedPiece.Contains(right) && !verifyPiece.Contains(right))
+                ++count;
+        }
+
+        if (piece.row - 1 > 0)
+        {
+            Block left = GetPiece(piece.row - 1, piece.column);
+            if (matchedPiece.Contains(left) && !verifyPiece.Contains(left))
+                ++count;
+        }
+
+        if (piece.column + 1 < height - 1)
+        {
+            Block up = GetPiece(piece.row, piece.column + 1);
+            if (matchedPiece.Contains(up) && !verifyPiece.Contains(up))
+                ++count;
+        }
+
+        if (piece.column - 1 > 0)
+        {
+            Block down = GetPiece(piece.row, piece.column - 1);
+            if (matchedPiece.Contains(down) && !verifyPiece.Contains(down))
+                ++count;
+        }
+
+        return count;
     }
 }

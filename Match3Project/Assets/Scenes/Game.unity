@@ -167,25 +167,26 @@ MonoBehaviour:
   width: 6
   height: 8
   offset: 6
-  waitTime: 0.16
-  blockDuration: 5
+  waitTime: 0.32
+  blockDuration: 2.5
   disabledPieces: {fileID: 721989247}
   piecePrefab: {fileID: 8935675836690888477, guid: f162842921417e94c807fe1167e223c0,
     type: 3}
   selectPiece: {fileID: 0}
-  targetPiece: {fileID: 0}
   matchedPiece: []
   disabledPiece: []
-  itemPiece: []
-  checkList: []
+  verifyPiece: []
+  itemList: []
   pieceSprites:
-  - {fileID: 21300000, guid: 46e02bf7ff09cdb4db91ea006daa150b, type: 3}
   - {fileID: 21300000, guid: 8e844542340f7284a984941e95149bf0, type: 3}
-  - {fileID: 21300000, guid: 29aa665c5b288bc4a87fb9979cb4a975, type: 3}
+  - {fileID: 21300000, guid: 46e02bf7ff09cdb4db91ea006daa150b, type: 3}
+  - {fileID: 21300000, guid: 380eeb482b85519418118928b193a396, type: 3}
   - {fileID: 21300000, guid: 63c7208a3eac5e241afbdaf9594f85a0, type: 3}
+  - {fileID: 21300000, guid: 29aa665c5b288bc4a87fb9979cb4a975, type: 3}
+  - {fileID: 21300000, guid: 9e059a4de16dd224fb9207ef9f17140e, type: 3}
   ItemSprites:
-  - {fileID: 21300000, guid: 97e495a418a992049b60280b31c3c1b4, type: 3}
-  - {fileID: 21300000, guid: b917e3ca0b3388c4ba3679939fee5c14, type: 3}
+  - {fileID: 21300000, guid: e8f8dde687420b94b9ef166371c8ed9a, type: 3}
+  - {fileID: 21300000, guid: 6a9a1422180043e43bc2184146ab75a8, type: 3}
   - {fileID: 21300000, guid: feb5cca94ecbb724ea749be1158a1d99, type: 3}
 --- !u!1 &448528616
 GameObject:

@@ -114,6 +114,9 @@ public class Block : MonoBehaviour
                     isTunning = false;
                     board.currState = BoardState.ORDER;
                 }
+
+                if (crossBomb)
+                    board.UsedCrossBomb(this);
             }
         }
     }
