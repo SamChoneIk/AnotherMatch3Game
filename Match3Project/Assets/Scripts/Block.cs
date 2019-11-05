@@ -85,21 +85,17 @@ public class Block : MonoBehaviour
     {
         if (currState == BlockState.MOVE)
         {
-            if(isTunning)
-            {
-                row = prevRow;
-                column = prevColumn;
-
-                moveToPos = new Vector2(prevRow, prevColumn);
-            }
-
-            accumTime += board.blockDuration * Time.deltaTime;
+            accumTime += board.blockFallSpeed * Time.deltaTime;
 
             if (Mathf.Abs(row - transform.position.x) > 0.1f || Mathf.Abs(column - transform.position.y) > 0.1f)
-                transform.position = Vector2.MoveTowards(transform.position, moveToPos, accumTime);
+            {
+                Debug.Log(gameObject.name);
+                transform.position = Vector2.Lerp(transform.position, moveToPos, accumTime);
+            }
 
             else
             {
+                Debug.Log(gameObject.name);
                 if (board.boardIndex[row, column] != gameObject)
                     board.boardIndex[row, column] = gameObject;
 
@@ -108,12 +104,6 @@ public class Block : MonoBehaviour
                 accumTime = 0f;
 
                 currState = BlockState.WAIT;
-
-                if (isTunning)
-                {
-                    isTunning = false;
-                    board.currState = BoardState.ORDER;
-                }
             }
         }
     }
@@ -185,5 +175,15 @@ public class Block : MonoBehaviour
 
             board.currState = BoardState.WORK;
         }
+    }
+
+    public void MoveToBack()
+    {
+        row = prevRow;
+        column = prevColumn;
+
+        moveToPos = new Vector2(prevRow, prevColumn);
+
+        currState = BlockState.MOVE;
     }
 }
