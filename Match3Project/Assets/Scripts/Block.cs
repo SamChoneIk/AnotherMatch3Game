@@ -19,7 +19,7 @@ public class Block : MonoBehaviour
     public int prevRow;
     public int prevColumn;
 
-    public float accumTime = 0f;
+    public float fallSpeed = 0f;
     public float dragRegist = 2f;
 
     public bool isTunning = false;
@@ -85,23 +85,21 @@ public class Block : MonoBehaviour
     {
         if (currState == BlockState.MOVE)
         {
-            accumTime += board.blockFallSpeed * Time.deltaTime;
+            fallSpeed += Time.deltaTime * board.blockFallSpeed;
 
             if (Mathf.Abs(row - transform.position.x) > 0.1f || Mathf.Abs(column - transform.position.y) > 0.1f)
             {
-                Debug.Log(gameObject.name);
-                transform.position = Vector2.Lerp(transform.position, moveToPos, accumTime);
+                transform.position = Vector2.Lerp(transform.position, moveToPos, fallSpeed);
             }
 
             else
             {
-                Debug.Log(gameObject.name);
                 if (board.boardIndex[row, column] != gameObject)
                     board.boardIndex[row, column] = gameObject;
 
                 gameObject.name = "[" + row + " , " + column + "]";
                 transform.position = moveToPos;
-                accumTime = 0f;
+                fallSpeed = 0f;
 
                 currState = BlockState.WAIT;
             }
@@ -174,6 +172,8 @@ public class Block : MonoBehaviour
             board.selectPiece = this;
 
             board.currState = BoardState.WORK;
+
+
         }
     }
 
@@ -183,6 +183,8 @@ public class Block : MonoBehaviour
         column = prevColumn;
 
         moveToPos = new Vector2(prevRow, prevColumn);
+
+        isTunning = true;
 
         currState = BlockState.MOVE;
     }

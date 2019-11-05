@@ -168,7 +168,7 @@ MonoBehaviour:
   height: 8
   offset: 5
   waitTime: 0.32
-  blockFallSpeed: 2
+  blockFallSpeed: 1
   disabledPieces: {fileID: 721989247}
   piecePrefab: {fileID: 8935675836690888477, guid: f162842921417e94c807fe1167e223c0,
     type: 3}
@@ -206,7 +206,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &100968680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -418,7 +418,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &982070426
 MonoBehaviour:
   m_ObjectHideFlags: 0
