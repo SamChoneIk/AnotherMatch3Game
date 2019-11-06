@@ -162,7 +162,7 @@ public class BoardManager : MonoBehaviour
         {
             checkTime += Time.deltaTime;
 
-            if (checkTime > 5f)
+            if (checkTime > 3f)
             {
                 if (DeadLockCheck())
                 {
@@ -175,7 +175,10 @@ public class BoardManager : MonoBehaviour
                 else
                 {
                     // hint effect
-                    checkTime = 0;
+                    Block Piece = FindHintMatched();
+
+                   // Piece.EffectPlay()
+                    //checkTime = 0f;
                 }
             }
         }
@@ -624,6 +627,7 @@ public class BoardManager : MonoBehaviour
             piece.crossBomb = false;
             GetRowPieces(piece.column);
             GetColumnPieces(piece.row);
+            piece.EffectPlay(2);
         }
     }
 
@@ -687,28 +691,26 @@ public class BoardManager : MonoBehaviour
 
     IEnumerator MatchedPieceDisabled()
     {
+        selectPiece = null;
+
         foreach (var piece in matchedPiece)
         {
-            piece.explosionEffect.Play();
-
-            while(piece.explosionEffect.isPlaying)
-            {
-                yield return null;
-            }
-
-            piece.itemSprite.sprite = null;
-            piece.gameObject.SetActive(false);
-
             piece.AllClearPiece();
+            piece.EffectPlay(0);
+        }
 
+        yield return new WaitForSeconds(0.5f);
+
+        foreach (var piece in matchedPiece)
+        {
+            piece.SetDisabledPiece();
             disabledPiece.Add(piece);
         }
 
         matchedPiece.Clear();
         verifyPiece.Clear();
-        selectPiece = null;
 
-        yield return new WaitForSeconds(waitTime);
+        //yield return new WaitForSeconds(waitTime);
 
         StartCoroutine(FallPieces());
     }
@@ -752,6 +754,7 @@ public class BoardManager : MonoBehaviour
                 {
                     Block enabledPiece = disabledPiece[0];
 
+                    enabledPiece.transform.parent = transform;
                     enabledPiece.InitPiece(Random.Range(0, pieceSprites.Length), row, column, this);
                     enabledPiece.transform.position = new Vector2(enabledPiece.row, height + fall);
                     enabledPiece.moveToPos = new Vector2(enabledPiece.row, enabledPiece.column);
@@ -777,71 +780,6 @@ public class BoardManager : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
 
         FindMatchedPiece();
-    }
-
-    private void FallPiece()
-    {
-        for (int column = 0; column < height; ++column)
-        {
-            for (int row = 0; row < width; ++row)
-            {
-                if (boardIndex[row, column] == null)
-                {
-                    for (int i = column + 1; i < height; ++i)
-                    {
-                        if (boardIndex[row, i] != null)
-                        {
-                            Block fallPiece = GetPiece(row, i); // 빈자리의 위에 있는 피스
-
-                            fallPiece.InitPiece(fallPiece.value, fallPiece.row, column, this);
-                            fallPiece.moveToPos = new Vector2(fallPiece.row, fallPiece.column);
-                            fallPiece.name = "[" + fallPiece.row + " , " + fallPiece.column + "]";
-                            boardIndex[fallPiece.row, fallPiece.column] = fallPiece.gameObject;
-
-                            boardIndex[row, i] = null;
-
-                            fallPiece.currState = BlockState.MOVE;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        int fall = 0;
-
-        for (int row = 0; row < width; ++row)
-        {
-            for (int column = 0; column < height; ++column)
-            {
-                if (boardIndex[row, column] == null)
-                {
-                    Block enabledPiece = disabledPiece[0];
-
-                    enabledPiece.InitPiece(Random.Range(0, pieceSprites.Length), row, column, this);
-                    enabledPiece.transform.position = new Vector2(enabledPiece.row, height + fall);
-                    enabledPiece.moveToPos = new Vector2(enabledPiece.row, enabledPiece.column);
-                    enabledPiece.name = "[" + enabledPiece.row + " , " + enabledPiece.column + "]";
-                    boardIndex[enabledPiece.row, enabledPiece.column] = enabledPiece.gameObject;
-
-                    enabledPiece.gameObject.SetActive(true);
-
-                    enabledPiece.currState = BlockState.MOVE;
-                    disabledPiece.Remove(enabledPiece);
-                    ++fall;
-                }
-            }
-
-            fall = 0;
-        }
-
-        //while (!FindMovingPiece())
-        //{
-        //  }
-
-        //yield return new WaitForSeconds(waitTime);
-
-        //FindMatchedPiece();
     }
 
     public Block GetPiece(int row, int column)
@@ -979,6 +917,51 @@ public class BoardManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    private Block FindHintMatched()
+    {
+        for (int column = 0; column < height; ++column)
+        {
+            for (int row = 0; row < width; ++row)
+            {
+                if (boardIndex[row, column] != null)
+                {
+                    Block currPiece = GetPiece(row, column);
+
+                    if (currPiece != null)
+                    {
+                        if (row > 0 && row < width - 1)
+                        {
+                            if (boardIndex[row + 1, column] != null && boardIndex[row - 1, column] != null)
+                            {
+                                Block rightPiece = GetPiece(row + 1, column);
+                                Block leftPiece = GetPiece(row - 1, column);
+
+                                if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
+                                {
+                                    return currPiece;
+                                }
+                            }
+                        }
+
+                        if (column > 0 && column < height - 1)
+                        {
+                            if (boardIndex[row, column + 1] != null && boardIndex[row, column - 1] != null)
+                            {
+                                Block upPiece = GetPiece(row, column + 1);
+                                Block downPiece = GetPiece(row, column - 1);
+
+                                if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
+                                    return currPiece;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     private bool FindMovingPiece()

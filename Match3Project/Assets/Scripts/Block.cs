@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public enum BlockState
 {
@@ -35,7 +36,9 @@ public class Block : MonoBehaviour
 
     private BoardManager board;
     private SpriteRenderer pieceSprite;
-    public ParticleSystem explosionEffect;
+
+    private ParticleSystem[] effectObjects;
+    private List<ParticleSystem> pieceEffects; // 0 = PieceExplosion, 1 = ColumnExplosion, 2 = CrossBomb, 3 = RowBomb
 
     public Block target;
     public Vector2 moveToPos;
@@ -43,7 +46,18 @@ public class Block : MonoBehaviour
     private void Awake()
     {
         pieceSprite = GetComponent<SpriteRenderer>();
-        explosionEffect = GetComponentInChildren<ParticleSystem>();
+        effectObjects = GetComponentsInChildren<ParticleSystem>();
+        pieceEffects = new List<ParticleSystem>();
+
+        for (int i = 0; i < effectObjects.Length; ++i)
+        {
+            if (effectObjects[i].transform.parent == this)
+            {
+                pieceEffects.Add(effectObjects[i]);
+            }
+        }
+
+        effectObjects = null;
     }
 
     public void InitPiece(int v, int r, int c, BoardManager b)
@@ -58,39 +72,69 @@ public class Block : MonoBehaviour
         row = r;
         column = c;
 
-        explosionEffect.Play();
+        foreach(var effect in pieceEffects)
+        {
+            effect.Stop();
+        }
 
         pieceSprite.sprite = board.pieceSprites[value];
 
         currState = BlockState.WAIT;
     }
 
+    /// <summary>
+    ///         <param name="index">
+    ///         index is particle elemants.
+    ///         Effect Play Numbers [ 0 : PieceExplosion || 1 : ColumnBomb || 2 : CrossBomb || 3 : RowBomb || 4 : HintEffect ]
+    ///         </param>
+    /// </summary>
+    public void EffectPlay(int index)
+    {
+        pieceEffects[index].Play();
+    }
+
     public void AllClearPiece()
     {
         board.boardIndex[row, column] = null;
 
-        InitPiece(0, 0, 0, board);
+        value = 0;
+        row = 0;
+        column = 0;
 
         target = null;
         rowBomb = false;
         columnBomb = false;
         crossBomb = false;
 
+        pieceSprite.sprite = null;
+        itemSprite.sprite = null;
+    }
+
+    public void SetDisabledPiece()
+    {
+        foreach (var effect in pieceEffects)
+        {
+            effect.Stop();
+        }
+
         name = "DefaultPiece";
         transform.parent = board.disabledPieces.transform;
         transform.position = new Vector2(row, column);
+
+        gameObject.SetActive(false);
     }
 
     private void Update()
     {
         if (currState == BlockState.MOVE)
         {
+            if (pieceEffects[4].isPlaying)
+                pieceEffects[4].Stop();
+
             fallSpeed += Time.deltaTime * board.blockFallSpeed;
 
             if (Mathf.Abs(row - transform.position.x) > 0.1f || Mathf.Abs(column - transform.position.y) > 0.1f)
-            {
                 transform.position = Vector2.Lerp(transform.position, moveToPos, fallSpeed);
-            }
 
             else
             {
@@ -172,8 +216,6 @@ public class Block : MonoBehaviour
             board.selectPiece = this;
 
             board.currState = BoardState.WORK;
-
-
         }
     }
 
