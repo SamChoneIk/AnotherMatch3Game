@@ -35,6 +35,7 @@ public class Block : MonoBehaviour
 
     private BoardManager board;
     private SpriteRenderer pieceSprite;
+    public ParticleSystem explosionEffect;
 
     public Block target;
     public Vector2 moveToPos;
@@ -42,6 +43,7 @@ public class Block : MonoBehaviour
     private void Awake()
     {
         pieceSprite = GetComponent<SpriteRenderer>();
+        explosionEffect = GetComponentInChildren<ParticleSystem>();
     }
 
     public void InitPiece(int v, int r, int c, BoardManager b)
@@ -56,6 +58,8 @@ public class Block : MonoBehaviour
         row = r;
         column = c;
 
+        explosionEffect.Play();
+
         pieceSprite.sprite = board.pieceSprites[value];
 
         currState = BlockState.WAIT;
@@ -67,8 +71,6 @@ public class Block : MonoBehaviour
 
         InitPiece(0, 0, 0, board);
 
-        itemSprite.sprite = null;
-
         target = null;
         rowBomb = false;
         columnBomb = false;
@@ -77,8 +79,6 @@ public class Block : MonoBehaviour
         name = "DefaultPiece";
         transform.parent = board.disabledPieces.transform;
         transform.position = new Vector2(row, column);
-
-        gameObject.SetActive(false);
     }
 
     private void Update()

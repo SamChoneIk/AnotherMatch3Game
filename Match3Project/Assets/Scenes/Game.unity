@@ -170,7 +170,7 @@ MonoBehaviour:
   waitTime: 0.32
   blockFallSpeed: 1
   disabledPieces: {fileID: 721989247}
-  piecePrefab: {fileID: 8935675836690888477, guid: f162842921417e94c807fe1167e223c0,
+  piecePrefab: {fileID: 7474845117984493925, guid: f162842921417e94c807fe1167e223c0,
     type: 3}
   selectPiece: {fileID: 0}
   matchedPiece: []

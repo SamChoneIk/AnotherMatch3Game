@@ -689,7 +689,18 @@ public class BoardManager : MonoBehaviour
     {
         foreach (var piece in matchedPiece)
         {
+            piece.explosionEffect.Play();
+
+            while(piece.explosionEffect.isPlaying)
+            {
+                yield return null;
+            }
+
+            piece.itemSprite.sprite = null;
+            piece.gameObject.SetActive(false);
+
             piece.AllClearPiece();
+
             disabledPiece.Add(piece);
         }
 
