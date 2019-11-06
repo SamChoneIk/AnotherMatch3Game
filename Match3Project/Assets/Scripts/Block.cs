@@ -36,9 +36,13 @@ public class Block : MonoBehaviour
 
     private BoardManager board;
     private SpriteRenderer pieceSprite;
+    public AudioSource pieceASource;
+    [SerializeField]
+    private List<ParticleSystem> pieceEffects; // 0 = PieceExplosion, 1 = ColumnExplosion, 2 = CrossBomb, 3 = RowBomb, 4 = HintEffect
 
     private ParticleSystem[] effectObjects;
-    private List<ParticleSystem> pieceEffects; // 0 = PieceExplosion, 1 = ColumnExplosion, 2 = CrossBomb, 3 = RowBomb
+    [SerializeField]
+    private AudioClip[] effectClip; // 0 = swap, 1 = tunning
 
     public Block target;
     public Vector2 moveToPos;
@@ -46,15 +50,21 @@ public class Block : MonoBehaviour
     private void Awake()
     {
         pieceSprite = GetComponent<SpriteRenderer>();
-        effectObjects = GetComponentsInChildren<ParticleSystem>();
+        pieceASource = GetComponent<AudioSource>();
+        AddPieceEffect();
+
+        effectClip = Resources.LoadAll<AudioClip>("PieceClip");
+    }
+
+    private void AddPieceEffect()
+    {
         pieceEffects = new List<ParticleSystem>();
 
+        effectObjects = GetComponentsInChildren<ParticleSystem>();
         for (int i = 0; i < effectObjects.Length; ++i)
         {
-            if (effectObjects[i].transform.parent == this)
-            {
+            if (effectObjects[i].transform.parent == transform)
                 pieceEffects.Add(effectObjects[i]);
-            }
         }
 
         effectObjects = null;
@@ -82,55 +92,10 @@ public class Block : MonoBehaviour
         currState = BlockState.WAIT;
     }
 
-    /// <summary>
-    ///         <param name="index">
-    ///         index is particle elemants.
-    ///         Effect Play Numbers [ 0 : PieceExplosion || 1 : ColumnBomb || 2 : CrossBomb || 3 : RowBomb || 4 : HintEffect ]
-    ///         </param>
-    /// </summary>
-    public void EffectPlay(int index)
-    {
-        pieceEffects[index].Play();
-    }
-
-    public void AllClearPiece()
-    {
-        board.boardIndex[row, column] = null;
-
-        value = 0;
-        row = 0;
-        column = 0;
-
-        target = null;
-        rowBomb = false;
-        columnBomb = false;
-        crossBomb = false;
-
-        pieceSprite.sprite = null;
-        itemSprite.sprite = null;
-    }
-
-    public void SetDisabledPiece()
-    {
-        foreach (var effect in pieceEffects)
-        {
-            effect.Stop();
-        }
-
-        name = "DefaultPiece";
-        transform.parent = board.disabledPieces.transform;
-        transform.position = new Vector2(row, column);
-
-        gameObject.SetActive(false);
-    }
-
     private void Update()
     {
         if (currState == BlockState.MOVE)
         {
-            if (pieceEffects[4].isPlaying)
-                pieceEffects[4].Stop();
-
             fallSpeed += Time.deltaTime * board.blockFallSpeed;
 
             if (Mathf.Abs(row - transform.position.x) > 0.1f || Mathf.Abs(column - transform.position.y) > 0.1f)
@@ -154,6 +119,7 @@ public class Block : MonoBehaviour
     {
         if (board.currState == BoardState.ORDER && currState == BlockState.WAIT)
         {
+            PieceEffectStop(4);
             board.selectPiece = this;
             startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
@@ -215,6 +181,8 @@ public class Block : MonoBehaviour
 
             board.selectPiece = this;
 
+            PieceClipPlay(1);
+
             board.currState = BoardState.WORK;
         }
     }
@@ -228,6 +196,73 @@ public class Block : MonoBehaviour
 
         isTunning = true;
 
+        if (board.selectPiece == this)
+        {
+            PieceClipPlay(2);
+        }
+
         currState = BlockState.MOVE;
+    }
+
+    /// <summary>
+    ///         <param name="index">
+    ///         index is particle elemants.
+    ///         Effect Play Numbers [ 0 : PieceExplosion || 1 : ColumnBomb || 2 : CrossBomb || 3 : RowBomb || 4 : HintEffect ]
+    ///         </param>
+    /// </summary>
+    public void PieceEffectPlay(int index)
+    {
+        pieceEffects[index].Play();
+    }
+
+    /// <summary>
+    ///         <param name="index">
+    ///         index is particle elemants.
+    ///         Effect Stop Numbers [ 0 : PieceExplosion || 1 : ColumnBomb || 2 : CrossBomb || 3 : RowBomb || 4 : HintEffect ]
+    ///         </param>
+    /// </summary>
+    public void PieceEffectStop(int index)
+    {
+        pieceEffects[index].Stop();
+    }
+
+    public void PieceClipPlay(int index)
+    {
+        pieceASource.Stop();
+        pieceASource.clip = effectClip[index];
+        pieceASource.Play();
+    }
+
+    public void AllClearPiece()
+    {
+        board.boardIndex[row, column] = null;
+
+        value = 0;
+        row = 0;
+        column = 0;
+
+        target = null;
+        rowBomb = false;
+        columnBomb = false;
+        crossBomb = false;
+
+        pieceSprite.sprite = null;
+        itemSprite.sprite = null;
+    }
+
+    public void SetDisabledPiece()
+    {
+        foreach (var effect in pieceEffects)
+        {
+            effect.Stop();
+        }
+
+        pieceASource.clip = null;
+
+        name = "DefaultPiece";
+        transform.parent = board.disabledPieces.transform;
+        transform.position = new Vector2(row, column);
+
+        gameObject.SetActive(false);
     }
 }

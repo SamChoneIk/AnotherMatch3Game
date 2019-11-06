@@ -24,7 +24,6 @@ public class BoardManager : MonoBehaviour
 
     [Header("Piece Parts")]
     public GameObject piecePrefab;
-
     public Block selectPiece;
 
     public List<Block> matchedPiece;
@@ -174,11 +173,15 @@ public class BoardManager : MonoBehaviour
 
                 else
                 {
-                    // hint effect
-                    Block Piece = FindHintMatched();
 
-                   // Piece.EffectPlay()
-                    //checkTime = 0f;
+                    Vector2 dir;
+                    // hint effect
+                    Block piece = FindHintMatched(out dir);
+                    Block adjacency = GetPiece(piece.row + (int)dir.x, piece.column + (int)dir.y);
+
+                    piece.PieceEffectPlay(4);
+                    adjacency.PieceEffectPlay(4);
+                    checkTime = 0f;
                 }
             }
         }
@@ -627,7 +630,7 @@ public class BoardManager : MonoBehaviour
             piece.crossBomb = false;
             GetRowPieces(piece.column);
             GetColumnPieces(piece.row);
-            piece.EffectPlay(2);
+            piece.PieceEffectPlay(2);
         }
     }
 
@@ -696,8 +699,10 @@ public class BoardManager : MonoBehaviour
         foreach (var piece in matchedPiece)
         {
             piece.AllClearPiece();
-            piece.EffectPlay(0);
+            piece.PieceEffectPlay(0);
         }
+        
+        matchedPiece[Random.Range(0, matchedPiece.Count)].PieceClipPlay(0);
 
         yield return new WaitForSeconds(0.5f);
 
@@ -919,48 +924,42 @@ public class BoardManager : MonoBehaviour
         return false;
     }
 
-    private Block FindHintMatched()
+    private Block FindHintMatched(out Vector2 dir)
     {
         for (int column = 0; column < height; ++column)
         {
             for (int row = 0; row < width; ++row)
             {
-                if (boardIndex[row, column] != null)
+                if (row < width - 1)
                 {
-                    Block currPiece = GetPiece(row, column);
+                    SwapBoardIndex(row, column, Vector2.right);
 
-                    if (currPiece != null)
+                    if (FindMatched())
                     {
-                        if (row > 0 && row < width - 1)
-                        {
-                            if (boardIndex[row + 1, column] != null && boardIndex[row - 1, column] != null)
-                            {
-                                Block rightPiece = GetPiece(row + 1, column);
-                                Block leftPiece = GetPiece(row - 1, column);
-
-                                if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
-                                {
-                                    return currPiece;
-                                }
-                            }
-                        }
-
-                        if (column > 0 && column < height - 1)
-                        {
-                            if (boardIndex[row, column + 1] != null && boardIndex[row, column - 1] != null)
-                            {
-                                Block upPiece = GetPiece(row, column + 1);
-                                Block downPiece = GetPiece(row, column - 1);
-
-                                if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
-                                    return currPiece;
-                            }
-                        }
+                        SwapBoardIndex(row, column, Vector2.right);
+                        dir = Vector2.right;
+                        return GetPiece(row, column);
                     }
+
+                    SwapBoardIndex(row, column, Vector2.right);
+                }
+
+                if (column < height - 1)
+                {
+                    SwapBoardIndex(row, column, Vector2.up);
+
+                    if (FindMatched())
+                    {
+                        SwapBoardIndex(row, column, Vector2.up);
+                        dir = Vector2.up;
+                        return GetPiece(row, column);
+                    }
+
+                    SwapBoardIndex(row, column, Vector2.up);
                 }
             }
         }
-
+        dir = Vector2.zero;
         return null;
     }
 
