@@ -723,7 +723,7 @@ public class BoardManager : MonoBehaviour
         {
             piece.SetDisabledPiece();
             disabledPiece.Add(piece);
-            ScoreManager.scoreMgr.ScoreRaise(10);
+            StageMgr.scoreMgr.IncreseScore(30);
         }
 
         matchedPiece.Clear();
