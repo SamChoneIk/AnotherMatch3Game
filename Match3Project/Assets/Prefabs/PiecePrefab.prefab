@@ -69,7 +69,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_Sprite: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -112,9 +112,9 @@ Transform:
   m_Children:
   - {fileID: 7652443699193145162}
   - {fileID: 7333360767127523368}
-  - {fileID: 614610428659221322}
+  - {fileID: 2659301313670310804}
   - {fileID: 3330522752010352711}
-  - {fileID: 7499480669264367129}
+  - {fileID: 2854218209371446924}
   - {fileID: 7770827623786692857}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -314,7 +314,9 @@ MonoBehaviour:
   columnBomb: 0
   crossBomb: 0
   itemSprite: {fileID: 7041771212347651925}
+  pieceASource: {fileID: 0}
   pieceEffects: []
+  effectClip: []
   target: {fileID: 0}
   moveToPos: {x: 0, y: 0}
 --- !u!1001 &2389262573946455996
@@ -609,11 +611,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: RowBomb
       objectReference: {fileID: 0}
+    - target: {fileID: 5762264938048997908, guid: d002255d2922db646b7e6030f1e1ccdf,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d002255d2922db646b7e6030f1e1ccdf, type: 3}
---- !u!4 &7499480669264367129 stripped
+--- !u!4 &2854218209371446924 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 33799914957396609, guid: d002255d2922db646b7e6030f1e1ccdf,
+  m_CorrespondingSourceObject: {fileID: 5762264938048997908, guid: d002255d2922db646b7e6030f1e1ccdf,
     type: 3}
   m_PrefabInstance: {fileID: 7524271673408754840}
   m_PrefabAsset: {fileID: 0}
@@ -684,11 +691,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: ColumnBomb
       objectReference: {fileID: 0}
+    - target: {fileID: 5973266973329728281, guid: 619c1f580bcaa914394a76c7246a4c94,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 619c1f580bcaa914394a76c7246a4c94, type: 3}
---- !u!4 &614610428659221322 stripped
+--- !u!4 &2659301313670310804 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 9116827380790561735, guid: 619c1f580bcaa914394a76c7246a4c94,
+  m_CorrespondingSourceObject: {fileID: 5973266973329728281, guid: 619c1f580bcaa914394a76c7246a4c94,
     type: 3}
   m_PrefabInstance: {fileID: 8503626084240607373}
   m_PrefabAsset: {fileID: 0}

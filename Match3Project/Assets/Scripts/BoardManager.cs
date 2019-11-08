@@ -594,32 +594,38 @@ public class BoardManager : MonoBehaviour
         {
             piece1.rowBomb = false;
             GetRowPieces(piece1.column);
+            piece1.PieceEffectPlay(3);
         }
         if (piece2.rowBomb)
         {
             piece2.rowBomb = false;
             GetRowPieces(piece2.column);
+            piece2.PieceEffectPlay(3);
         }
         if (piece3.rowBomb)
         {
             piece3.rowBomb = false;
             GetRowPieces(piece3.column);
+            piece3.PieceEffectPlay(3);
         }
 
         if (piece1.columnBomb)
         {
-            piece1.rowBomb = false;
+            piece1.columnBomb = false;
             GetColumnPieces(piece1.row);
+            piece1.PieceEffectPlay(1);
         }
         if (piece2.columnBomb)
         {
-            piece2.rowBomb = false;
+            piece2.columnBomb = false;
             GetColumnPieces(piece2.row);
+            piece2.PieceEffectPlay(1);
         }
         if (piece3.columnBomb)
         {
-            piece3.rowBomb = false;
+            piece3.columnBomb = false;
             GetColumnPieces(piece3.row);
+            piece3.PieceEffectPlay(1);
         }
     }
 
@@ -627,10 +633,10 @@ public class BoardManager : MonoBehaviour
     {
         if (piece.crossBomb)
         {
+            piece.PieceEffectPlay(2);
             piece.crossBomb = false;
             GetRowPieces(piece.column);
             GetColumnPieces(piece.row);
-            piece.PieceEffectPlay(2);
         }
     }
 
@@ -698,11 +704,18 @@ public class BoardManager : MonoBehaviour
 
         foreach (var piece in matchedPiece)
         {
+            if (piece.pieceEffects[1].isPlaying || piece.pieceEffects[2].isPlaying || piece.pieceEffects[3].isPlaying)
+            {
+                piece.AllClearPiece();
+
+                continue;
+            }
+
             piece.AllClearPiece();
             piece.PieceEffectPlay(0);
         }
         
-        matchedPiece[Random.Range(0, matchedPiece.Count)].PieceClipPlay(0);
+        matchedPiece[Random.Range(0, matchedPiece.Count)].PieceClipPlay(1);
 
         yield return new WaitForSeconds(0.5f);
 
@@ -710,6 +723,7 @@ public class BoardManager : MonoBehaviour
         {
             piece.SetDisabledPiece();
             disabledPiece.Add(piece);
+            ScoreManager.scoreMgr.ScoreRaise(10);
         }
 
         matchedPiece.Clear();
@@ -959,6 +973,7 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
+
         dir = Vector2.zero;
         return null;
     }
@@ -1032,6 +1047,21 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    public void AllStopEffect()
+    {
+        for (int column = 0; column < height; ++column)
+        {
+            for (int row = 0; row < width; ++row)
+            {
+                Block piece = GetPiece(row, column);
+
+                foreach(var e in piece.pieceEffects)
+                {
+                    e.Stop();
+                }
+            }
+        }
+    }
 
     private int isCenterPiece(Block piece)
     {

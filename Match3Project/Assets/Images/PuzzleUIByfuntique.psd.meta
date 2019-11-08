@@ -1,0 +1,1168 @@
+fileFormatVersion: 2
+guid: b912558c071e5f74390f3a1be271e8dc
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5757905255412231990
+    second: PuzzleUIByfuntique_0
+  - first:
+      213: 7106457049224118040
+    second: PuzzleUIByfuntique_1
+  - first:
+      213: -5761679647753915107
+    second: PuzzleUIByfuntique_2
+  - first:
+      213: 2707742428672861972
+    second: PuzzleUIByfuntique_3
+  - first:
+      213: 9137414553600142724
+    second: PuzzleUIByfuntique_4
+  - first:
+      213: -6988061333922194589
+    second: PuzzleUIByfuntique_5
+  - first:
+      213: -6728313285987616414
+    second: PuzzleUIByfuntique_6
+  - first:
+      213: -5320778178218478044
+    second: PuzzleUIByfuntique_7
+  - first:
+      213: -4070552855583261919
+    second: PuzzleUIByfuntique_8
+  - first:
+      213: -2491946676371565966
+    second: PuzzleUIByfuntique_9
+  - first:
+      213: 4475317171577373901
+    second: PuzzleUIByfuntique_10
+  - first:
+      213: -5851464474709065386
+    second: PuzzleUIByfuntique_11
+  - first:
+      213: 5124263437684427672
+    second: PuzzleUIByfuntique_12
+  - first:
+      213: 2309594257789061037
+    second: PuzzleUIByfuntique_13
+  - first:
+      213: 6744888771069315685
+    second: PuzzleUIByfuntique_14
+  - first:
+      213: 5975863455074011131
+    second: PuzzleUIByfuntique_15
+  - first:
+      213: -8033389064453516174
+    second: PuzzleUIByfuntique_16
+  - first:
+      213: -8740931575890936847
+    second: PuzzleUIByfuntique_17
+  - first:
+      213: 6234770426497003168
+    second: PuzzleUIByfuntique_18
+  - first:
+      213: -2347786580707140380
+    second: PuzzleUIByfuntique_19
+  - first:
+      213: -5422174770577432733
+    second: PuzzleUIByfuntique_20
+  - first:
+      213: -7864053448581844642
+    second: PuzzleUIByfuntique_21
+  - first:
+      213: -7364220283700735931
+    second: PuzzleUIByfuntique_22
+  - first:
+      213: -4572109804461445346
+    second: PuzzleUIByfuntique_23
+  - first:
+      213: -7626102718997557754
+    second: PuzzleUIByfuntique_24
+  - first:
+      213: 5787391268812738067
+    second: PuzzleUIByfuntique_25
+  - first:
+      213: -6711792067823027258
+    second: PuzzleUIByfuntique_26
+  - first:
+      213: -3659840490290161122
+    second: PuzzleUIByfuntique_27
+  - first:
+      213: 4763935524729134546
+    second: PuzzleUIByfuntique_28
+  - first:
+      213: 4266261950646856440
+    second: PuzzleUIByfuntique_29
+  - first:
+      213: -3514796697114402676
+    second: PuzzleUIByfuntique_30
+  - first:
+      213: -4736059934794991577
+    second: PuzzleUIByfuntique_31
+  - first:
+      213: 3789069507720308014
+    second: PuzzleUIByfuntique_32
+  - first:
+      213: 5157420227975960724
+    second: PuzzleUIByfuntique_33
+  - first:
+      213: -7502708046730206308
+    second: PuzzleUIByfuntique_34
+  - first:
+      213: 8245756962928037166
+    second: PuzzleUIByfuntique_35
+  - first:
+      213: -2432231609786843262
+    second: PuzzleUIByfuntique_36
+  - first:
+      213: 4284232628666799019
+    second: PuzzleUIByfuntique_37
+  - first:
+      213: -1212055519036150665
+    second: PuzzleUIByfuntique_38
+  - first:
+      213: 3304621266521752298
+    second: PuzzleUIByfuntique_39
+  - first:
+      213: 2732229236149362388
+    second: PuzzleUIByfuntique_40
+  - first:
+      213: 4771652915607407444
+    second: PuzzleUIByfuntique_41
+  - first:
+      213: -4322764721575395028
+    second: PuzzleUIByfuntique_42
+  - first:
+      213: -9186451849585931361
+    second: PuzzleUIByfuntique_43
+  externalObjects: {}
+  serializedVersion: 10
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - serializedVersion: 2
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_0
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 5558
+        width: 906
+        height: 1307
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 100, y: 110, z: 100, w: 85}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c2217782ca5c35c4c886140562cf2900
+      internalID: 5757905255412231990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_1
+      rect:
+        serializedVersion: 2
+        x: 1406
+        y: 6646
+        width: 94
+        height: 95
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 95e78eabb290e33439c4992281bc5de1
+      internalID: 7106457049224118040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_2
+      rect:
+        serializedVersion: 2
+        x: 1247
+        y: 6282
+        width: 483
+        height: 171
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a3730e3a3848ab40bf85217dd944e5d
+      internalID: -5761679647753915107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_3
+      rect:
+        serializedVersion: 2
+        x: 1247
+        y: 6065
+        width: 483
+        height: 172
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: adda6fd5507d29043b83c6048feaa3d2
+      internalID: 2707742428672861972
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_4
+      rect:
+        serializedVersion: 2
+        x: 1247
+        y: 5841
+        width: 483
+        height: 172
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bc6c8e20f6dc4ac43ab9c3bf6fd1ddf8
+      internalID: 9137414553600142724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_5
+      rect:
+        serializedVersion: 2
+        x: 1247
+        y: 5618
+        width: 483
+        height: 169
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 10abffa99bc496f428f0d47f8436b3d0
+      internalID: -6988061333922194589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_6
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 5240
+        width: 571
+        height: 248
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6d1af64ff77c90f49831fad2aaee9bb2
+      internalID: -6728313285987616414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_7
+      rect:
+        serializedVersion: 2
+        x: 1243
+        y: 5371
+        width: 490
+        height: 189
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8a6cf04e9d8130a458dcaaa9a3c1e25e
+      internalID: -5320778178218478044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_8
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 4940
+        width: 637
+        height: 281
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45c334f69d8668d4da84f5d1c00f8550
+      internalID: -4070552855583261919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_9
+      rect:
+        serializedVersion: 2
+        x: 1243
+        y: 5155
+        width: 490
+        height: 189
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30f1bf6de7064b04487c32ae97ea4eac
+      internalID: -2491946676371565966
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_10
+      rect:
+        serializedVersion: 2
+        x: 1243
+        y: 4929
+        width: 490
+        height: 189
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2305580b6dc54924f9f79cfca7650ba9
+      internalID: 4475317171577373901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_11
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 4601
+        width: 595
+        height: 278
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 979452db994dcda42a2f7aed29f5d620
+      internalID: -5851464474709065386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_12
+      rect:
+        serializedVersion: 2
+        x: 1243
+        y: 4705
+        width: 490
+        height: 189
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 762893c5b70ba844b8cee3ea866d24ee
+      internalID: 5124263437684427672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_13
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 4284
+        width: 551
+        height: 255
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 333cad20591c89b46a4bbe6276e0c297
+      internalID: 2309594257789061037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_14
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 3667
+        width: 421
+        height: 428
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 56eede10759b5694f94b3743c2a7ac3b
+      internalID: 6744888771069315685
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_15
+      rect:
+        serializedVersion: 2
+        x: 673
+        y: 3661
+        width: 423
+        height: 427
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43c5b691c7718ea4b98c0dc4d5946487
+      internalID: 5975863455074011131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_16
+      rect:
+        serializedVersion: 2
+        x: 1243
+        y: 3677
+        width: 409
+        height: 416
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad41d663802ba5b4abbfff299cd07176
+      internalID: -8033389064453516174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_17
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 3268
+        width: 166
+        height: 169
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34ea22dc1fac85e48a4c3e5817ba1b38
+      internalID: -8740931575890936847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_18
+      rect:
+        serializedVersion: 2
+        x: 569
+        y: 3268
+        width: 166
+        height: 169
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cf5c5ca944b596c40a730cac5b0135ca
+      internalID: 6234770426497003168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_19
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 3268
+        width: 165
+        height: 169
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c84015579564a3f42984c6d7b8083f01
+      internalID: -2347786580707140380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_20
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 3268
+        width: 167
+        height: 169
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a1fb9f923f780645bda4c9c476dcb75
+      internalID: -5422174770577432733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_21
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 3268
+        width: 168
+        height: 169
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de6264c42445e694a8567fa9f5cde604
+      internalID: -7864053448581844642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_22
+      rect:
+        serializedVersion: 2
+        x: 1304
+        y: 3268
+        width: 167
+        height: 169
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6a9362d437e8634597889be440ef8c4
+      internalID: -7364220283700735931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_23
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 3064
+        width: 166
+        height: 170
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f3f04677096dfca41bdf68558b215a9e
+      internalID: -4572109804461445346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_24
+      rect:
+        serializedVersion: 2
+        x: 574
+        y: 3064
+        width: 165
+        height: 170
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba5ccb1aa363c5f40a77b5d4acaa6b62
+      internalID: -7626102718997557754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_25
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 3064
+        width: 165
+        height: 170
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c7dcda09b5c46dc4d99e8b9cfbb2fd7f
+      internalID: 5787391268812738067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_26
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 3064
+        width: 166
+        height: 170
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fbaba220fb0066a4192091680258c015
+      internalID: -6711792067823027258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_27
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 3059
+        width: 168
+        height: 172
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c4bcb05d2e8f7654c83e6550152b9c4f
+      internalID: -3659840490290161122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_28
+      rect:
+        serializedVersion: 2
+        x: 1303
+        y: 3059
+        width: 167
+        height: 172
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9660344e285f2e1499065bf6c5d35def
+      internalID: 4763935524729134546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_29
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 2863
+        width: 619
+        height: 172
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0a4c9b1d734190b429aece2b5bb1a2d6
+      internalID: 4266261950646856440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_30
+      rect:
+        serializedVersion: 2
+        x: 1155
+        y: 2888
+        width: 119
+        height: 120
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b6d57ceb7862404da86f53bb0a8babb
+      internalID: -3514796697114402676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_31
+      rect:
+        serializedVersion: 2
+        x: 374
+        y: 2643
+        width: 168
+        height: 169
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ec9c9bab809eb740870e21156a81fb2
+      internalID: -4736059934794991577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_32
+      rect:
+        serializedVersion: 2
+        x: 569
+        y: 2643
+        width: 166
+        height: 169
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 99b9ca06db5e7904d91d9a7aa14fa39d
+      internalID: 3789069507720308014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_33
+      rect:
+        serializedVersion: 2
+        x: 767
+        y: 2643
+        width: 166
+        height: 169
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1bcb923fecc4ab841afa6ff4f48502f1
+      internalID: 5157420227975960724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_34
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 2217
+        width: 514
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9f34b855a7164424187987f0d94be5d4
+      internalID: -7502708046730206308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_35
+      rect:
+        serializedVersion: 2
+        x: 739
+        y: 2294
+        width: 210
+        height: 206
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2bce74b89da108f438848628c8edd006
+      internalID: 8245756962928037166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_36
+      rect:
+        serializedVersion: 2
+        x: 1062
+        y: 2444
+        width: 118
+        height: 117
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40d32143a3acf2b4aa3a81b93b2c6d1d
+      internalID: -2432231609786843262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_37
+      rect:
+        serializedVersion: 2
+        x: 1037
+        y: 2355
+        width: 676
+        height: 49
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e5d83f03914144468e97d37c076bf7a
+      internalID: 4284232628666799019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_38
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1784
+        width: 1197
+        height: 246
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be772b49772443748b759581f1bfbb29
+      internalID: -1212055519036150665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_39
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 1125
+        width: 445
+        height: 429
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0eed74c6766557b43b18b3c807cf6e4b
+      internalID: 3304621266521752298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_40
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 612
+        width: 266
+        height: 280
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e0cbcb246fe6ac4dbad7b9ccd1ed95a
+      internalID: 2732229236149362388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_41
+      rect:
+        serializedVersion: 2
+        x: 792
+        y: 594
+        width: 272
+        height: 248
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3fc49a1bc6c48d048a576aaa5f6b97a7
+      internalID: 4771652915607407444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_42
+      rect:
+        serializedVersion: 2
+        x: 1455
+        y: 607
+        width: 182
+        height: 277
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86466ce737231fc429bc05468e8d83bb
+      internalID: -4322764721575395028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PuzzleUIByfuntique_43
+      rect:
+        serializedVersion: 2
+        x: 645
+        y: 129
+        width: 263
+        height: 254
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e6b430ffc3a6fac46b805e98b8aa7b7e
+      internalID: -9186451849585931361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 673818f010ee0434ea3169781819a93f
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

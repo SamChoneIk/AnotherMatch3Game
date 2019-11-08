@@ -38,11 +38,11 @@ public class Block : MonoBehaviour
     private SpriteRenderer pieceSprite;
     public AudioSource pieceASource;
     [SerializeField]
-    private List<ParticleSystem> pieceEffects; // 0 = PieceExplosion, 1 = ColumnExplosion, 2 = CrossBomb, 3 = RowBomb, 4 = HintEffect
+    public List<ParticleSystem> pieceEffects; // 0 = PieceExplosion, 1 = ColumnExplosion, 2 = CrossBomb, 3 = RowBomb, 4 = HintEffect
 
     private ParticleSystem[] effectObjects;
     [SerializeField]
-    private AudioClip[] effectClip; // 0 = swap, 1 = tunning
+    private AudioClip[] effectClip; // 0 = ItemSwipe, 1 = Matched, 2 = swap, 3 = tunning
 
     public Block target;
     public Vector2 moveToPos;
@@ -51,12 +51,11 @@ public class Block : MonoBehaviour
     {
         pieceSprite = GetComponent<SpriteRenderer>();
         pieceASource = GetComponent<AudioSource>();
-        AddPieceEffect();
 
-        effectClip = Resources.LoadAll<AudioClip>("PieceClip");
+        AddAllPieceEffect();
     }
 
-    private void AddPieceEffect()
+    private void AddAllPieceEffect()
     {
         pieceEffects = new List<ParticleSystem>();
 
@@ -68,6 +67,8 @@ public class Block : MonoBehaviour
         }
 
         effectObjects = null;
+
+        effectClip = Resources.LoadAll<AudioClip>("PieceClip");
     }
 
     public void InitPiece(int v, int r, int c, BoardManager b)
@@ -96,6 +97,8 @@ public class Block : MonoBehaviour
     {
         if (currState == BlockState.MOVE)
         {
+            board.AllStopEffect();
+
             fallSpeed += Time.deltaTime * board.blockFallSpeed;
 
             if (Mathf.Abs(row - transform.position.x) > 0.1f || Mathf.Abs(column - transform.position.y) > 0.1f)
@@ -119,7 +122,6 @@ public class Block : MonoBehaviour
     {
         if (board.currState == BoardState.ORDER && currState == BlockState.WAIT)
         {
-            PieceEffectStop(4);
             board.selectPiece = this;
             startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
@@ -181,7 +183,7 @@ public class Block : MonoBehaviour
 
             board.selectPiece = this;
 
-            PieceClipPlay(1);
+            PieceClipPlay(2);
 
             board.currState = BoardState.WORK;
         }
@@ -198,7 +200,7 @@ public class Block : MonoBehaviour
 
         if (board.selectPiece == this)
         {
-            PieceClipPlay(2);
+            PieceClipPlay(3);
         }
 
         currState = BlockState.MOVE;
@@ -212,20 +214,16 @@ public class Block : MonoBehaviour
     /// </summary>
     public void PieceEffectPlay(int index)
     {
+        pieceEffects[index].Stop();
         pieceEffects[index].Play();
     }
 
     /// <summary>
     ///         <param name="index">
-    ///         index is particle elemants.
-    ///         Effect Stop Numbers [ 0 : PieceExplosion || 1 : ColumnBomb || 2 : CrossBomb || 3 : RowBomb || 4 : HintEffect ]
+    ///         index is AudioClip elemants.
+    ///         Effect Stop Numbers [ 0 : ItemSwipe || 1 : Matched || 2 : swap || 3 : tunning ]
     ///         </param>
     /// </summary>
-    public void PieceEffectStop(int index)
-    {
-        pieceEffects[index].Stop();
-    }
-
     public void PieceClipPlay(int index)
     {
         pieceASource.Stop();
