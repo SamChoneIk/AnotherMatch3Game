@@ -24,12 +24,12 @@ public class BoardManager : MonoBehaviour
 
     [Header("Piece Parts")]
     public GameObject piecePrefab;
-    public Block selectPiece;
+    public Piece selectPiece;
 
-    public List<Block> matchedPiece;
-    public List<Block> disabledPiece;
-    public List<Block> verifyPiece;
-    public List<Block> itemList; // debug
+    public List<Piece> matchedPiece;
+    public List<Piece> disabledPiece;
+    public List<Piece> verifyPiece;
+    public List<Piece> itemList; // debug
 
     public Sprite[] pieceSprites;
     public Sprite[] ItemSprites;
@@ -40,10 +40,10 @@ public class BoardManager : MonoBehaviour
     {
         boardIndex = new GameObject[width, height];
 
-        matchedPiece = new List<Block>();
-        disabledPiece = new List<Block>();
-        verifyPiece = new List<Block>();
-        itemList = new List<Block>();
+        matchedPiece = new List<Piece>();
+        disabledPiece = new List<Piece>();
+        verifyPiece = new List<Piece>();
+        itemList = new List<Piece>();
 
         StartCoroutine(CreateBoard());
     }
@@ -173,11 +173,10 @@ public class BoardManager : MonoBehaviour
 
                 else
                 {
-
                     Vector2 dir;
                     // hint effect
-                    Block piece = FindHintMatched(out dir);
-                    Block adjacency = GetPiece(piece.row + (int)dir.x, piece.column + (int)dir.y);
+                    Piece piece = FindHintMatched(out dir);
+                    Piece adjacency = GetPiece(piece.row + (int)dir.x, piece.column + (int)dir.y);
 
                     piece.PieceEffectPlay(4);
                     adjacency.PieceEffectPlay(4);
@@ -198,7 +197,7 @@ public class BoardManager : MonoBehaviour
                 int value = Random.Range(0, pieceSprites.Length);
 
                 GameObject pieceGo = Instantiate(piecePrefab, new Vector2(row, column + offset), Quaternion.identity);
-                Block piece = pieceGo.GetComponent<Block>();
+                Piece piece = pieceGo.GetComponent<Piece>();
                 piece.InitPiece(value, row, column, this);
 
                 pieceGo.transform.parent = transform;
@@ -222,7 +221,7 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < Mathf.RoundToInt(height * width / 2); ++i)
         {
             GameObject pieceGo = Instantiate(piecePrefab, Vector2.zero, Quaternion.identity);
-            Block piece = pieceGo.GetComponent<Block>();
+            Piece piece = pieceGo.GetComponent<Piece>();
 
             piece.InitPiece(0, 0, 0, this);
 
@@ -251,7 +250,7 @@ public class BoardManager : MonoBehaviour
             {
                 if (boardIndex[row, column] != null)
                 {
-                    Block currPiece = GetPiece(row, column);
+                    Piece currPiece = GetPiece(row, column);
 
                     if (currPiece != null)
                     {
@@ -259,8 +258,8 @@ public class BoardManager : MonoBehaviour
                         {
                             if (boardIndex[row + 1, column] != null && boardIndex[row - 1, column] != null)
                             {
-                                Block rightPiece = GetPiece(row + 1, column);
-                                Block leftPiece = GetPiece(row - 1, column);
+                                Piece rightPiece = GetPiece(row + 1, column);
+                                Piece leftPiece = GetPiece(row - 1, column);
 
                                 if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
                                 {
@@ -282,8 +281,8 @@ public class BoardManager : MonoBehaviour
                         {
                             if (boardIndex[row, column + 1] != null && boardIndex[row, column - 1] != null)
                             {
-                                Block upPiece = GetPiece(row, column + 1);
-                                Block downPiece = GetPiece(row, column - 1);
+                                Piece upPiece = GetPiece(row, column + 1);
+                                Piece downPiece = GetPiece(row, column - 1);
 
                                 if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
                                 {
@@ -340,7 +339,7 @@ public class BoardManager : MonoBehaviour
 
                 if (rows >= 2 && cols >= 2)
                 {
-                    Block bombPiece = matchedPiece[i];
+                    Piece bombPiece = matchedPiece[i];
 
                     if (selectPiece != null)
                     {
@@ -390,7 +389,7 @@ public class BoardManager : MonoBehaviour
                 if (matchedPiece[i].row + r > width - 1)
                     break;
 
-                Block check = GetPiece(matchedPiece[i].row + r, matchedPiece[i].column);
+                Piece check = GetPiece(matchedPiece[i].row + r, matchedPiece[i].column);
 
                 if (matchedPiece.Contains(check) && matchedPiece[i].value == check.value)
                 {
@@ -404,7 +403,7 @@ public class BoardManager : MonoBehaviour
 
             if (rows >= 3)
             {
-                Block bombPiece = matchedPiece[i];
+                Piece bombPiece = matchedPiece[i];
 
                 if(selectPiece != null)
                 {
@@ -452,7 +451,7 @@ public class BoardManager : MonoBehaviour
                 if (matchedPiece[i].column + c > height - 1)
                     break;
 
-                Block check = GetPiece(matchedPiece[i].row, matchedPiece[i].column + c);
+                Piece check = GetPiece(matchedPiece[i].row, matchedPiece[i].column + c);
 
                 if (matchedPiece.Contains(check) && matchedPiece[i].value == check.value)
                 {
@@ -466,7 +465,7 @@ public class BoardManager : MonoBehaviour
 
             if (cols >= 3)
             {
-                Block bombPiece = matchedPiece[i];
+                Piece bombPiece = matchedPiece[i];
 
                 if (selectPiece != null)
                 {
@@ -504,7 +503,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void FindDirectionMatchedPiece(Block piece, ref int rows, ref int cols)
+    private void FindDirectionMatchedPiece(Piece piece, ref int rows, ref int cols)
     {
         Vector2[] direction =
         {
@@ -522,7 +521,7 @@ public class BoardManager : MonoBehaviour
                     piece.row + ((int)dir.x * i) < 0 || piece.column + ((int)dir.y * i) < 0)
                     break;
 
-                Block check = GetPiece(piece.row + ((int)dir.x * i), piece.column + ((int)dir.y * i));
+                Piece check = GetPiece(piece.row + ((int)dir.x * i), piece.column + ((int)dir.y * i));
 
                 // 매치된 블럭일 때
                 if (matchedPiece.Contains(check) && !verifyPiece.Contains(check) &&
@@ -551,11 +550,11 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private bool FindNeighborPiece(Block piece)
+    private bool FindNeighborPiece(Piece piece)
     {
         if (piece.row + 1 < width - 1)
         {
-            Block right = GetPiece(piece.row + 1, piece.column);
+            Piece right = GetPiece(piece.row + 1, piece.column);
             if (matchedPiece.Contains(right) && !verifyPiece.Contains(right) && 
                 piece.value == right.value)
                 return true;
@@ -563,7 +562,7 @@ public class BoardManager : MonoBehaviour
 
         if (piece.row - 1 > 0)
         {
-            Block left = GetPiece(piece.row - 1, piece.column);
+            Piece left = GetPiece(piece.row - 1, piece.column);
             if (matchedPiece.Contains(left) && !verifyPiece.Contains(left) && 
                 piece.value == left.value)
                 return true;
@@ -571,7 +570,7 @@ public class BoardManager : MonoBehaviour
 
         if (piece.column + 1 < height - 1)
         {
-            Block up = GetPiece(piece.row, piece.column + 1);
+            Piece up = GetPiece(piece.row, piece.column + 1);
             if (matchedPiece.Contains(up) && !verifyPiece.Contains(up) && 
                 piece.value == up.value)
                 return true;
@@ -579,7 +578,7 @@ public class BoardManager : MonoBehaviour
 
         if (piece.column - 1 > 0)
         {
-            Block down = GetPiece(piece.row, piece.column - 1);
+            Piece down = GetPiece(piece.row, piece.column - 1);
             if (matchedPiece.Contains(down) && !verifyPiece.Contains(down) &&
                 piece.value == down.value)
                 return true;
@@ -588,7 +587,7 @@ public class BoardManager : MonoBehaviour
         return false;
     }
 
-    private void UsedItem(Block piece1, Block piece2, Block piece3)
+    private void UsedItem(Piece piece1, Piece piece2, Piece piece3)
     {
         if (piece1.rowBomb)
         {
@@ -629,7 +628,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public void UsedCrossBomb(Block piece)
+    public void UsedCrossBomb(Piece piece)
     {
         if (piece.crossBomb)
         {
@@ -646,7 +645,7 @@ public class BoardManager : MonoBehaviour
         {
             if (boardIndex[row, column] != null)
             {
-                Block piece = GetPiece(row, column);
+                Piece piece = GetPiece(row, column);
 
                 if(piece.columnBomb)
                 {
@@ -675,7 +674,7 @@ public class BoardManager : MonoBehaviour
         {
             if (boardIndex[row, column] != null)
             {
-                Block piece = GetPiece(row, column);
+                Piece piece = GetPiece(row, column);
 
                 if (piece.rowBomb)
                 {
@@ -700,7 +699,11 @@ public class BoardManager : MonoBehaviour
 
     IEnumerator MatchedPieceDisabled()
     {
+        if(selectPiece != null)
+            StageMgr.instance.DecreaseMove(1);
+
         selectPiece = null;
+        
 
         foreach (var piece in matchedPiece)
         {
@@ -723,7 +726,7 @@ public class BoardManager : MonoBehaviour
         {
             piece.SetDisabledPiece();
             disabledPiece.Add(piece);
-            StageMgr.scoreMgr.IncreseScore(30);
+            StageMgr.instance.IncreaseScore(30);
         }
 
         matchedPiece.Clear();
@@ -746,7 +749,7 @@ public class BoardManager : MonoBehaviour
                     {
                         if (boardIndex[row, i] != null)
                         {
-                            Block fallPiece = GetPiece(row, i); // 빈자리의 위에 있는 피스
+                            Piece fallPiece = GetPiece(row, i); // 빈자리의 위에 있는 피스
 
                             fallPiece.InitPiece(fallPiece.value, fallPiece.row, column, this);
                             fallPiece.moveToPos = new Vector2(fallPiece.row, fallPiece.column);
@@ -771,7 +774,7 @@ public class BoardManager : MonoBehaviour
             {
                 if (boardIndex[row, column] == null)
                 {
-                    Block enabledPiece = disabledPiece[0];
+                    Piece enabledPiece = disabledPiece[0];
 
                     enabledPiece.transform.parent = transform;
                     enabledPiece.InitPiece(Random.Range(0, pieceSprites.Length), row, column, this);
@@ -801,9 +804,9 @@ public class BoardManager : MonoBehaviour
         FindMatchedPiece();
     }
 
-    public Block GetPiece(int row, int column)
+    public Piece GetPiece(int row, int column)
     {
-        return boardIndex[row, column].GetComponent<Block>();
+        return boardIndex[row, column].GetComponent<Piece>();
     }
 
     private bool DeadLockCheck()
@@ -862,7 +865,7 @@ public class BoardManager : MonoBehaviour
                 {
                     int value = Random.Range(0, pieceSprites.Length);
 
-                    Block piece = GetPiece(row, column);
+                    Piece piece = GetPiece(row, column);
                     piece.gameObject.SetActive(false);
 
                     piece.InitPiece(value, piece.row, piece.column, this);
@@ -903,7 +906,7 @@ public class BoardManager : MonoBehaviour
             {
                 if (boardIndex[row, column] != null)
                 {
-                    Block currPiece = GetPiece(row, column);
+                    Piece currPiece = GetPiece(row, column);
 
                     if (currPiece != null)
                     {
@@ -911,8 +914,8 @@ public class BoardManager : MonoBehaviour
                         {
                             if (boardIndex[row + 1, column] != null && boardIndex[row - 1, column] != null)
                             {
-                                Block rightPiece = GetPiece(row + 1, column);
-                                Block leftPiece = GetPiece(row - 1, column);
+                                Piece rightPiece = GetPiece(row + 1, column);
+                                Piece leftPiece = GetPiece(row - 1, column);
 
                                 if (currPiece.value == rightPiece.value && currPiece.value == leftPiece.value)
                                     return true;
@@ -923,8 +926,8 @@ public class BoardManager : MonoBehaviour
                         {
                             if (boardIndex[row, column + 1] != null && boardIndex[row, column - 1] != null)
                             {
-                                Block upPiece = GetPiece(row, column + 1);
-                                Block downPiece = GetPiece(row, column - 1);
+                                Piece upPiece = GetPiece(row, column + 1);
+                                Piece downPiece = GetPiece(row, column - 1);
 
                                 if (currPiece.value == upPiece.value && currPiece.value == downPiece.value)
                                     return true;
@@ -938,7 +941,7 @@ public class BoardManager : MonoBehaviour
         return false;
     }
 
-    private Block FindHintMatched(out Vector2 dir)
+    private Piece FindHintMatched(out Vector2 dir)
     {
         for (int column = 0; column < height; ++column)
         {
@@ -986,7 +989,7 @@ public class BoardManager : MonoBehaviour
             {
                 if (boardIndex[row, column] != null)
                 {
-                    Block currPiece = GetPiece(row, column);
+                    Piece currPiece = GetPiece(row, column);
 
                     // Piece Moving Check
                         if (currPiece.currState == BlockState.MOVE)
@@ -1007,7 +1010,7 @@ public class BoardManager : MonoBehaviour
             {
                 if (boardIndex[row, column] != null)
                 {
-                    Block piece = GetPiece(row, column);
+                    Piece piece = GetPiece(row, column);
                     /*if (boardIndex[row, column].GetComponent<Block>().value == GetPiece(row, column).value)
                         Debug.Log("[" + row + " , " + column + "] = " + GetPiece(row, column).value);*/
 
@@ -1038,7 +1041,7 @@ public class BoardManager : MonoBehaviour
             {
                 if (boardIndex[row, column] != null)
                 {
-                    Block piece = GetPiece(row, column);
+                    Piece piece = GetPiece(row, column);
 
                     if (piece.rowBomb || piece.columnBomb || piece.crossBomb)
                         Debug.Log("is itemPiece");
@@ -1053,7 +1056,7 @@ public class BoardManager : MonoBehaviour
         {
             for (int row = 0; row < width; ++row)
             {
-                Block piece = GetPiece(row, column);
+                Piece piece = GetPiece(row, column);
 
                 foreach(var e in piece.pieceEffects)
                 {
@@ -1063,7 +1066,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private int isCenterPiece(Block piece)
+    private int isCenterPiece(Piece piece)
     {
         int count = 0;
 
@@ -1077,28 +1080,28 @@ public class BoardManager : MonoBehaviour
 
         if (piece.row + 1 < width - 1)
         {
-            Block right = GetPiece(piece.row + 1, piece.column);
+            Piece right = GetPiece(piece.row + 1, piece.column);
             if (matchedPiece.Contains(right) && !verifyPiece.Contains(right))
                 ++count;
         }
 
         if (piece.row - 1 > 0)
         {
-            Block left = GetPiece(piece.row - 1, piece.column);
+            Piece left = GetPiece(piece.row - 1, piece.column);
             if (matchedPiece.Contains(left) && !verifyPiece.Contains(left))
                 ++count;
         }
 
         if (piece.column + 1 < height - 1)
         {
-            Block up = GetPiece(piece.row, piece.column + 1);
+            Piece up = GetPiece(piece.row, piece.column + 1);
             if (matchedPiece.Contains(up) && !verifyPiece.Contains(up))
                 ++count;
         }
 
         if (piece.column - 1 > 0)
         {
-            Block down = GetPiece(piece.row, piece.column - 1);
+            Piece down = GetPiece(piece.row, piece.column - 1);
             if (matchedPiece.Contains(down) && !verifyPiece.Contains(down))
                 ++count;
         }
@@ -1106,13 +1109,13 @@ public class BoardManager : MonoBehaviour
         return count;
     }
 
-    public void PieceListSort(List<Block> pieces, bool column = false, bool descending = false)
+    public void PieceListSort(List<Piece> pieces, bool column = false, bool descending = false)
     {
         if (column)
         {
             if (descending)
             {
-                pieces.Sort(delegate (Block a, Block b)
+                pieces.Sort(delegate (Piece a, Piece b)
                 {
                     if (a.column < b.column)
                         return 1;
@@ -1127,7 +1130,7 @@ public class BoardManager : MonoBehaviour
 
             else
             {
-                pieces.Sort(delegate (Block a, Block b)
+                pieces.Sort(delegate (Piece a, Piece b)
                 {
                     if (a.column > b.column)
                         return 1;
@@ -1145,7 +1148,7 @@ public class BoardManager : MonoBehaviour
         {
             if (descending)
             {
-                pieces.Sort(delegate (Block a, Block b)
+                pieces.Sort(delegate (Piece a, Piece b)
                 {
                     if (a.row < b.row)
                         return 1;
@@ -1160,7 +1163,7 @@ public class BoardManager : MonoBehaviour
 
             else
             {
-                pieces.Sort(delegate (Block a, Block b)
+                pieces.Sort(delegate (Piece a, Piece b)
                 {
                     if (a.row > b.row)
                         return 1;

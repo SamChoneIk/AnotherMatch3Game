@@ -6,45 +6,53 @@ using UnityEngine.UI;
 public class StageMgr : MonoBehaviour
 {
     public Text scoreText;
+    public Text moveText;
     public Slider slider;
 
+    private int stage;
+    private int moveValue = 20;
+
     public float score = 0;
-    public float goalScore;
-
-    private float prevScore;
-    public float scoreSpeed = 0;
-
-    private float accumTime = 0;
     public float delay = 2f;
 
-    public static StageMgr scoreMgr;
+    public float goalScore;
+
+    private float nextScore = 0;
+    private float accumTime = 0;
+
+    public static StageMgr instance;
     private void Awake()
     {
-        scoreMgr = this;
-    }
-
-    public void IncreseScore(int value)
-    {
-        prevScore = score;
-        score += value;
+        instance = this;
+        moveText.text = moveValue.ToString();
+        slider.maxValue = goalScore;
     }
 
     private void Update()
     {
-        if (prevScore != score)
+        if (score != nextScore)
         {
-            accumTime += Time.deltaTime;
+            score = Mathf.Lerp(score, nextScore, Time.deltaTime * 0.8f);
+            scoreText.text = "SCORE : " + Mathf.FloorToInt(score).ToString("D8");
+            slider.value = score;
 
-            scoreText.text = "SCORE : " + Mathf.FloorToInt(Mathf.Lerp((int)prevScore, (int)score, Time.deltaTime * scoreSpeed)).ToString("D8");
-
-            if(accumTime > delay)
+            if (score >= nextScore - 10)
             {
-                prevScore = score;
-                scoreText.text = "SCORE : " + score;
-
-                accumTime = 0;
+                score = nextScore;
+                scoreText.text = "SCORE : " + Mathf.FloorToInt(score).ToString("D8");
+                slider.value = score;
             }
         }
     }
 
+    public void DecreaseMove(int value)
+    {
+        moveValue -= value;
+        moveText.text = moveValue.ToString();
+    }
+
+    public void IncreaseScore(int value)
+    {
+        nextScore += value;
+    }
 }
