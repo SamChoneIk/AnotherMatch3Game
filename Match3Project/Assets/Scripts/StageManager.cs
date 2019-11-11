@@ -7,19 +7,16 @@ using System.IO;
 public class StageManager : MonoBehaviour
 {
     public Image background;
-    private AudioSource audioSource;
+    private AudioSource bg_M;
     public Text scoreText;
     public Text goalScoreText;
     public Text moveText;
     public Slider slider;
 
-    public AudioClip[] backgroundMusic;
-    public Sprite[] backgroundSprite;
-
     public int goalScore;
 
     public float score = 0;
-    public float delay = 2f;
+    public float scoringSpeed = 0f;
 
     public int combo = 0;
 
@@ -37,12 +34,20 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
-        audioSource = GetComponent<AudioSource>();
+        bg_M = GetComponent<AudioSource>();
 
-        backgroundMusic = Resources.LoadAll<AudioClip>("Music");
-        backgroundSprite = Resources.LoadAll<Sprite>("Art/Background");
+        StageInit();
+    }
 
-        LoadGameData();
+    private void StageInit()
+    {
+        stageData = GameManager.instance.stageData;
+
+        background.sprite = GameManager.instance.bgSprite[stageData.bgIdx];
+        bg_M.clip = GameManager.instance.bg_Ms[stageData.bgmIdx];
+        bg_M.Play();
+        moveValue = stageData.move;
+        goalScore = stageData.goalScore;
 
         moveText.text = moveValue.ToString();
         goalScoreText.text = "GOAL SCORE : " + Mathf.FloorToInt(goalScore).ToString("D8");
@@ -53,7 +58,7 @@ public class StageManager : MonoBehaviour
     {
         if (score != nextScore)
         {
-            score = Mathf.Lerp(score, nextScore, Time.deltaTime * 0.8f);
+            score = Mathf.Lerp(score, nextScore, Time.deltaTime * scoringSpeed);
             scoreText.text = "SCORE : " + Mathf.FloorToInt(score).ToString("D8");
             slider.value = score;
 
@@ -82,14 +87,10 @@ public class StageManager : MonoBehaviour
                 slider.value = score;
 
                 if(board.currState == BoardState.CLEAR)
-                {
-                    Debug.Log("Clear UI");
-                }
+                    GameManager.instance.StageClear();
 
                 else if (board.currState == BoardState.FAIL)
-                {
-                    Debug.Log("FAIL UI");
-                }
+                    GameManager.instance.StageFail();
             }
         }
     }
@@ -103,23 +104,5 @@ public class StageManager : MonoBehaviour
     {
         moveValue -= value;
         moveText.text = moveValue.ToString();
-    }
-
-    public void LoadGameData()
-    {
-        string path = Application.streamingAssetsPath + "/Stages/" + "stage" + 1.ToString() + ".json";//GameManager.instance.stageLevel;
-
-        if(File.Exists(path))
-        {
-            Debug.Log("Load JsonFile");
-            string jsonData = File.ReadAllText(path);
-            stageData = JsonUtility.FromJson<StageData>(jsonData);
-
-            background.sprite = backgroundSprite[stageData.backgroundIndex];
-            audioSource.clip = backgroundMusic[stageData.musicIndex];
-            audioSource.Play();
-            moveValue = stageData.move;
-            goalScore = stageData.goalScore;
-        }
     }
 }

@@ -10,19 +10,15 @@ public class UIManager : MonoBehaviour
     public GameObject option;
 
     public void GameStart()
-    {
+    { 
         mainMenu.SetActive(false);
         stageSelect.SetActive(true);
     }
 
-    public void StageSelect()
-    {
-
-    }
-
     public void Option()
     {
-
+        mainMenu.SetActive(false);
+        option.SetActive(true);
     }
 
     public void BackToMainMenu()

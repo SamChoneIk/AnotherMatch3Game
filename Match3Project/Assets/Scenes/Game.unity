@@ -543,11 +543,9 @@ MonoBehaviour:
   goalScoreText: {fileID: 221587986}
   moveText: {fileID: 1153214677}
   slider: {fileID: 1462817365}
-  backgroundMusic: []
-  backgroundSprite: []
   goalScore: 3000
   score: 0
-  delay: 1
+  scoringSpeed: 2
   combo: 0
   board: {fileID: 0}
 --- !u!4 &330191941
@@ -1262,7 +1260,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 4c0320bd9916a414498e321b9ff67f0e, type: 3}
-    m_FontSize: 125
+    m_FontSize: 100
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
@@ -1549,8 +1547,8 @@ MonoBehaviour:
     stage: 1
     goalScore: 2500
     move: 40
-    backgroundIndex: 0
-    musicIndex: 3
+    bgIdx: 0
+    bgmIdx: 0
 --- !u!4 &1611377718
 Transform:
   m_ObjectHideFlags: 0
