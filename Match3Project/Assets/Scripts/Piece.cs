@@ -34,7 +34,7 @@ public class Piece : MonoBehaviour
     private Vector2 startPos;
     private Vector2 endPos;
 
-    private BoardManager board;
+    private Board board;
     private SpriteRenderer pieceSprite;
     public AudioSource pieceASource;
     [SerializeField]
@@ -71,7 +71,7 @@ public class Piece : MonoBehaviour
         effectClip = Resources.LoadAll<AudioClip>("PieceClip");
     }
 
-    public void InitPiece(int v, int r, int c, BoardManager b)
+    public void InitPiece(int v, int r, int c, Board b)
     {
         if (board == null)
             board = b;
@@ -108,7 +108,7 @@ public class Piece : MonoBehaviour
             {
                 if (board.boardIndex[row, column] != gameObject)
                     board.boardIndex[row, column] = gameObject;
-
+                
                 gameObject.name = "[" + row + " , " + column + "]";
                 transform.position = moveToPos;
                 fallSpeed = 0f;
