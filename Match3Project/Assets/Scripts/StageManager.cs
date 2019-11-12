@@ -28,10 +28,14 @@ public class StageManager : MonoBehaviour
     public Text scoreText;
     public Text goalScoreText;
     public Text moveText;
+
     public Slider scoreSlider;
     public Slider volumeSlider;
 
-    [Space]
+    public Image[] starImages;
+    public Sprite starSprite;
+
+
     [Header("Stage Parts")]
     public Image stageBG;
     public AudioSource stageBGM;
@@ -44,6 +48,8 @@ public class StageManager : MonoBehaviour
 
     private int moveValue;
     private int goalScore;
+    private int stars = 0;
+
     private float nextScore;
     private float score;
 
@@ -51,6 +57,9 @@ public class StageManager : MonoBehaviour
 
     private StageData stageData;
     public static StageManager instance;
+
+    public TextAsset[] stageLevel;
+
     private void Awake()
     {
 #if UNITY_EDITOR || UNITY_EDITOR_WIN || UNITY_EDITOR_OSX || UNITY_STANDALONE
@@ -94,23 +103,7 @@ public class StageManager : MonoBehaviour
 
     public void LoadGameData()
     {
-        string path;
-
-#if UNITY_EDITOR || UNITY_EDITOR_WIN || UNITY_EDITOR_OSX || UNITY_STANDALONE
-       path = Application.streamingAssetsPath + "/Stages/" + "stage" + GameManager.instance.stageLevel.ToString() + ".json";
-#endif
-
-#if UNITY_IOS || UNITY_IPHONE || UNITY_ANDROID || UNITY_WEBGL
-        path = Application.persistentDataPath + "Resources/Stages/" + "stage" + GameManager.instance.stageLevel.ToString() + ".json";
-#endif
-
-
-        if (File.Exists(path))
-        {
-            Debug.Log("Load JsonFile");
-            string jsonData = File.ReadAllText(path);
-            stageData = JsonUtility.FromJson<StageData>(jsonData);
-        }
+        stageData = JsonUtility.FromJson<StageData>(stageLevel[GameManager.instance.stageLevel].text);
     }
 
     private void Update()
@@ -127,8 +120,15 @@ public class StageManager : MonoBehaviour
             scoreText.text = "SCORE : " + Mathf.FloorToInt(score).ToString("D8");
             scoreSlider.value = score;
 
+            if(score >= goalScore * 0.5)
+                starImages[0].sprite = starSprite;
+
+            if(score >= goalScore * 0.75 && stars == 1)
+                starImages[1].sprite = starSprite;
+
             if (score >= goalScore)
             {
+                starImages[2].sprite = starSprite;
                 if (board.currState != BoardState.CLEAR)
                 {
                     Debug.Log("clear");
@@ -136,8 +136,14 @@ public class StageManager : MonoBehaviour
                 }
             }
 
-            if (moveValue == 0)
+            if (moveValue == 0 && board.currState != BoardState.CLEAR)
             {
+                if (stars > 0)
+                {
+                    Debug.Log("clear");
+                    board.currState = BoardState.CLEAR;
+                }
+
                 if (board.currState != BoardState.FAIL)
                 {
                     Debug.Log("FAIL");
@@ -171,13 +177,20 @@ public class StageManager : MonoBehaviour
         moveText.text = moveValue.ToString();
     }
 
-
     public void PauseMenu()
     {
         Time.timeScale = 0;
         pauseUI.SetActive(true);
 
         currMenuUI = pauseUI;
+    }
+
+    public void Option()
+    {
+        pauseUI.SetActive(false);
+        optionUI.SetActive(true);
+
+        currMenuUI = optionUI;
     }
 
     public void StageClear()
@@ -194,32 +207,6 @@ public class StageManager : MonoBehaviour
         currMenuUI = failUI;
     }
 
-    public void BackMenu()
-    {
-        if (currMenuUI == optionUI)
-        {
-            GameManager.instance.bgmVolume = stageBGM.volume;
-            currMenuUI.SetActive(false);
-            pauseUI.SetActive(true);
-
-            currMenuUI = pauseUI;
-        }
-
-        else if (currMenuUI == pauseUI)
-        {
-            Time.timeScale = 1;
-            currMenuUI.SetActive(false);
-        }
-    }
-
-    public void Option()
-    {
-        pauseUI.SetActive(false);
-        optionUI.SetActive(true);
-
-        currMenuUI = optionUI;
-    }
-
     public void MainMenu()
     {
         BackMenu();
@@ -232,4 +219,21 @@ public class StageManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    public void BackMenu()
+    {
+        if (currMenuUI == optionUI)
+        {
+            GameManager.instance.bgmVolume = stageBGM.volume;
+            currMenuUI.SetActive(false);
+            pauseUI.SetActive(true);
+
+            currMenuUI = pauseUI;
+        }
+
+        else
+        {
+            Time.timeScale = 1;
+            currMenuUI.SetActive(false);
+        }
+    }
 }

@@ -17,13 +17,6 @@ public class CreateStageToJson : MonoBehaviour
         if(!create)
             return;
 
-        if(stageData.stage == 0 || stageData.stage <= 6)
-        {
-            Debug.Log("Nonexistent Stage");
-            create = false;
-            return;
-        }
-
         create = false;
 
         string jsonData = JsonUtility.ToJson(stageData);
@@ -37,12 +30,13 @@ public class CreateStageToJson : MonoBehaviour
 
         path += fileName;
 
-        File.WriteAllText(path, jsonData);        
+        File.WriteAllText(path, jsonData);
+        Debug.Log("Create path");
     }
 
     private string SaveLocation()
     {
-        string path = Application.streamingAssetsPath + "/Stages/";
+        string path = Application.streamingAssetsPath + "/stage/";
 
         if(!Directory.Exists(path))
             Directory.CreateDirectory(path);
