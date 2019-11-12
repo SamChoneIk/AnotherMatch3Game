@@ -68,7 +68,7 @@ public class Piece : MonoBehaviour
 
         effectObjects = null;
 
-        effectClip = Resources.LoadAll<AudioClip>("PieceClip");
+        effectClip = Resources.LoadAll<AudioClip>("Sounds/PieceClip");
     }
 
     public void InitPiece(int v, int r, int c, Board b)
@@ -120,7 +120,7 @@ public class Piece : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (board.currState == BoardState.ORDER && currState == BlockState.WAIT)
+        if (board.currState == BoardState.ORDER && currState == BlockState.WAIT && Time.timeScale > 0)
         {
             board.selectPiece = this;
             startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -129,7 +129,7 @@ public class Piece : MonoBehaviour
 
     private void OnMouseUp()
     {
-        if (board.currState == BoardState.ORDER && currState == BlockState.WAIT)
+        if (board.currState == BoardState.ORDER && currState == BlockState.WAIT && Time.timeScale > 0)
         {
             endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             CalculratePiece();
@@ -138,7 +138,7 @@ public class Piece : MonoBehaviour
 
     private void CalculratePiece()
     {
-        if (board.currState == BoardState.ORDER && currState == BlockState.WAIT)
+        if (board.currState == BoardState.ORDER && currState == BlockState.WAIT && Time.timeScale > 0)
         {
             Vector2 dir = (endPos - startPos);
 

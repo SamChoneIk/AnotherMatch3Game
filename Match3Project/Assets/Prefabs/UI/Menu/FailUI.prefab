@@ -241,7 +241,6 @@ GameObject:
   - component: {fileID: 7694016347488188255}
   - component: {fileID: 8379291135613883836}
   - component: {fileID: 1527415522984312670}
-  - component: {fileID: 6322399822026052390}
   m_Layer: 5
   m_Name: FailUI
   m_TagString: Untagged
@@ -329,21 +328,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &6322399822026052390
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4473051622981686960}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bd9c573fd0bd364e8c3e7f82e3f2196, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mainMenu: {fileID: 6636070947339168976}
-  stageSelect: {fileID: 0}
-  option: {fileID: 0}
 --- !u!1 &4919780253846847089
 GameObject:
   m_ObjectHideFlags: 0
@@ -607,7 +591,7 @@ PrefabInstance:
     - target: {fileID: 9079242697284587148, guid: 62cc220609f021547aed88ca9b0abc7c,
         type: 3}
       propertyPath: m_Name
-      value: StageSelect
+      value: Replay
       objectReference: {fileID: 0}
     - target: {fileID: 4322932256886561614, guid: 62cc220609f021547aed88ca9b0abc7c,
         type: 3}
@@ -727,7 +711,7 @@ PrefabInstance:
     - target: {fileID: 8102189533298189421, guid: 62cc220609f021547aed88ca9b0abc7c,
         type: 3}
       propertyPath: m_Text
-      value: STAGE SELECT
+      value: REPLAY
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 62cc220609f021547aed88ca9b0abc7c, type: 3}
@@ -889,11 +873,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1009452978828295433}
     m_Modifications:
-    - target: {fileID: 4872561725308217806, guid: d90fd341f517c88408d24a8769bd5e0e,
-        type: 3}
-      propertyPath: m_Name
-      value: PauseScore
-      objectReference: {fileID: 0}
     - target: {fileID: 4872561725308217807, guid: d90fd341f517c88408d24a8769bd5e0e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -998,6 +977,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4872561725308217806, guid: d90fd341f517c88408d24a8769bd5e0e,
+        type: 3}
+      propertyPath: m_Name
+      value: PauseScore
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d90fd341f517c88408d24a8769bd5e0e, type: 3}

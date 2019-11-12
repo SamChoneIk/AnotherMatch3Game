@@ -17,13 +17,20 @@ public class CreateStageToJson : MonoBehaviour
         if(!create)
             return;
 
+        if(stageData.stage == 0 || stageData.stage <= 6)
+        {
+            Debug.Log("Nonexistent Stage");
+            create = false;
+            return;
+        }
+
         create = false;
 
         string jsonData = JsonUtility.ToJson(stageData);
         string path = SaveLocation();
 
         if(string.IsNullOrEmpty(fileName))
-            fileName = "Stage " + stageData.stage + " Data.json";
+            fileName = "stage" + stageData.stage + ".json";
 
         else
             fileName += ".json";

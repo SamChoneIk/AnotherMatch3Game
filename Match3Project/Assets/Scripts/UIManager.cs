@@ -1,38 +1,60 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    public GameObject mainMenu;
-    public GameObject stageSelect;
-    public GameObject option;
+    public GameObject mainMenuUI;
+    public GameObject stageSelectUI;
+    public GameObject optionUI;
+
+    public Slider volumeSlider;
+
+    private GameObject currMenuUI;
+    private AudioSource bgMusic;
+
+    private void Start()
+    {
+        bgMusic = GetComponent<AudioSource>();
+        bgMusic.volume = GameManager.instance.bgmVolume;
+
+        volumeSlider.value = bgMusic.volume;
+    }
+
+    private void Update()
+    {
+        if (optionUI.activeInHierarchy)
+        {
+            bgMusic.volume = volumeSlider.value;
+        }
+    }
 
     public void GameStart()
     { 
-        mainMenu.SetActive(false);
-        stageSelect.SetActive(true);
+        mainMenuUI.SetActive(false);
+        stageSelectUI.SetActive(true);
+
+        currMenuUI = stageSelectUI;
     }
 
     public void Option()
     {
-        mainMenu.SetActive(false);
-        option.SetActive(true);
+        mainMenuUI.SetActive(false);
+        optionUI.SetActive(true);
+
+        currMenuUI = optionUI;
     }
 
-    public void BackToMainMenu()
+    public void MainMenu()
     {
-        if(SceneManager.GetActiveScene().buildIndex == 0)
+        if(currMenuUI == optionUI)
         {
-            stageSelect.SetActive(false);
-            mainMenu.SetActive(true);
+            GameManager.instance.bgmVolume = bgMusic.volume;
         }
 
-        else
-        {
-            SceneManager.LoadScene(0);
-        }
+        currMenuUI.SetActive(false);
+        mainMenuUI.SetActive(true);
     }
 
     public void GameExit()

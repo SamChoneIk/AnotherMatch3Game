@@ -40,8 +40,6 @@ public class Board : MonoBehaviour
 
     private void Start()
     {
-        StageManager.instance.board = this;
-
         boardIndex = new GameObject[width, height];
 
         matchedPiece = new List<Piece>();
@@ -49,8 +47,8 @@ public class Board : MonoBehaviour
         verifyPiece = new List<Piece>();
         itemList = new List<Piece>();
 
-        pieceSprites = Resources.LoadAll<Sprite>("Art/PieceSprite");
-        ItemSprites = Resources.LoadAll<Sprite>("Art/ItemSprite");
+        pieceSprites = Resources.LoadAll<Sprite>("Arts/PieceSprite");
+        ItemSprites = Resources.LoadAll<Sprite>("Arts/ItemSprite");
 
         StartCoroutine(CreateBoard());
     }
