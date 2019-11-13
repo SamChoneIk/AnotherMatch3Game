@@ -215,9 +215,7 @@ public class Piece : MonoBehaviour
         isTunning = true;
 
         if (board.selectPiece == this)
-        {
             PieceClipPlay(3);
-        }
 
         currState = BlockState.MOVE;
     }

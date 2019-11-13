@@ -25,5 +25,4 @@ public class GameManager : MonoBehaviour
     {
         ++stageLevel;
     }
-
 }
