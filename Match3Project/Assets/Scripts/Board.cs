@@ -104,7 +104,7 @@ public class Board : MonoBehaviour
             {
                 if (DeadLockCheck())
                 {
-                    Debug.Log("is DeadLock !!");
+                   // Debug.Log("is DeadLock !!");
                     selectPiece = null;
 
                     StartCoroutine(PieceRegenerate());
@@ -124,7 +124,7 @@ public class Board : MonoBehaviour
             }
         }
 
-        DebugSystem();
+        //DebugSystem();
     }
 
     IEnumerator CreateBoard()
@@ -253,6 +253,10 @@ public class Board : MonoBehaviour
         else
         {
             StageManager.instance.combo = 0;
+
+            if (currState == BoardState.CLEAR || currState == BoardState.FAIL)
+                return;
+
             currState = BoardState.ORDER;
         }
     }
@@ -278,7 +282,7 @@ public class Board : MonoBehaviour
 
                 FindDirectionMatchedPiece(matchedPiece[i], ref rows, ref cols);
 
-                Debug.Log("rows = " + rows + " & " + "columns = " + cols);
+               // Debug.Log("rows = " + rows + " & " + "columns = " + cols);
 
                 if (rows >= 2 && cols >= 2)
                 {
@@ -296,9 +300,10 @@ public class Board : MonoBehaviour
                     else
                         bombPiece = verifyPiece[Random.Range(prevCount, verifyPiece.Count)];
 
-                    Debug.Log("generate CrossBomb");
+                    //Debug.Log("generate CrossBomb");
 
                     bombPiece.crossBomb = true;
+                    bombPiece.value = pieceSprites.Length + 1;
                     bombPiece.itemSprite.sprite = ItemSprites[2];
 
                     itemList.Add(bombPiece);
@@ -360,7 +365,7 @@ public class Board : MonoBehaviour
                 else
                     bombPiece = verifyPiece[Random.Range(prevCount, verifyPiece.Count)];
 
-                Debug.Log("generate RowBomb");
+                //Debug.Log("generate RowBomb");
 
                 bombPiece.rowBomb = true;
                 bombPiece.itemSprite.sprite = ItemSprites[1];
@@ -422,7 +427,7 @@ public class Board : MonoBehaviour
                 else
                     bombPiece = verifyPiece[Random.Range(prevCount, verifyPiece.Count)];
 
-                Debug.Log("generate ColumnBomb");
+                //Debug.Log("generate ColumnBomb");
 
                 bombPiece.columnBomb = true;
                 bombPiece.itemSprite.sprite = ItemSprites[0];
@@ -956,6 +961,23 @@ public class Board : MonoBehaviour
                     e.Stop();
                 }
             }
+        }
+    }
+
+    public void AllPieceVolume()
+    {
+        for (int column = 0; column < height; ++column)
+        {
+            for (int row = 0; row < width; ++row)
+            {
+                Piece piece = GetPiece(row, column);
+                piece.GetComponent<AudioSource>().volume = GameManager.instance.seVolume;
+            }
+        }
+
+        foreach (var piece in disabledPiece)
+        {
+            piece.GetComponent<AudioSource>().volume = GameManager.instance.seVolume;
         }
     }
 
