@@ -25,25 +25,20 @@ public class StageManager : MonoBehaviour
 
     private GameObject currMenuUI;
 
-    [Header("UI Texts")]
     public Text scoreText;
     public Text goalScoreText;
     public Text moveText;
-    public Text pauseScore;
-    public Text clearScore;
-    public Text failScore;
 
-    [Header("UI Images")]
     public Slider scoreSlider;
+    public Slider volumeSlider;
+
     public Image[] starImages;
     public Sprite starSprite;
+
 
     [Header("Stage Parts")]
     public Image stageBG;
     public AudioSource stageBGM;
-
-    public Slider bgmVolume;
-    public Slider seVolume;
 
     private Sprite[] stageBGs;
     private AudioClip[] stageBGMs;
@@ -57,10 +52,6 @@ public class StageManager : MonoBehaviour
 
     private float nextScore;
     private float score;
-
-    [Header("Others")]
-    public GameObject nextButton;
-    public GameObject thanksText;
 
     public Board board;
 
@@ -99,7 +90,6 @@ public class StageManager : MonoBehaviour
         stageBGM = GetComponent<AudioSource>();
         stageBGM.clip = stageBGMs[stageData.bgmIdx];
         stageBGM.volume = GameManager.instance.bgmVolume;
-        
         stageBGM.Play();
 
         moveValue = stageData.move;
@@ -108,8 +98,7 @@ public class StageManager : MonoBehaviour
         moveText.text = moveValue.ToString();
         goalScoreText.text = "GOAL SCORE : " + Mathf.FloorToInt(goalScore).ToString("D8");
         scoreSlider.maxValue = goalScore;
-        bgmVolume.value = GameManager.instance.bgmVolume;
-        seVolume.value = GameManager.instance.seVolume;
+        volumeSlider.value = stageBGM.volume;
     }
 
     public void LoadGameData()
@@ -121,7 +110,7 @@ public class StageManager : MonoBehaviour
     {
         if (optionUI.activeInHierarchy)
         {
-            stageBGM.volume = bgmVolume.value;
+            stageBGM.volume = volumeSlider.value;
             return;
         }
 
@@ -131,7 +120,36 @@ public class StageManager : MonoBehaviour
             scoreText.text = "SCORE : " + Mathf.FloorToInt(score).ToString("D8");
             scoreSlider.value = score;
 
-            CheckTheGameState();
+            if(score >= goalScore * 0.5)
+                starImages[0].sprite = starSprite;
+
+            if(score >= goalScore * 0.75 && stars == 1)
+                starImages[1].sprite = starSprite;
+
+            if (score >= goalScore)
+            {
+                starImages[2].sprite = starSprite;
+                if (board.currState != BoardState.CLEAR)
+                {
+                    Debug.Log("clear");
+                    board.currState = BoardState.CLEAR;
+                }
+            }
+
+            if (moveValue == 0 && board.currState != BoardState.CLEAR)
+            {
+                if (stars > 0)
+                {
+                    Debug.Log("clear");
+                    board.currState = BoardState.CLEAR;
+                }
+
+                if (board.currState != BoardState.FAIL)
+                {
+                    Debug.Log("FAIL");
+                    board.currState = BoardState.FAIL;
+                }
+            }
 
             if (score >= nextScore - 10)
             {
@@ -148,36 +166,6 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    public void CheckTheGameState()
-    {
-        if (board.currState == BoardState.CLEAR || board.currState == BoardState.FAIL)
-            return;
-
-        if (score >= goalScore * 0.5 && stars == 0)
-            starImages[stars++].sprite = starSprite;
-
-        if (score >= goalScore * 0.75 && stars == 1)
-            starImages[stars++].sprite = starSprite;
-        
-
-        if (score >= goalScore && stars == 2)
-        {
-            starImages[stars].sprite = starSprite;
-            board.currState = BoardState.CLEAR;
-        }
-
-        if (moveValue == 0 && board.currState != BoardState.CLEAR)
-        {
-            if(stars > 0 )
-            { 
-                board.currState = BoardState.CLEAR;
-                return;
-            }
-
-            board.currState = BoardState.FAIL;
-        }
-    }
-
     public void IncreaseScore(int value)
     {
         nextScore += combo > 1 ? value * combo : value;
@@ -191,12 +179,7 @@ public class StageManager : MonoBehaviour
 
     public void PauseMenu()
     {
-        if (board.currState == BoardState.CLEAR || board.currState == BoardState.FAIL)
-            return;
-
         Time.timeScale = 0;
-
-        pauseScore.text = "SCORE : " + Mathf.FloorToInt(nextScore).ToString("D8");
         pauseUI.SetActive(true);
 
         currMenuUI = pauseUI;
@@ -212,13 +195,6 @@ public class StageManager : MonoBehaviour
 
     public void StageClear()
     {
-        if (stageData.stage >= 5)
-        {
-            nextButton.SetActive(false);
-            thanksText.SetActive(true);
-        }
-
-        clearScore.text = "SCORE : " + Mathf.FloorToInt(score).ToString("D8");
         clearUI.SetActive(true);
 
         currMenuUI = clearUI;
@@ -226,7 +202,6 @@ public class StageManager : MonoBehaviour
 
     public void StageFail()
     {
-        failScore.text = "SCORE : " + Mathf.FloorToInt(score).ToString("D8");
         failUI.SetActive(true);
 
         currMenuUI = failUI;
@@ -236,13 +211,6 @@ public class StageManager : MonoBehaviour
     {
         BackMenu();
         SceneManager.LoadScene("Main");
-    }
-
-    public void NextGame()
-    {
-        BackMenu();
-        GameManager.instance.NextGame();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void Replay()
@@ -255,18 +223,14 @@ public class StageManager : MonoBehaviour
     {
         if (currMenuUI == optionUI)
         {
-            GameManager.instance.bgmVolume = bgmVolume.value;
-            GameManager.instance.seVolume = seVolume.value;
-
-            board.AllPieceVolume();
-
+            GameManager.instance.bgmVolume = stageBGM.volume;
             currMenuUI.SetActive(false);
             pauseUI.SetActive(true);
 
             currMenuUI = pauseUI;
         }
 
-        else if(currMenuUI == pauseUI)
+        else
         {
             Time.timeScale = 1;
             currMenuUI.SetActive(false);
