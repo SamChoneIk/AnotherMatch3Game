@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class MainMenuUIManager : MonoBehaviour
 {
     public GameObject mainMenuUI;
     public GameObject stageSelectUI;
     public GameObject optionUI;
 
-    public Slider volumeSlider;
+    private GameObject prevMenu;
+    private GameObject currMenu;
 
-    private GameObject currMenuUI;
+    public Slider bgmVolume;
+    public Slider seVolume;
+
     private AudioSource bgMusic;
 
     private void Start()
@@ -19,15 +22,14 @@ public class UIManager : MonoBehaviour
         bgMusic = GetComponent<AudioSource>();
         bgMusic.volume = GameManager.instance.bgmVolume;
 
-        volumeSlider.value = bgMusic.volume;
+        bgmVolume.value = GameManager.instance.bgmVolume;
+        seVolume.value = GameManager.instance.seVolume;
     }
 
     private void Update()
     {
         if (optionUI.activeInHierarchy)
-        {
-            bgMusic.volume = volumeSlider.value;
-        }
+            bgMusic.volume = bgmVolume.value;
     }
 
     public void GameStart()
@@ -35,7 +37,7 @@ public class UIManager : MonoBehaviour
         mainMenuUI.SetActive(false);
         stageSelectUI.SetActive(true);
 
-        currMenuUI = stageSelectUI;
+        currMenu = stageSelectUI;
     }
 
     public void Option()
@@ -43,21 +45,22 @@ public class UIManager : MonoBehaviour
         mainMenuUI.SetActive(false);
         optionUI.SetActive(true);
 
-        currMenuUI = optionUI;
+        currMenu = optionUI;
     }
 
-    public void MainMenu()
+    public void BackMenu()
     {
-        if(currMenuUI == optionUI)
+        if(currMenu == optionUI)
         {
-            GameManager.instance.bgmVolume = bgMusic.volume;
+            GameManager.instance.bgmVolume = bgmVolume.value;
+            GameManager.instance.seVolume = seVolume.value;
         }
 
-        currMenuUI.SetActive(false);
+        currMenu.SetActive(false);
         mainMenuUI.SetActive(true);
     }
 
-    public void GameExit()
+    public void QuitGame()
     {
         Application.Quit();
     }
