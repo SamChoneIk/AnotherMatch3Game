@@ -16,9 +16,7 @@ public class Board : MonoBehaviour
 {
     [Header("Board State")]
     public BoardState currState = BoardState.WORK;
-    public int width = 6;
-    public int height = 8;
-    public int offset = 5;
+    public int width, height, offset;
 
     public float waitTime = 0.08f;
     public float blockFallSpeed;
@@ -52,10 +50,84 @@ public class Board : MonoBehaviour
         pieceSprites = Resources.LoadAll<Sprite>("Arts/PieceSprite");
         ItemSprites = Resources.LoadAll<Sprite>("Arts/ItemSprite");
 
-        StartCoroutine(GeneratePiece());
+        StartCoroutine(CreateBoard());
     }
 
-    IEnumerator GeneratePiece()
+    void Update()
+    {
+        if (currState == BoardState.WORK)
+        {
+            checkTime = 0;
+
+            if (selectPiece != null)
+            {
+                // 블럭이 움직이고 있을때
+                if (!FindMovingPiece())
+                    return;
+
+                if (selectPiece.isTunning && selectPiece.target.isTunning)
+                {
+                    selectPiece.isTunning = false;
+                    selectPiece.target.isTunning = false;
+
+                    currState = BoardState.ORDER;
+                    return;
+                }
+
+                if(selectPiece.crossBomb || selectPiece.target.crossBomb)
+                {
+                    UsedCrossBomb(selectPiece);
+                    UsedCrossBomb(selectPiece.target);
+                }
+
+                if (FindMatched() || matchedPiece.Count > 0)
+                    FindMatchedPiece();
+
+                else
+                {
+                    selectPiece.MoveToBack();
+                    selectPiece.target.MoveToBack();
+
+                    return;
+                }
+            }
+
+            else
+                return;
+        }
+
+        else if (currState == BoardState.ORDER)
+        {
+            checkTime += Time.deltaTime;
+
+            if (checkTime > 3f)
+            {
+                if (DeadLockCheck())
+                {
+                   // Debug.Log("is DeadLock !!");
+                    selectPiece = null;
+
+                    StartCoroutine(PieceRegenerate());
+                }
+
+                else
+                {
+                    Vector2 dir;
+                    // hint effect
+                    Piece piece = FindHintMatched(out dir);
+                    Piece adjacency = GetPiece(piece.row + (int)dir.x, piece.column + (int)dir.y);
+
+                    piece.PieceEffectPlay(4);
+                    adjacency.PieceEffectPlay(4);
+                    checkTime = 0f;
+                }
+            }
+        }
+
+        //DebugSystem();
+    }
+
+    IEnumerator CreateBoard()
     {
         for (int column = 0; column < height; ++column)
         {
@@ -99,7 +171,7 @@ public class Board : MonoBehaviour
             disabledPiece.Add(piece);
         }
 
-        while (!FindMovingPiece())
+        while(!FindMovingPiece())
         {
             yield return null;
         }
@@ -107,77 +179,6 @@ public class Board : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
 
         currState = BoardState.ORDER;
-    }
-
-    void Update()
-    {
-        if (currState == BoardState.WORK)
-        {
-            checkTime = 0;
-
-            if (selectPiece == null)
-                return;
-
-            // 블럭이 움직이고 있을때
-            if (!FindMovingPiece())
-                return;
-
-            if (selectPiece.isTunning && selectPiece.target.isTunning)
-            {
-                selectPiece.isTunning = false;
-                selectPiece.target.isTunning = false;
-
-                currState = BoardState.ORDER;
-                return;
-            }
-
-            if (selectPiece.crossBomb || selectPiece.target.crossBomb)
-            {
-                UsedCrossBomb(selectPiece);
-                UsedCrossBomb(selectPiece.target);
-            }
-
-            if (FindMatched() || matchedPiece.Count > 0)
-                FindMatchedPiece();
-
-            else
-            {
-                selectPiece.MoveToBack();
-                selectPiece.target.MoveToBack();
-
-                return;
-            }
-        }
-
-        else if (currState == BoardState.ORDER)
-        {
-            checkTime += Time.deltaTime;
-
-            if (checkTime > 3f)
-            {
-                if (DeadLockCheck())
-                {
-                    // Debug.Log("is DeadLock !!");
-                    selectPiece = null;
-
-                    StartCoroutine(RegeneratePiece());
-                }
-
-                else
-                {
-                    Vector2 dir;
-                    // hint effect
-                    Piece piece = FindHintMatched(out dir);
-                    Piece adjacency = GetPiece(piece.row + (int)dir.x, piece.column + (int)dir.y);
-
-                    piece.PieceEffectPlay(4);
-                    adjacency.PieceEffectPlay(4);
-                    checkTime = 0f;
-                }
-            }
-        }
-
-        //DebugSystem();
     }
 
     public void FindMatchedPiece()
@@ -196,7 +197,6 @@ public class Board : MonoBehaviour
                         {
                             if (boardIndex[row + 1, column] != null && boardIndex[row - 1, column] != null)
                             {
-                                ///////////////////// 수정
                                 Piece rightPiece = GetPiece(row + 1, column);
                                 Piece leftPiece = GetPiece(row - 1, column);
 
@@ -213,7 +213,6 @@ public class Board : MonoBehaviour
 
                                     UsedItem(rightPiece, currPiece, leftPiece);
                                 }
-                                /////////////////////
                             }
                         }
 
@@ -221,7 +220,6 @@ public class Board : MonoBehaviour
                         {
                             if (boardIndex[row, column + 1] != null && boardIndex[row, column - 1] != null)
                             {
-                                ///////////////////// 수정
                                 Piece upPiece = GetPiece(row, column + 1);
                                 Piece downPiece = GetPiece(row, column - 1);
 
@@ -238,7 +236,6 @@ public class Board : MonoBehaviour
 
                                     UsedItem(upPiece, currPiece, downPiece);
                                 }
-                                /////////////////////
                             }
                         }
                     }
@@ -537,7 +534,7 @@ public class Board : MonoBehaviour
 
         return false;
     }
-    /////////// 수정
+
     private void UsedItem(Piece piece1, Piece piece2, Piece piece3)
     {
         if (piece1.rowBomb)
@@ -578,8 +575,6 @@ public class Board : MonoBehaviour
             piece3.PieceEffectPlay(1);
         }
     }
-
-    //////////// 
 
     public void UsedCrossBomb(Piece piece)
     {
@@ -660,22 +655,18 @@ public class Board : MonoBehaviour
 
         foreach (var piece in matchedPiece)
         {
-            ////////////////////// 수정
-            /*if (piece.pieceEffects[1].isPlaying || piece.pieceEffects[2].isPlaying || piece.pieceEffects[3].isPlaying)
+            if (piece.pieceEffects[1].isPlaying || piece.pieceEffects[2].isPlaying || piece.pieceEffects[3].isPlaying)
             {
                 piece.AllClearPiece();
 
                 continue;
-            }*/
-            /////////////////////
+            }
 
             piece.AllClearPiece();
             piece.PieceEffectPlay(0);
         }
-
-        ///////////////////// 수정
+        
         matchedPiece[Random.Range(0, matchedPiece.Count)].PieceClipPlay(1);
-        /////////////////////
 
         yield return new WaitForSeconds(0.5f);
 
@@ -689,10 +680,12 @@ public class Board : MonoBehaviour
         matchedPiece.Clear();
         verifyPiece.Clear();
 
-        StartCoroutine(FallingPiece());
+        //yield return new WaitForSeconds(waitTime);
+
+        StartCoroutine(FallPieces());
     }
 
-    IEnumerator FallingPiece()
+    IEnumerator FallPieces()
     {
         for (int column = 0; column < height; ++column)
         {
@@ -808,7 +801,7 @@ public class Board : MonoBehaviour
         boardIndex[row, column] = temp;
     }
 
-    IEnumerator RegeneratePiece()
+    IEnumerator PieceRegenerate()
     {
         currState = BoardState.WORK;
 
@@ -1020,7 +1013,7 @@ public class Board : MonoBehaviour
         {
             selectPiece = null;
 
-            StartCoroutine(RegeneratePiece());
+            StartCoroutine(PieceRegenerate());
         }
 
         // debug Generate Item
