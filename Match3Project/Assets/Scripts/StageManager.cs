@@ -29,9 +29,7 @@ public class StageManager : MonoBehaviour
     public Text scoreText;
     public Text goalScoreText;
     public Text moveText;
-    public Text pauseScore;
     public Text clearScore;
-    public Text failScore;
 
     [Header("UI Images")]
     public Slider scoreSlider;
@@ -65,12 +63,13 @@ public class StageManager : MonoBehaviour
     public Board board;
 
     private StageData stageData;
-    public static StageManager instance;
-
     public TextAsset[] stageLevel;
 
+    public static StageManager instance;
     private void Awake()
     {
+        instance = this;
+
 #if UNITY_EDITOR || UNITY_EDITOR_WIN || UNITY_EDITOR_OSX || UNITY_STANDALONE
         Camera.main.orthographicSize = 6;
 #endif
@@ -78,15 +77,14 @@ public class StageManager : MonoBehaviour
 #if UNITY_IOS || UNITY_IPHONE || UNITY_ANDROID || UNITY_WEBGL
         Camera.main.orthographicSize = 7;
 #endif
-
-        instance = this;
+    }
+    private void Start()
+    {
+        stageBGM = GetComponent<AudioSource>();
 
         stageBGMs = Resources.LoadAll<AudioClip>("Sounds/BGM");
         stageBGs = Resources.LoadAll<Sprite>("Arts/Background");
-    }
 
-    private void Start()
-    {
         StageInit();
     }
 
@@ -94,27 +92,26 @@ public class StageManager : MonoBehaviour
     {
         LoadGameData();
 
-        stageBG.sprite = stageBGs[stageData.bgIdx];
-
-        stageBGM = GetComponent<AudioSource>();
-        stageBGM.clip = stageBGMs[stageData.bgmIdx];
         stageBGM.volume = GameManager.instance.bgmVolume;
-        
-        stageBGM.Play();
-
-        moveValue = stageData.move;
-        goalScore = stageData.goalScore;
-
-        moveText.text = moveValue.ToString();
-        goalScoreText.text = "GOAL SCORE : " + Mathf.FloorToInt(goalScore).ToString("D8");
-        scoreSlider.maxValue = goalScore;
         bgmVolume.value = GameManager.instance.bgmVolume;
         seVolume.value = GameManager.instance.seVolume;
+
+        goalScoreText.text = "GOAL SCORE : " + Mathf.FloorToInt(goalScore).ToString("D8");
+        scoreSlider.maxValue = goalScore;
+
+        moveText.text = moveValue.ToString();
+
+        stageBGM.Play();
     }
 
     public void LoadGameData()
     {
         stageData = JsonUtility.FromJson<StageData>(stageLevel[GameManager.instance.stageLevel].text);
+
+        stageBG.sprite = stageBGs[stageData.bgIdx];
+        stageBGM.clip = stageBGMs[stageData.bgmIdx];
+        moveValue = stageData.move;
+        goalScore = stageData.goalScore;
     }
 
     private void Update()
@@ -196,7 +193,6 @@ public class StageManager : MonoBehaviour
 
         Time.timeScale = 0;
 
-        pauseScore.text = "SCORE : " + Mathf.FloorToInt(nextScore).ToString("D8");
         pauseUI.SetActive(true);
 
         currMenuUI = pauseUI;
@@ -226,7 +222,6 @@ public class StageManager : MonoBehaviour
 
     public void StageFail()
     {
-        failScore.text = "SCORE : " + Mathf.FloorToInt(score).ToString("D8");
         failUI.SetActive(true);
 
         currMenuUI = failUI;
