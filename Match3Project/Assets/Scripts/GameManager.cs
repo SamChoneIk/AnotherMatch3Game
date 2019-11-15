@@ -2,6 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public static class Variables
+{
+    public static int stageLevel;
+    public static float bgmVolume = 1;
+    public static float seVolume = 1;
+}
+
 public class GameManager : MonoBehaviour
 {
     public int stageLevel;
@@ -9,6 +16,7 @@ public class GameManager : MonoBehaviour
     public float seVolume = 1;
 
     public static GameManager instance;
+
     private void Awake()
     {
         if (instance == null)

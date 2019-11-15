@@ -126,7 +126,7 @@ public class Piece : MonoBehaviour
             if (board.currState == BoardState.CLEAR || board.currState == BoardState.FAIL)
                 return;
 
-            board.selectPiece = this;
+            //board.selectPiece = this;
             startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
     }
@@ -193,12 +193,11 @@ public class Piece : MonoBehaviour
             currState = PieceState.MOVE;
             target.currState = PieceState.MOVE;
 
-            board.selectPiece = this;
-           // board.AllStopEffect();
+            board.selectedPiece = this;
+            board.currState = BoardState.WORK;
 
             StageManager.instance.SoundEffectPlay(0);
 
-            board.currState = BoardState.WORK;
         }
     }
 
@@ -216,8 +215,8 @@ public class Piece : MonoBehaviour
 
     /// <summary>
     ///         <param name="index">
-    ///         index is particle elemants.
-    ///         Effect Play Numbers [ 0 : PieceExplosion || 1 : ColumnBomb || 2 : CrossBomb || 3 : RowBomb || 4 : HintEffect ]
+    ///         Piece의 파티클 이펙트를 재생합니다.
+    ///         Piece Particle Effect Play Numbers [ 0 : PieceExplosion || 1 : ColumnBomb || 2 : CrossBomb || 3 : RowBomb || 4 : HintEffect ]
     ///         </param>
     /// </summary>
     public void PieceEffectPlay(int index)
@@ -226,44 +225,28 @@ public class Piece : MonoBehaviour
         pieceEffects[index].Play();
     }
 
-    public bool IsEffectPlaying()
+    /// <summary>
+    ///         <param name="index">
+    ///         Piece의 파티클 이펙트를 정지합니다.
+    ///         Piece Particle Effect Stop Numbers [ 0 : PieceExplosion || 1 : ColumnBomb || 2 : CrossBomb || 3 : RowBomb || 4 : HintEffect ]
+    ///         </param>
+    /// </summary>
+    public void PieceEffectStop(int index)
     {
-        foreach(var effect in pieceEffects)
-        {
-            if (pieceEffects[0] == effect)
-                continue;
-
-            if (effect.isPlaying)
-                return true;
-        }
-        return false;
+        pieceEffects[index].Stop();
     }
 
-    public void AllClearPiece()
+    public void InitDisabledPiece()
     {
         board.boardIndex[row, column] = null;
+
+        pieceSprite.sprite = null;
+        itemSprite.sprite = null;
+
+        target = null;
 
         value = 0;
         row = 0;
         column = 0;
-
-        target = null;
-
-        pieceSprite.sprite = null;
-        itemSprite.sprite = null;
-    }
-
-    public void SetDisabledPiece()
-    {
-        foreach (var effect in pieceEffects)
-        {
-            effect.Stop();
-        }
-
-        name = "DefaultPiece";
-        transform.parent = board.disabledPieces.transform;
-        transform.position = new Vector2(row, column);
-
-        gameObject.SetActive(false);
     }
 }

@@ -262,9 +262,10 @@ public class StageManager : MonoBehaviour
             currMenuUI.SetActive(false);
         }
     }
+
     /// <summary>
     ///         <param name="index">
-    ///         index is Sound Effect elemants.
+    ///         Stage의 Sound Effect를 재생합니다.
     ///         Effect Play Numbers [ 0 : Swap || 1 : Tunning || 2 : Matched ]
     ///         </param>
     /// </summary>
