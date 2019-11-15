@@ -3,6 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
+[System.Serializable]
+public class StageData
+{
+    public int stage;
+    public int goalScore;
+    public int move;
+    public int bgIdx;
+    public int bgmIdx;
+}
+
 [ExecuteInEditMode]
 public class CreateStageToJson : MonoBehaviour
 {

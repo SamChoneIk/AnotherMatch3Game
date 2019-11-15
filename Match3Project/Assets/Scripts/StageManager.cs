@@ -2,18 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.IO;
 using UnityEngine.SceneManagement;
-
-[System.Serializable]
-public class StageData
-{
-    public int stage;
-    public int goalScore;
-    public int move;
-    public int bgIdx;
-    public int bgmIdx;
-}
 
 public class StageManager : MonoBehaviour
 {
@@ -27,34 +16,36 @@ public class StageManager : MonoBehaviour
 
     [Header("UI Texts")]
     public Text scoreText;
-    public Text goalScoreText;
     public Text moveText;
-    public Text clearScore;
+    public Text clearStageScoreText;
+    public Text clearUIScoreText;
 
     [Header("UI Images")]
     public Slider scoreSlider;
-    public Image[] starImages;
+    public Slider bgmValue;
+    public Slider seValue;
+
     public Sprite starSprite;
+    public Image[] clearStars;
 
     [Header("Stage Parts")]
-    public Image stageBG;
-    public AudioSource stageBGM;
-
-    public Slider bgmVolume;
-    public Slider seVolume;
-
+    private Image stageBG;
     private Sprite[] stageBGs;
+
+    private AudioSource stageBGM;
     private AudioClip[] stageBGMs;
+
+    private AudioSource stageSE;
+    private AudioClip[] stageSEs; // 0 = ItemSwipe, 1 = Matched, 2 = swap, 3 = tunning
 
     public float scoringSpeed = 0f;
     public int combo = 0;
 
-    private int moveValue;
+    private float score;
+    private float nextScore;
     private int goalScore;
     private int stars = 0;
-
-    private float nextScore;
-    private float score;
+    private int moveValue;
 
     [Header("Others")]
     public GameObject nextButton;
@@ -80,10 +71,14 @@ public class StageManager : MonoBehaviour
     }
     private void Start()
     {
-        stageBGM = GetComponent<AudioSource>();
-
-        stageBGMs = Resources.LoadAll<AudioClip>("Sounds/BGM");
+        stageBG = GameObject.FindWithTag("BG").GetComponent<Image>();
         stageBGs = Resources.LoadAll<Sprite>("Arts/Background");
+
+        stageBGM = GameObject.FindWithTag("BGM").GetComponent<AudioSource>();
+        stageBGMs = Resources.LoadAll<AudioClip>("Sounds/BGM");
+
+        stageSE = GameObject.FindWithTag("SE").GetComponent<AudioSource>();
+        stageSEs = Resources.LoadAll<AudioClip>("Sounds/SE");
 
         StageInit();
     }
@@ -93,15 +88,15 @@ public class StageManager : MonoBehaviour
         LoadGameData();
 
         stageBGM.volume = GameManager.instance.bgmVolume;
-        bgmVolume.value = GameManager.instance.bgmVolume;
-        seVolume.value = GameManager.instance.seVolume;
+        bgmValue.value = GameManager.instance.bgmVolume;
 
-        goalScoreText.text = "GOAL SCORE : " + Mathf.FloorToInt(goalScore).ToString("D8");
+        stageSE.volume = GameManager.instance.seVolume;
+        seValue.value = GameManager.instance.seVolume;
+
+        clearStageScoreText.text = "GOAL SCORE : " + Mathf.FloorToInt(goalScore).ToString("D8");
         scoreSlider.maxValue = goalScore;
 
         moveText.text = moveValue.ToString();
-
-        stageBGM.Play();
     }
 
     public void LoadGameData()
@@ -109,7 +104,10 @@ public class StageManager : MonoBehaviour
         stageData = JsonUtility.FromJson<StageData>(stageLevel[GameManager.instance.stageLevel].text);
 
         stageBG.sprite = stageBGs[stageData.bgIdx];
+
         stageBGM.clip = stageBGMs[stageData.bgmIdx];
+        stageBGM.Play();
+
         moveValue = stageData.move;
         goalScore = stageData.goalScore;
     }
@@ -118,7 +116,9 @@ public class StageManager : MonoBehaviour
     {
         if (optionUI.activeInHierarchy)
         {
-            stageBGM.volume = bgmVolume.value;
+            stageBGM.volume = bgmValue.value;
+            stageSE.volume = seValue.value;
+
             return;
         }
 
@@ -151,27 +151,24 @@ public class StageManager : MonoBehaviour
             return;
 
         if (score >= goalScore * 0.5 && stars == 0)
-            starImages[stars++].sprite = starSprite;
+            clearStars[stars++].sprite = starSprite;
 
         if (score >= goalScore * 0.75 && stars == 1)
-            starImages[stars++].sprite = starSprite;
+            clearStars[stars++].sprite = starSprite;
         
 
         if (score >= goalScore && stars == 2)
         {
-            starImages[stars].sprite = starSprite;
+            clearStars[stars].sprite = starSprite;
             board.currState = BoardState.CLEAR;
         }
 
-        if (moveValue == 0 && board.currState != BoardState.CLEAR)
+        if (moveValue == 0)
         {
-            if(stars > 0 )
-            { 
-                board.currState = BoardState.CLEAR;
+            if (board.currState == BoardState.CLEAR && board.currState == BoardState.FAIL)
                 return;
-            }
 
-            board.currState = BoardState.FAIL;
+            board.currState = stars > 0 ? BoardState.CLEAR : BoardState.FAIL;
         }
     }
 
@@ -214,7 +211,7 @@ public class StageManager : MonoBehaviour
             thanksText.SetActive(true);
         }
 
-        clearScore.text = "SCORE : " + Mathf.FloorToInt(score).ToString("D8");
+        clearUIScoreText.text = "SCORE : " + Mathf.FloorToInt(score).ToString("D8");
         clearUI.SetActive(true);
 
         currMenuUI = clearUI;
@@ -250,10 +247,8 @@ public class StageManager : MonoBehaviour
     {
         if (currMenuUI == optionUI)
         {
-            GameManager.instance.bgmVolume = bgmVolume.value;
-            GameManager.instance.seVolume = seVolume.value;
-
-            board.AllPieceVolume();
+            GameManager.instance.bgmVolume = bgmValue.value;
+            GameManager.instance.seVolume = seValue.value;
 
             currMenuUI.SetActive(false);
             pauseUI.SetActive(true);
@@ -266,5 +261,17 @@ public class StageManager : MonoBehaviour
             Time.timeScale = 1;
             currMenuUI.SetActive(false);
         }
+    }
+    /// <summary>
+    ///         <param name="index">
+    ///         index is Sound Effect elemants.
+    ///         Effect Play Numbers [ 0 : Swap || 1 : Tunning || 2 : Matched ]
+    ///         </param>
+    /// </summary>
+    public void SoundEffectPlay(int index)
+    {
+        stageSE.Stop();
+        stageSE.clip = stageSEs[index];
+        stageSE.Play();
     }
 }

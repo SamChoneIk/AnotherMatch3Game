@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public enum BlockState
+public enum PieceState
 {
     WAIT,
     MOVE
@@ -12,7 +12,7 @@ public enum BlockState
 public class Piece : MonoBehaviour
 {
     [Header("Piece Offset")]
-    public BlockState currState = BlockState.WAIT;
+    public PieceState currState = PieceState.WAIT;
 
     public int value;
 
@@ -40,11 +40,8 @@ public class Piece : MonoBehaviour
     public SpriteRenderer itemSprite;
     private SpriteRenderer pieceSprite;
 
-    public AudioSource pieceSound;
     public List<ParticleSystem> pieceEffects; // 0 = PieceExplosion, 1 = ColumnExplosion, 2 = CrossBomb, 3 = RowBomb, 4 = HintEffect
-
     private ParticleSystem[] effectObjects;
-    private AudioClip[] effectClip; // 0 = ItemSwipe, 1 = Matched, 2 = swap, 3 = tunning
 
     private Board board;
 
@@ -52,13 +49,10 @@ public class Piece : MonoBehaviour
     {
         pieceSprite = GetComponent<SpriteRenderer>();
 
-        pieceSound = GetComponent<AudioSource>();
-        pieceSound.volume = GameManager.instance.seVolume;
-
-        AddAllPieceEffect();
+        AddPieceEffect();
     }
 
-    private void AddAllPieceEffect()
+    private void AddPieceEffect()
     {
         pieceEffects = new List<ParticleSystem>();
 
@@ -70,11 +64,9 @@ public class Piece : MonoBehaviour
         }
 
         effectObjects = null;
-
-        effectClip = Resources.LoadAll<AudioClip>("Sounds/PieceClip");
     }
 
-    public void InitPiece(int v, int r, int c, Board b)
+    public void SettingPiece(Board b, string n, int v, int r, int c)
     {
         if (board == null)
             board = b;
@@ -82,28 +74,32 @@ public class Piece : MonoBehaviour
         if (target != null)
             target = null;
 
+        if(value != v)
         value = v;
         row = r;
         column = c;
 
-        foreach(var effect in pieceEffects)
-        {
-            effect.Stop();
-        }
+        moveToPos = new Vector2(row, column);
+        name = n;
 
-        if(!crossBomb)
+        if (!crossBomb)
             pieceSprite.sprite = board.pieceSprites[value];
 
-        currState = BlockState.WAIT;
+        if (board.boardIndex[row, column] != gameObject)
+            board.boardIndex[row, column] = gameObject;
+    }
+
+    public void SetPieceValue(int v)
+    {
+        value = v;
+        pieceSprite.sprite = board.pieceSprites[value];
     }
 
     private void Update()
     {
-        if (currState == BlockState.MOVE)
+        if (currState == PieceState.MOVE)
         {
-            board.AllStopEffect();
-
-            fallSpeed += Time.deltaTime * board.blockFallSpeed;
+            fallSpeed += Time.deltaTime * board.fallSpeed;
 
             if (Mathf.Abs(row - transform.position.x) > 0.1f || Mathf.Abs(column - transform.position.y) > 0.1f)
                 transform.position = Vector2.Lerp(transform.position, moveToPos, fallSpeed);
@@ -117,14 +113,14 @@ public class Piece : MonoBehaviour
                 transform.position = moveToPos;
                 fallSpeed = 0f;
 
-                currState = BlockState.WAIT;
+                currState = PieceState.WAIT;
             }
         }
     }
 
     private void OnMouseDown()
     {
-        if (currState == BlockState.WAIT && Time.timeScale > 0 &&
+        if (currState == PieceState.WAIT && Time.timeScale > 0 &&
             board.currState == BoardState.ORDER)
         {
             if (board.currState == BoardState.CLEAR || board.currState == BoardState.FAIL)
@@ -137,7 +133,7 @@ public class Piece : MonoBehaviour
 
     private void OnMouseUp()
     {
-        if (currState == BlockState.WAIT && Time.timeScale > 0 &&
+        if (currState == PieceState.WAIT && Time.timeScale > 0 &&
             board.currState == BoardState.ORDER)
         {
             if (board.currState == BoardState.CLEAR || board.currState == BoardState.FAIL)
@@ -150,7 +146,7 @@ public class Piece : MonoBehaviour
 
     private void CalculratePiece()
     {
-        if (currState == BlockState.WAIT && Time.timeScale > 0 &&
+        if (currState == PieceState.WAIT && Time.timeScale > 0 &&
             board.currState == BoardState.ORDER)
         {
             if (board.currState == BoardState.CLEAR || board.currState == BoardState.FAIL)
@@ -194,12 +190,13 @@ public class Piece : MonoBehaviour
             target.moveToPos = new Vector2(target.row, target.column);
 
             // 블럭을 움직임
-            currState = BlockState.MOVE;
-            target.currState = BlockState.MOVE;
+            currState = PieceState.MOVE;
+            target.currState = PieceState.MOVE;
 
             board.selectPiece = this;
+           // board.AllStopEffect();
 
-            PieceClipPlay(2);
+            StageManager.instance.SoundEffectPlay(0);
 
             board.currState = BoardState.WORK;
         }
@@ -214,12 +211,7 @@ public class Piece : MonoBehaviour
 
         isTunning = true;
 
-        if (board.selectPiece == this)
-        {
-            PieceClipPlay(3);
-        }
-
-        currState = BlockState.MOVE;
+        currState = PieceState.MOVE;
     }
 
     /// <summary>
@@ -234,17 +226,17 @@ public class Piece : MonoBehaviour
         pieceEffects[index].Play();
     }
 
-    /// <summary>
-    ///         <param name="index">
-    ///         index is AudioClip elemants.
-    ///         Effect Stop Numbers [ 0 : ItemSwipe || 1 : Matched || 2 : swap || 3 : tunning ]
-    ///         </param>
-    /// </summary>
-    public void PieceClipPlay(int index)
+    public bool IsEffectPlaying()
     {
-        pieceSound.Stop();
-        pieceSound.clip = effectClip[index];
-        pieceSound.Play();
+        foreach(var effect in pieceEffects)
+        {
+            if (pieceEffects[0] == effect)
+                continue;
+
+            if (effect.isPlaying)
+                return true;
+        }
+        return false;
     }
 
     public void AllClearPiece()
@@ -256,9 +248,6 @@ public class Piece : MonoBehaviour
         column = 0;
 
         target = null;
-        rowBomb = false;
-        columnBomb = false;
-        crossBomb = false;
 
         pieceSprite.sprite = null;
         itemSprite.sprite = null;
@@ -270,8 +259,6 @@ public class Piece : MonoBehaviour
         {
             effect.Stop();
         }
-
-        pieceSound.clip = null;
 
         name = "DefaultPiece";
         transform.parent = board.disabledPieces.transform;
