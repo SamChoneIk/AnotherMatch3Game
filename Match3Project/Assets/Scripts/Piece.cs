@@ -3,6 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+public enum PieceEffect
+{
+    PIECEEXPLOSION = 0,
+    COLUMNBOMB = 1,
+    CROSSBOMB = 2,
+    ROWBOMB = 3,
+    HINTEFFECT = 4,
+}
+
 public enum PieceState
 {
     WAIT,
@@ -75,7 +84,8 @@ public class Piece : MonoBehaviour
             target = null;
 
         if(value != v)
-        value = v;
+           value = v;
+
         row = r;
         column = c;
 
@@ -85,8 +95,8 @@ public class Piece : MonoBehaviour
         if (!crossBomb)
             pieceSprite.sprite = board.pieceSprites[value];
 
-        if (board.boardIndex[row, column] != gameObject)
-            board.boardIndex[row, column] = gameObject;
+        if (board.pieceArray[row, column] != gameObject || board.pieceArray[row, column] == null)
+            board.pieceArray[row, column] = gameObject;
     }
 
     public void SetPieceValue(int v)
@@ -99,17 +109,17 @@ public class Piece : MonoBehaviour
     {
         if (currState == PieceState.MOVE)
         {
-            fallSpeed += Time.deltaTime * board.fallSpeed;
+            fallSpeed += Time.deltaTime * board.pieceFallSpeed;
 
             if (Mathf.Abs(row - transform.position.x) > 0.1f || Mathf.Abs(column - transform.position.y) > 0.1f)
                 transform.position = Vector2.Lerp(transform.position, moveToPos, fallSpeed);
 
             else
             {
-                if (board.boardIndex[row, column] != gameObject)
-                    board.boardIndex[row, column] = gameObject;
+                if (board.pieceArray[row, column] != gameObject)
+                    board.pieceArray[row, column] = gameObject;
                 
-                gameObject.name = "[" + row + " , " + column + "]";
+                gameObject.name = $"[{row} , {column}]";
                 transform.position = moveToPos;
                 fallSpeed = 0f;
 
@@ -121,9 +131,9 @@ public class Piece : MonoBehaviour
     private void OnMouseDown()
     {
         if (currState == PieceState.WAIT && Time.timeScale > 0 &&
-            board.currState == BoardState.ORDER)
+            board.currBoardState == BoardState.ORDER)
         {
-            if (board.currState == BoardState.CLEAR || board.currState == BoardState.FAIL)
+            if (board.currBoardState == BoardState.CLEAR || board.currBoardState == BoardState.FAIL)
                 return;
 
             //board.selectPiece = this;
@@ -134,9 +144,9 @@ public class Piece : MonoBehaviour
     private void OnMouseUp()
     {
         if (currState == PieceState.WAIT && Time.timeScale > 0 &&
-            board.currState == BoardState.ORDER)
+            board.currBoardState == BoardState.ORDER)
         {
-            if (board.currState == BoardState.CLEAR || board.currState == BoardState.FAIL)
+            if (board.currBoardState == BoardState.CLEAR || board.currBoardState == BoardState.FAIL)
                 return;
 
             endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -147,9 +157,9 @@ public class Piece : MonoBehaviour
     private void CalculratePiece()
     {
         if (currState == PieceState.WAIT && Time.timeScale > 0 &&
-            board.currState == BoardState.ORDER)
+            board.currBoardState == BoardState.ORDER)
         {
-            if (board.currState == BoardState.CLEAR || board.currState == BoardState.FAIL)
+            if (board.currBoardState == BoardState.CLEAR || board.currBoardState == BoardState.FAIL)
                 return;
 
             Vector2 dir = (endPos - startPos);
@@ -167,8 +177,8 @@ public class Piece : MonoBehaviour
 
     private void MoveToPiece(Vector2 direction)
     {
-        if ((row + direction.x) < board.width && (column + direction.y) < board.height &&
-            board.boardIndex[row + (int)direction.x, column + (int)direction.y] != null)
+        if ((row + direction.x) < board.horizontal && (column + direction.y) < board.vertical &&
+            board.pieceArray[row + (int)direction.x, column + (int)direction.y] != null)
         {
             // 블럭이 참조할 대상
             target = board.GetPiece(row + (int)direction.x, column + (int)direction.y);
@@ -194,9 +204,9 @@ public class Piece : MonoBehaviour
             target.currState = PieceState.MOVE;
 
             board.selectedPiece = this;
-            board.currState = BoardState.WORK;
+            board.currBoardState = BoardState.WORK;
 
-            StageManager.instance.SoundEffectPlay(0);
+            StageCtrl.instance.SoundEffectPlay(SoundEffectList.SWAP);
 
         }
     }
@@ -214,39 +224,47 @@ public class Piece : MonoBehaviour
     }
 
     /// <summary>
-    ///         <param name="index">
+    ///         <param name="effectName">
     ///         Piece의 파티클 이펙트를 재생합니다.
     ///         Piece Particle Effect Play Numbers [ 0 : PieceExplosion || 1 : ColumnBomb || 2 : CrossBomb || 3 : RowBomb || 4 : HintEffect ]
     ///         </param>
     /// </summary>
-    public void PieceEffectPlay(int index)
+    public void PieceEffectPlay(PieceEffect effectName)
     {
-        pieceEffects[index].Stop();
-        pieceEffects[index].Play();
+        pieceEffects[(int)effectName].Stop();
+        pieceEffects[(int)effectName].Play();
     }
 
     /// <summary>
-    ///         <param name="index">
+    ///         <param name="effectName">
     ///         Piece의 파티클 이펙트를 정지합니다.
     ///         Piece Particle Effect Stop Numbers [ 0 : PieceExplosion || 1 : ColumnBomb || 2 : CrossBomb || 3 : RowBomb || 4 : HintEffect ]
     ///         </param>
     /// </summary>
-    public void PieceEffectStop(int index)
+    public void PieceEffectStop(PieceEffect effectName)
     {
-        pieceEffects[index].Stop();
+        pieceEffects[(int)effectName].Stop();
     }
 
-    public void InitDisabledPiece()
+    public void SetDisabledPiece()
     {
-        board.boardIndex[row, column] = null;
-
+        board.pieceArray[row, column] = null;
         pieceSprite.sprite = null;
         itemSprite.sprite = null;
-
         target = null;
 
-        value = 0;
-        row = 0;
-        column = 0;
+        name = Variables.disabledPieceName;
+    }
+
+    public void TunningNull()
+    {
+        target.isTunning = false;
+        target = null;
+        isTunning = false;
+        board.selectedPiece = null;
+
+        StageCtrl.instance.SoundEffectPlay(SoundEffectList.TUNNING);
+
+        board.currBoardState = BoardState.ORDER;
     }
 }

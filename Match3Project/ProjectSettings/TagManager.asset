@@ -7,6 +7,7 @@ TagManager:
   - BGM
   - SE
   - BG
+  - UIMenus
   layers:
   - Default
   - TransparentFX
