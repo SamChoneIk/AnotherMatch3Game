@@ -3,28 +3,23 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-public enum BoardState
-{
-    ORDER,
-    WORK,
-    CLEAR,
-    FAIL,
-}
-
 public class Board : MonoBehaviour
 {
-    [Header("Board State")]
+    [Header("Board Parts")]
     public BoardState currBoardState;
 
     public int horizontal = 6;
     public int vertical = 8;
     public int fallOffset = 5;
 
+    public int matchedScore = 30;
+    public int decreaseMoveValue = 1;
+
     public float delayTime = 0.08f;
+    public float effectDelayTime = 0.5f;
     public float pieceFallSpeed;
 
     public GameObject[,] pieceArray;
-
     public Piece selectedPiece;
 
     [Header("Piece Parts")]
@@ -34,23 +29,25 @@ public class Board : MonoBehaviour
     public Sprite[] pieceSprites;
     public Sprite[] itemSprites;
 
-    public List<Piece> matchedPieces;
-    public List<Piece> disabledPieces;
-    public List<Piece> verifyedPiece;
-    public List<Piece> hintPieces;
+    private List<Piece> matchedPieces;
+    private List<Piece> disabledPieces;
+    private List<Piece> verifyedPieces;
+    private List<Piece> hintPieces;
 
     private float hintAccumTime;
     private bool isMatched = false;
 
     private void Start()
     {
+        StageController.instance.board = this;
+
         currBoardState = BoardState.WORK;
 
         pieceArray = new GameObject[horizontal, vertical];
 
         matchedPieces = new List<Piece>();
         disabledPieces = new List<Piece>();
-        verifyedPiece = new List<Piece>();
+        verifyedPieces = new List<Piece>();
         hintPieces = new List<Piece>();
 
         pieceSprites = Resources.LoadAll<Sprite>(Variables.pieceSpritesPath);
@@ -155,10 +152,9 @@ public class Board : MonoBehaviour
         return false;
     }
 
-    void Update()
+    private void Update()
     {
-        if (currBoardState == BoardState.CLEAR ||
-            currBoardState == BoardState.FAIL)
+        if (StageController.instance.currStageState == StageState.CLEAR || StageController.instance.currStageState == StageState.FAIL)
             return;
 
         switch (currBoardState)
@@ -166,12 +162,7 @@ public class Board : MonoBehaviour
             case BoardState.WORK:
                 {
                     if (hintPieces.Count > 0)
-                    {
-                        hintPieces[0].PieceEffectStop(PieceEffect.HINTEFFECT);
-                        hintPieces[1].PieceEffectStop(PieceEffect.HINTEFFECT);
-
-                        hintPieces.Clear();
-                    }
+                        HintPieceSwitch(false);
 
                     hintAccumTime = 0;
 
@@ -194,14 +185,13 @@ public class Board : MonoBehaviour
                     }
 
                     FindMatchedPiece(true);
-
                     if (isMatched)
                         FindMatchedPiece();
 
                     else
                     {
-                        selectedPiece.MoveToBack();
                         selectedPiece.target.MoveToBack();
+                        selectedPiece.MoveToBack();
                     }
 
                     break;
@@ -219,10 +209,7 @@ public class Board : MonoBehaviour
                                 GeneratePiece(true);
 
                             else
-                            {
-                                hintPieces[0].PieceEffectPlay(PieceEffect.HINTEFFECT);
-                                hintPieces[1].PieceEffectPlay(PieceEffect.HINTEFFECT);
-                            }
+                                HintPieceSwitch(true);
                         }
                     }
 
@@ -232,12 +219,7 @@ public class Board : MonoBehaviour
         DebugSystem();
     }
 
-    public void BoardStateAction(BoardState currState)
-    {
-       
-    }
-
-    public void FindMatchedPiece(bool findMatched = false)
+    private void FindMatchedPiece(bool findMatched = false)
     {
         if (isMatched)
             isMatched = false;
@@ -263,20 +245,19 @@ public class Board : MonoBehaviour
             }
         }
 
+        if (findMatched && !isMatched)
+            return;
+
         if (matchedPieces.Count > 0)
         {
             GenerateItemPiece();
-            ++StageCtrl.instance.combo;
             StartCoroutine(DisabledMatchedPiece());
+            return;
         }
 
         else
         {
-            StageCtrl.instance.combo = 0;
-
-            if (currBoardState == BoardState.CLEAR || currBoardState == BoardState.FAIL)
-                return;
-
+            StageController.instance.combo = 0;
             currBoardState = BoardState.ORDER;
         }
     }
@@ -319,10 +300,10 @@ public class Board : MonoBehaviour
         {
             for (int i = 0; i < matchedPieces.Count - 1; ++i)
             {
-                if (verifyedPiece.Contains(matchedPieces[i]))
+                if (verifyedPieces.Contains(matchedPieces[i]))
                     continue;
 
-                verifyedPiece.Add(matchedPieces[i]);
+                verifyedPieces.Add(matchedPieces[i]);
 
                 FindDirectionMatchedPiece(matchedPieces[i], ref rows, ref cols);
 
@@ -342,7 +323,7 @@ public class Board : MonoBehaviour
                     }
 
                     else
-                        bombPiece = verifyedPiece[Random.Range(prevCount, verifyedPiece.Count)];
+                        bombPiece = verifyedPieces[Random.Range(prevCount, verifyedPieces.Count)];
 
                     //Debug.Log("generate CrossBomb");
 
@@ -352,16 +333,16 @@ public class Board : MonoBehaviour
 
                     matchedPieces.Remove(bombPiece);
 
-                    prevCount = verifyedPiece.Count - 1;
+                    prevCount = verifyedPieces.Count - 1;
                 }
 
                 else
                 {
-                    if (verifyedPiece.Count >= 3)
-                        verifyedPiece.RemoveRange(prevCount, (verifyedPiece.Count - 1) - prevCount);
+                    if (verifyedPieces.Count >= 3)
+                        verifyedPieces.RemoveRange(prevCount, (verifyedPieces.Count - 1) - prevCount);
 
                     else
-                        verifyedPiece.Clear();
+                        verifyedPieces.Clear();
                 }
 
                 rows = 0;
@@ -372,7 +353,7 @@ public class Board : MonoBehaviour
         // Row Bomb
         for (int i = 0; i < matchedPieces.Count - 1; ++i)
         {
-            if (verifyedPiece.Contains(matchedPieces[i]))
+            if (verifyedPieces.Contains(matchedPieces[i]))
                 continue;
 
             for (int r = 1; r < horizontal - 1; ++r)
@@ -384,7 +365,7 @@ public class Board : MonoBehaviour
 
                 if (matchedPieces.Contains(check) && matchedPieces[i].value == check.value)
                 {
-                    verifyedPiece.Add(check);
+                    verifyedPieces.Add(check);
                     rows++;
                 }
 
@@ -406,7 +387,7 @@ public class Board : MonoBehaviour
                 }
                 
                 else
-                    bombPiece = verifyedPiece[Random.Range(prevCount, verifyedPiece.Count)];
+                    bombPiece = verifyedPieces[Random.Range(prevCount, verifyedPieces.Count)];
 
                 //Debug.Log("generate RowBomb");
 
@@ -415,16 +396,16 @@ public class Board : MonoBehaviour
 
                 matchedPieces.Remove(bombPiece);
 
-                prevCount = verifyedPiece.Count - 1;
+                prevCount = verifyedPieces.Count - 1;
             }
 
             else
             {
-                if (verifyedPiece.Count >= 3)
-                    verifyedPiece.RemoveRange(prevCount, (verifyedPiece.Count - 1) - prevCount);
+                if (verifyedPieces.Count >= 3)
+                    verifyedPieces.RemoveRange(prevCount, (verifyedPieces.Count - 1) - prevCount);
 
                 else
-                    verifyedPiece.Clear();
+                    verifyedPieces.Clear();
             }
 
             rows = 0;
@@ -433,7 +414,7 @@ public class Board : MonoBehaviour
         // Column Bomb
         for (int i = 0; i < matchedPieces.Count - 1; ++i)
         {
-            if (verifyedPiece.Contains(matchedPieces[i]))
+            if (verifyedPieces.Contains(matchedPieces[i]))
                 continue;
 
             for (int c = 1; c < vertical - 1; ++c)
@@ -445,7 +426,7 @@ public class Board : MonoBehaviour
 
                 if (matchedPieces.Contains(check) && matchedPieces[i].value == check.value)
                 {
-                    verifyedPiece.Add(check);
+                    verifyedPieces.Add(check);
                     cols++;
                 }
 
@@ -467,7 +448,7 @@ public class Board : MonoBehaviour
                 }
 
                 else
-                    bombPiece = verifyedPiece[Random.Range(prevCount, verifyedPiece.Count)];
+                    bombPiece = verifyedPieces[Random.Range(prevCount, verifyedPieces.Count)];
 
                 //Debug.Log("generate ColumnBomb");
 
@@ -476,16 +457,16 @@ public class Board : MonoBehaviour
 
                 matchedPieces.Remove(bombPiece);
 
-                prevCount = verifyedPiece.Count - 1;
+                prevCount = verifyedPieces.Count - 1;
             }
 
             else
             {
-                if (verifyedPiece.Count >= 3)
-                    verifyedPiece.RemoveRange(prevCount, verifyedPiece.Count  - prevCount);
+                if (verifyedPieces.Count >= 3)
+                    verifyedPieces.RemoveRange(prevCount, verifyedPieces.Count  - prevCount);
 
                 else
-                    verifyedPiece.Clear();
+                    verifyedPieces.Clear();
             }
 
             cols = 0;
@@ -513,11 +494,11 @@ public class Board : MonoBehaviour
                 Piece check = GetPiece(piece.row + ((int)dir.x * i), piece.column + ((int)dir.y * i));
 
                 // 매치된 블럭일 때
-                if (matchedPieces.Contains(check) && !verifyedPiece.Contains(check) &&
+                if (matchedPieces.Contains(check) && !verifyedPieces.Contains(check) &&
                   check.value == piece.value)
                 {
                     // 체크가 끝난 블럭은 검사에서 제외
-                    verifyedPiece.Add(check);
+                    verifyedPieces.Add(check);
 
                     // 검사하는 블럭에 상하좌우에 다른 매치된 블럭이 있을 경우
                     if (FindNeighborPiece(check))
@@ -544,7 +525,7 @@ public class Board : MonoBehaviour
         if (piece.row + 1 < horizontal - 1)
         {
             Piece right = GetPiece(piece.row + 1, piece.column);
-            if (matchedPieces.Contains(right) && !verifyedPiece.Contains(right) && 
+            if (matchedPieces.Contains(right) && !verifyedPieces.Contains(right) && 
                 piece.value == right.value)
                 return true;
         }
@@ -552,7 +533,7 @@ public class Board : MonoBehaviour
         if (piece.row - 1 > 0)
         {
             Piece left = GetPiece(piece.row - 1, piece.column);
-            if (matchedPieces.Contains(left) && !verifyedPiece.Contains(left) && 
+            if (matchedPieces.Contains(left) && !verifyedPieces.Contains(left) && 
                 piece.value == left.value)
                 return true;
         }
@@ -560,7 +541,7 @@ public class Board : MonoBehaviour
         if (piece.column + 1 < vertical - 1)
         {
             Piece up = GetPiece(piece.row, piece.column + 1);
-            if (matchedPieces.Contains(up) && !verifyedPiece.Contains(up) && 
+            if (matchedPieces.Contains(up) && !verifyedPieces.Contains(up) && 
                 piece.value == up.value)
                 return true;
         }
@@ -568,7 +549,7 @@ public class Board : MonoBehaviour
         if (piece.column - 1 > 0)
         {
             Piece down = GetPiece(piece.row, piece.column - 1);
-            if (matchedPieces.Contains(down) && !verifyedPiece.Contains(down) &&
+            if (matchedPieces.Contains(down) && !verifyedPieces.Contains(down) &&
                 piece.value == down.value)
                 return true;
         }
@@ -617,7 +598,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    public void UsedCrossBomb(Piece piece)
+    private void UsedCrossBomb(Piece piece)
     {
         if (piece.crossBomb)
         {
@@ -651,8 +632,8 @@ public class Board : MonoBehaviour
                 if (!matchedPieces.Contains(rowPiece))
                     matchedPieces.Add(rowPiece);
 
-                if (!verifyedPiece.Contains(rowPiece))
-                    verifyedPiece.Add(rowPiece);
+                if (!verifyedPieces.Contains(rowPiece))
+                    verifyedPieces.Add(rowPiece);
             }
         }
     }
@@ -680,8 +661,8 @@ public class Board : MonoBehaviour
                 if (!matchedPieces.Contains(columnPiece))
                     matchedPieces.Add(columnPiece);
 
-                if (!verifyedPiece.Contains(columnPiece))
-                    verifyedPiece.Add(columnPiece);
+                if (!verifyedPieces.Contains(columnPiece))
+                    verifyedPieces.Add(columnPiece);
             }
         }
     }
@@ -690,7 +671,7 @@ public class Board : MonoBehaviour
     {
         if (selectedPiece != null)
         {
-            StageCtrl.instance.DecreaseMove(1);
+            StageController.instance.DecreaseMove(decreaseMoveValue);
             selectedPiece = null;
         }
 
@@ -700,13 +681,14 @@ public class Board : MonoBehaviour
             piece.SetDisabledPiece();
         }
 
-        StageCtrl.instance.SoundEffectPlay(SoundEffectList.MATCHED);
+        StageController.instance.SoundEffectPlay(SoundEffectList.MATCHED);
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(effectDelayTime);
 
+        ++StageController.instance.combo;
         foreach (var piece in matchedPieces)
         {
-            StageCtrl.instance.IncreaseScore(30);
+            StageController.instance.IncreaseScore(matchedScore);
 
             piece.transform.SetParent(disabledPiecesParent.transform);
             piece.gameObject.SetActive(false);
@@ -715,7 +697,7 @@ public class Board : MonoBehaviour
         }
 
         matchedPieces.Clear();
-        verifyedPiece.Clear();
+        verifyedPieces.Clear();
 
         StartCoroutine(FallingPieces());
     }
@@ -733,7 +715,7 @@ public class Board : MonoBehaviour
                         if (pieceArray[row, i] != null)
                         {
                             Piece fallPiece = GetPiece(row, i); // 빈 자리의 위에 있는 블럭
-                            fallPiece.SettingPiece(this, "[" + fallPiece.row + " , " + fallPiece.column + "]",fallPiece.value, fallPiece. row, column);
+                            fallPiece.SettingPiece(this, $"[{fallPiece.row}  , {fallPiece.column}]",fallPiece.value, fallPiece. row, column);
 
                             pieceArray[row, i] = null;
 
@@ -755,7 +737,7 @@ public class Board : MonoBehaviour
                 {
                     Piece enabledPiece = disabledPieces[0];
 
-                    enabledPiece.SettingPiece(this, "[" + row + " , " + column + "]", Random.Range(0, pieceSprites.Length), row, column);
+                    enabledPiece.SettingPiece(this, $"[{row}  , {column}]", Random.Range(0, pieceSprites.Length), row, column);
 
                     enabledPiece.transform.SetParent(transform);
                     enabledPiece.transform.position = new Vector2(enabledPiece.row, vertical + fall);
@@ -797,7 +779,6 @@ public class Board : MonoBehaviour
                     FindMatchedPiece(true);
                     if (isMatched)
                     {
-                        Debug.Log("asd");
                         SwapBoardIndex(row, column, Vector2.right);
                         hintPieces.Add(GetPiece(row, column));
                         hintPieces.Add(GetPiece(row + 1, column));
@@ -835,7 +816,7 @@ public class Board : MonoBehaviour
         pieceArray[row, column] = temp;
     }
 
-    public bool FindMovingPiece()
+    private bool FindMovingPiece()
     {
         for (int column = 0; column < vertical; ++column)
         {
@@ -851,6 +832,23 @@ public class Board : MonoBehaviour
             }
         }
         return false;
+    }
+
+    private void HintPieceSwitch(bool hintSwitch = false)
+    {
+        if (hintSwitch)
+        {
+            hintPieces[0].PieceEffectPlay(PieceEffect.HINTEFFECT);
+            hintPieces[1].PieceEffectPlay(PieceEffect.HINTEFFECT);
+        }
+
+        else
+        {
+            hintPieces[0].PieceEffectStop(PieceEffect.HINTEFFECT);
+            hintPieces[1].PieceEffectStop(PieceEffect.HINTEFFECT);
+
+            hintPieces.Clear();
+        }
     }
 
     private void DebugSystem()
@@ -939,7 +937,7 @@ public class Board : MonoBehaviour
                     else
                     {
                         if (piece.currState == PieceState.MOVE)
-                            Debug.Log("[" + row + " , " + column + "] is Moving");
+                            Debug.Log($"[{row} , {column}]] is Moving");
                     }
                 }
             }

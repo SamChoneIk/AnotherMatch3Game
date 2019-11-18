@@ -3,21 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public enum PieceEffect
-{
-    PIECEEXPLOSION = 0,
-    COLUMNBOMB = 1,
-    CROSSBOMB = 2,
-    ROWBOMB = 3,
-    HINTEFFECT = 4,
-}
-
-public enum PieceState
-{
-    WAIT,
-    MOVE
-}
-
 public class Piece : MonoBehaviour
 {
     [Header("Piece Offset")]
@@ -27,11 +12,11 @@ public class Piece : MonoBehaviour
 
     public int row;
     public int column;
-    public int prevRow;
-    public int prevColumn;
+    private int prevRow;
+    private int prevColumn;
 
-    public float fallSpeed = 0f;
-    public float dragRegist = 2f;
+    private float fallSpeed;
+    private float dragRegist = 2f;
 
     public bool isTunning = false;
 
@@ -40,7 +25,7 @@ public class Piece : MonoBehaviour
     public bool crossBomb = false;
 
     public Piece target;
-    public Vector2 moveToPos;
+    private Vector2 moveToPos;
 
     private Vector2 startPos;
     private Vector2 endPos;
@@ -130,36 +115,22 @@ public class Piece : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (currState == PieceState.WAIT && Time.timeScale > 0 &&
-            board.currBoardState == BoardState.ORDER)
-        {
-            if (board.currBoardState == BoardState.CLEAR || board.currBoardState == BoardState.FAIL)
-                return;
-
             //board.selectPiece = this;
             startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        }
     }
 
     private void OnMouseUp()
     {
-        if (currState == PieceState.WAIT && Time.timeScale > 0 &&
-            board.currBoardState == BoardState.ORDER)
-        {
-            if (board.currBoardState == BoardState.CLEAR || board.currBoardState == BoardState.FAIL)
-                return;
-
             endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             CalculratePiece();
-        }
     }
 
     private void CalculratePiece()
     {
-        if (currState == PieceState.WAIT && Time.timeScale > 0 &&
-            board.currBoardState == BoardState.ORDER)
+        if (currState == PieceState.WAIT && board.currBoardState == BoardState.ORDER && Time.timeScale > 0)
         {
-            if (board.currBoardState == BoardState.CLEAR || board.currBoardState == BoardState.FAIL)
+            if (StageController.instance.currStageState == StageState.CLEAR ||
+                StageController.instance.currStageState == StageState.FAIL)
                 return;
 
             Vector2 dir = (endPos - startPos);
@@ -206,7 +177,7 @@ public class Piece : MonoBehaviour
             board.selectedPiece = this;
             board.currBoardState = BoardState.WORK;
 
-            StageCtrl.instance.SoundEffectPlay(SoundEffectList.SWAP);
+            StageController.instance.SoundEffectPlay(SoundEffectList.SWAP);
 
         }
     }
@@ -263,7 +234,7 @@ public class Piece : MonoBehaviour
         isTunning = false;
         board.selectedPiece = null;
 
-        StageCtrl.instance.SoundEffectPlay(SoundEffectList.TUNNING);
+        StageController.instance.SoundEffectPlay(SoundEffectList.TUNNING);
 
         board.currBoardState = BoardState.ORDER;
     }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: stage1
   m_EditorClassIdentifier: 
   stageLevel: 1
-  clearScore: 5000
+  clearScore: 2500
   move: 30
   backgroundSprite: {fileID: 21300000, guid: 39319f6760050ef40ae82dbb32b4e48f, type: 3}
   backgroundMusic: {fileID: 8300000, guid: f2fedd3d07c4dfd4ea10f61280261791, type: 3}

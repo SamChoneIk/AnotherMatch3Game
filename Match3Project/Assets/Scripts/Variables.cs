@@ -2,10 +2,38 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum StageState
+{
+    PLAY,
+    CLEAR,
+    FAIL,
+}
+
+public enum BoardState
+{
+    ORDER,
+    WORK,
+}
+
+public enum PieceState
+{
+    WAIT,
+    MOVE
+}
+
 public enum SceneIndex
 {
     MAIN = 0,
     GAME = 1,
+}
+
+public enum PieceEffect
+{
+    PIECEEXPLOSION = 0,
+    COLUMNBOMB = 1,
+    CROSSBOMB = 2,
+    ROWBOMB = 3,
+    HINTEFFECT = 4,
 }
 
 public enum SoundEffectList
@@ -17,36 +45,19 @@ public enum SoundEffectList
 
 public static class Variables
 {
+    public static bool dataLoad = false;
+
     public static int stageLevel;
     public static float bgmVolume = 1;
     public static float seVolume = 1;
+    public static int stageTotalClear = 0;
+    public static int stageTotalFail = 0;
 
     public static string disabledPieceName = "DefaultPiece";
     public static string pieceSpritesPath = "Arts/PieceSprite";
     public static string itemSpritesPath = "Arts/ItemSprite";
-    public static string stageBackgroundPath = "Arts/Background";
-    public static string stageBackgroundMusicPath = "Sounds/BGM";
     public static string stageSoundEffectPath = "Sounds/SE";
     public static string stageDataPath = "Data/stage";
-}
-
-public class GameManager : MonoBehaviour
-{
-    public static GameManager instance;
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(this);
-        }
-
-        else if (instance != this)
-            Destroy(gameObject);
-    }
-
-    private void Start()
-    {
-        
-    }
+    public static string playerDataPath = Application.persistentDataPath + "/PlayerData/";
+    public static string playerDataName = "CEMPlayerdata.json";
 }
