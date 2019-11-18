@@ -42,7 +42,7 @@ public class MainMenuUI : MonoBehaviour
 
         if (Application.platform == RuntimePlatform.Android)
         {
-            if (Input.GetKey(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
                 if (currMenu == optionUI || currMenu == stageSelectUI)
                     BackMenu();

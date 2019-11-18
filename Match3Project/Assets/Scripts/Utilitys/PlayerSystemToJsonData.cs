@@ -14,8 +14,7 @@ public class PlayerData
 
 public class PlayerSystemToJsonData : MonoBehaviour
 {
-    public PlayerData playerData;
-
+    private PlayerData playerData = new PlayerData();
     public static PlayerSystemToJsonData instance;
     public void Awake()
     {
@@ -35,21 +34,25 @@ public class PlayerSystemToJsonData : MonoBehaviour
         playerData.stageTotalClear = Variables.stageTotalClear;
         playerData.stageTotalFail = Variables.stageTotalFail;
 
-        string path = Variables.playerDataPath + Variables.playerDataName;
+        string path = Variables.playerDataPath;
+        if (!Directory.Exists(path))
+            Directory.CreateDirectory(path);
+
+        path += Variables.playerDataName;
+
         string jsonData = JsonUtility.ToJson(playerData);
-        File.WriteAllText(path, jsonData);
+        File.WriteAllText(path,jsonData);
     }
 
     public void LoadPlayerSystemData()
     {
         if (!File.Exists(Variables.playerDataPath + Variables.playerDataName))
         {
-            playerData = new PlayerData();
             SavePlayerSystemData();
         }
 
         string path = Variables.playerDataPath + Variables.playerDataName;
-        string jsonData = JsonUtility.ToJson(playerData);
+        string jsonData = File.ReadAllText(path);
         playerData = JsonUtility.FromJson<PlayerData>(jsonData);
 
         Variables.bgmVolume = playerData.bgmVolume;

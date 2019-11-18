@@ -170,7 +170,9 @@ MonoBehaviour:
   vertical: 8
   fallOffset: 5
   matchedScore: 30
-  delayTime: 0.08
+  decreaseMoveValue: 1
+  delayTime: 0.02
+  effectDelayTime: 0.5
   pieceFallSpeed: 2
   selectedPiece: {fileID: 0}
   piecePrefab: {fileID: 7474845117984493925, guid: f162842921417e94c807fe1167e223c0,
@@ -2841,7 +2843,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1122869622
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3532,7 +3534,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1618107163
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6326,6 +6328,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7201208766242591237}
+  - component: {fileID: 7201208766242591238}
   m_Layer: 5
   m_Name: UIMenus
   m_TagString: Untagged
@@ -6351,9 +6354,17 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -700}
+  m_AnchoredPosition: {x: 0, y: -150}
   m_SizeDelta: {x: 950, y: 1085}
-  m_Pivot: {x: 0.5, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &7201208766242591238
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7201208766242591236}
+  m_CullTransparentMesh: 0
 --- !u!1 &7201208766256959156
 GameObject:
   m_ObjectHideFlags: 0

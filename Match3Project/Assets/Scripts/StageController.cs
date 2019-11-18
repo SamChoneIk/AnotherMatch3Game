@@ -113,9 +113,43 @@ public class StageController : MonoBehaviour
         {
             stageBGM.volume = bgmSlider.value;
             stageSE.volume = seSlider.value;
-
-            return;
         }
+
+       /* if (Application.platform == RuntimePlatform.Android)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (currMenu != pauseMenu)
+                {
+                    PauseMenu();
+                    return;
+                }
+
+                if (currMenu == optionMenu)
+                    BackMenu();
+
+                    currMenu == clearMenu || currMenu == failMenu)
+
+                if (currMenu == optionUI || currMenu == stageSelectUI)
+                    BackMenu();
+
+            }
+        }*/
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (currMenu == null)
+                PauseMenu();
+
+            if (currMenu == optionMenu)
+                BackMenu();
+
+            if (currMenu == pauseMenu)
+                Resume();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            Debug.Log(currMenu);
 
         if (score != nextScore)
         {
@@ -185,19 +219,20 @@ public class StageController : MonoBehaviour
 
     public void PauseMenu()
     {
+        Time.timeScale = 0;
+
         pauseUI.SetActive(true);
         currMenu = pauseMenu;
         currMenu.SetActive(true);
-
-        Time.timeScale = 0;
     }
 
     public void Resume()
     {
-        currMenu.SetActive(false);
-        pauseUI.SetActive(false);
-
         Time.timeScale = 1;
+
+        currMenu.SetActive(false);
+        currMenu = null;
+        pauseUI.SetActive(false);
     }
 
     public void OptionMenu()
