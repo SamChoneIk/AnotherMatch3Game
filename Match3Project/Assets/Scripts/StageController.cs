@@ -109,47 +109,28 @@ public class StageController : MonoBehaviour
 
     private void Update()
     {
+
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (currMenu == null)
+                    PauseMenu();
+
+                else if (currMenu == optionMenu)
+                    BackMenu();
+
+                else if (currMenu == pauseMenu)
+                    Resume();
+            }
+        }
+
         if (optionMenu.activeInHierarchy)
         {
             stageBGM.volume = bgmSlider.value;
             stageSE.volume = seSlider.value;
+            return;
         }
-
-       /* if (Application.platform == RuntimePlatform.Android)
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                if (currMenu != pauseMenu)
-                {
-                    PauseMenu();
-                    return;
-                }
-
-                if (currMenu == optionMenu)
-                    BackMenu();
-
-                    currMenu == clearMenu || currMenu == failMenu)
-
-                if (currMenu == optionUI || currMenu == stageSelectUI)
-                    BackMenu();
-
-            }
-        }*/
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (currMenu == null)
-                PauseMenu();
-
-            if (currMenu == optionMenu)
-                BackMenu();
-
-            if (currMenu == pauseMenu)
-                Resume();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-            Debug.Log(currMenu);
 
         if (score != nextScore)
         {
