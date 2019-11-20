@@ -4,11 +4,10 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Blue
-  - Gray
-  - Green
-  - Orenge
-  - Pupple
+  - BGM
+  - SE
+  - BG
+  - UIMenus
   layers:
   - Default
   - TransparentFX
