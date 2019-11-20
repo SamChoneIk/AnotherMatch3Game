@@ -77,6 +77,7 @@ public class Board : MonoBehaviour
         {
             for (int row = 0; row < horizontal; ++row)
             {
+                // 검토하고 null체크 제거
                 if (regenerate)
                 {
                     if (selectedPiece != null)
@@ -306,6 +307,8 @@ public class Board : MonoBehaviour
 
                 FindDirectionMatchedPiece(matchedPieces[i], ref rows, ref cols);
 
+               // Debug.Log("rows = " + rows + " & " + "columns = " + cols);
+
                 if (rows >= 2 && cols >= 2)
                 {
                     Piece bombPiece = matchedPieces[i];
@@ -321,6 +324,8 @@ public class Board : MonoBehaviour
 
                     else
                         bombPiece = verifyedPieces[Random.Range(prevCount, verifyedPieces.Count)];
+
+                    //Debug.Log("generate CrossBomb");
 
                     bombPiece.crossBomb = true;
                     bombPiece.value = pieceSprites.Length + 1;
@@ -384,6 +389,8 @@ public class Board : MonoBehaviour
                 else
                     bombPiece = verifyedPieces[Random.Range(prevCount, verifyedPieces.Count)];
 
+                //Debug.Log("generate RowBomb");
+
                 bombPiece.rowBomb = true;
                 bombPiece.itemSprite.sprite = itemSprites[1];
 
@@ -443,6 +450,8 @@ public class Board : MonoBehaviour
                 else
                     bombPiece = verifyedPieces[Random.Range(prevCount, verifyedPieces.Count)];
 
+                //Debug.Log("generate ColumnBomb");
+
                 bombPiece.columnBomb = true;
                 bombPiece.itemSprite.sprite = itemSprites[0];
 
@@ -484,8 +493,9 @@ public class Board : MonoBehaviour
 
                 Piece check = GetPiece(piece.row + ((int)dir.x * i), piece.column + ((int)dir.y * i));
 
-                // 매치된 블럭이고 검증이 끝난 블럭이고 색이 같은 블럭일때
-                if (matchedPieces.Contains(check) && !verifyedPieces.Contains(check) && check.value == piece.value)
+                // 매치된 블럭일 때
+                if (matchedPieces.Contains(check) && !verifyedPieces.Contains(check) &&
+                  check.value == piece.value)
                 {
                     // 체크가 끝난 블럭은 검사에서 제외
                     verifyedPieces.Add(check);
@@ -915,9 +925,14 @@ public class Board : MonoBehaviour
                 if (pieceArray[row, column] != null)
                 {
                     Piece piece = GetPiece(row, column);
+                    /*if (boardIndex[row, column].GetComponent<Block>().value == GetPiece(row, column).value)
+                        Debug.Log("[" + row + " , " + column + "] = " + GetPiece(row, column).value);*/
 
                     if (!moving)
+                    {
                         sb.Append($"[{row} , {column}] = {piece.value} || PosX : {piece.transform.position.x} , PosY :  {piece.transform.position.y} \n");
+                        //Debug.Log("[" + row + " , " + column + "] = " + piece.value + ", PosX : " + piece.transform.position.x + ", PosY : " + piece.transform.position.y);
+                    }
 
                     else
                     {
@@ -948,4 +963,73 @@ public class Board : MonoBehaviour
             }
         }
     }
+
+    /*public void PieceListSort(List<Piece> pieces, bool column = false, bool descending = false)
+    {
+        if (column)
+        {
+            if (descending)
+            {
+                pieces.Sort(delegate (Piece a, Piece b)
+                {
+                    if (a.column < b.column)
+                        return 1;
+
+                    else if (a.column > b.column)
+                        return -1;
+
+                    else
+                        return 0;
+                });
+            }
+
+            else
+            {
+                pieces.Sort(delegate (Piece a, Piece b)
+                {
+                    if (a.column > b.column)
+                        return 1;
+
+                    else if (a.column < b.column)
+                        return -1;
+
+                    else
+                        return 0;
+                });
+            }
+        }
+
+        else
+        {
+            if (descending)
+            {
+                pieces.Sort(delegate (Piece a, Piece b)
+                {
+                    if (a.row < b.row)
+                        return 1;
+
+                    else if (a.row > b.row)
+                        return -1;
+
+                    else
+                        return 0;
+                });
+            }
+
+            else
+            {
+                pieces.Sort(delegate (Piece a, Piece b)
+                {
+                    if (a.row > b.row)
+                        return 1;
+
+                    else if (a.row < b.row)
+                        return -1;
+
+                    else
+                        return 0;
+                });
+            }
+        }
+    }*/
 }
