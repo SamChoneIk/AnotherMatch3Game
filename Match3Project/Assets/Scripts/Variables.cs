@@ -53,6 +53,14 @@ public static class Variables
     public static int stageTotalClear = 0;
     public static int stageTotalFail = 0;
 
+    public static bool stageFirstClear = false;
+    public static bool stageAllClear = false;
+    public static bool stage1Clear = false;
+    public static bool stage2Clear = false;
+    public static bool stage3Clear = false;
+    public static bool stage4Clear = false;
+    public static bool stage5Clear = false;
+
     public static string disabledPieceName = "DefaultPiece";
     public static string pieceSpritesPath = "Arts/PieceSprite";
     public static string itemSpritesPath = "Arts/ItemSprite";

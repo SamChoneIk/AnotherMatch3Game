@@ -10,9 +10,7 @@ public class GoogleAdmobBanner : MonoBehaviour
     public void Start()
     {
 #if UNITY_ANDROID
-        string appId = "ca-app-pub-3940256099942544~3347511713";
-#elif UNITY_IPHONE
-            string appId = "ca-app-pub-3940256099942544~1458002511";
+            string appId = "ca-app-pub-4570069551723430/4093497335";
 #else
             string appId = "unexpected_platform";
 #endif
@@ -25,9 +23,7 @@ public class GoogleAdmobBanner : MonoBehaviour
     private void RequestBanner()
     {
 #if UNITY_ANDROID
-        string adUnitId = "ca-app-pub-3940256099942544/6300978111";
-#elif UNITY_IPHONE
-            string adUnitId = "ca-app-pub-3940256099942544/2934735716";
+            string adUnitId = "ca-app-pub-4570069551723430/8427138795";
 #else
             string adUnitId = "unexpected_platform";
 #endif

@@ -313,7 +313,6 @@ public class Board : MonoBehaviour
                 {
                     Piece bombPiece = matchedPieces[i];
 
-                    // 선택된 블럭이 존재할 경우 해당 블럭을 Cross Bomb
                     if (selectedPiece != null)
                     {
                         if (selectedPiece.value == matchedPieces[i].value)
@@ -324,9 +323,7 @@ public class Board : MonoBehaviour
                     }
 
                     else
-                    {
                         bombPiece = verifyedPieces[Random.Range(prevCount, verifyedPieces.Count)];
-                    }
 
                     //Debug.Log("generate CrossBomb");
 
@@ -496,11 +493,11 @@ public class Board : MonoBehaviour
 
                 Piece check = GetPiece(piece.row + ((int)dir.x * i), piece.column + ((int)dir.y * i));
 
-                // 검사한 블럭이 매치된 블럭이거나 검증되지 않은 블럭이고 색이 같을 때
+                // 매치된 블럭일 때
                 if (matchedPieces.Contains(check) && !verifyedPieces.Contains(check) &&
-                 piece.value == check.value)
+                  check.value == piece.value)
                 {
-                    // 검사가 된 블럭은 검증된 블럭으로 추가
+                    // 체크가 끝난 블럭은 검사에서 제외
                     verifyedPieces.Add(check);
 
                     // 검사하는 블럭에 상하좌우에 다른 매치된 블럭이 있을 경우

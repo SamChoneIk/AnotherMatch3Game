@@ -160,10 +160,10 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.SELab.CandyExecuteMatch
+    Android: com.SELab.CandyExcuteMatch
     Standalone: com.atentz.3match
   buildNumber: {}
-  AndroidBundleVersionCode: 1
+  AndroidBundleVersionCode: 2
   AndroidMinSdkVersion: 19
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 2
@@ -256,7 +256,7 @@ PlayerSettings:
   AndroidTargetArchitectures: 5
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: C:/Users/Atents/Documents/tizmaos01/CandyExcuteMatch/KeyStore/CandyExcuteMatch.keystore
+  AndroidKeystoreName: "C:/Users/ahfl2/OneDrive/\uBC14\uD0D5 \uD654\uBA74/CandyExecuteMatch.keystore"
   AndroidKeyaliasName: cematch
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0
