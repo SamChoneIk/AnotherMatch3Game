@@ -160,10 +160,10 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.SELab.CandyExcuteMatch
+    Android: com.selab.candyexcutematch
     Standalone: com.atentz.3match
   buildNumber: {}
-  AndroidBundleVersionCode: 2
+  AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 19
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 2
@@ -253,10 +253,11 @@ PlayerSettings:
   clonedFromGUID: 5f34be1353de5cf4398729fda238591b
   templatePackageId: com.unity.template.2d@2.3.2
   templateDefaultScene: Assets/Scenes/SampleScene.unity
-  AndroidTargetArchitectures: 5
+  AndroidTargetArchitectures: 3
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: "C:/Users/ahfl2/OneDrive/\uBC14\uD0D5 \uD654\uBA74/CandyExecuteMatch.keystore"
+  AndroidKeystoreName: C:/Users/Atents/Documents/tizmaos01/CandyExcuteMatch/CandyExecuteMatch
+    Resources/CandyExecuteMatch.keystore
   AndroidKeyaliasName: cematch
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0
@@ -700,10 +701,10 @@ PlayerSettings:
   facebookXfbml: 0
   facebookFrictionlessRequests: 1
   apiCompatibilityLevel: 6
-  cloudProjectId: 
+  cloudProjectId: 32d053cb-99fc-4f65-bc09-1c49a68f288a
   framebufferDepthMemorylessMode: 0
-  projectName: 
-  organizationId: 
+  projectName: CandyExecuteMatch
+  organizationId: tizmaos01
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0

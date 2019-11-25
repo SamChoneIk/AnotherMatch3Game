@@ -24,13 +24,13 @@ public class MainMenuUI : MonoBehaviour
 
     private void Start()
     {
-        mainMenuBGM.volume = Variables.bgmVolume;
+        mainMenuBGM.volume = StaticVariables.bgmVolume;
 
-        bgmVolume.value = Variables.bgmVolume;
-        seVolume.value = Variables.seVolume;
+        bgmVolume.value = StaticVariables.bgmVolume;
+        seVolume.value = StaticVariables.seVolume;
 
-        totalClear.text = $"TOTAL CLEAR : {Variables.stageTotalClear.ToString("D6")}";
-        totalFail.text = $"TOTAL FAIL : {Variables.stageTotalFail.ToString("D6")}";
+        totalClear.text = $"TOTAL CLEAR : {StaticVariables.stageTotalClear.ToString("D6")}";
+        totalFail.text = $"TOTAL FAIL : {StaticVariables.stageTotalFail.ToString("D6")}";
 
         currMenu = mainUI;
     }
@@ -62,7 +62,7 @@ public class MainMenuUI : MonoBehaviour
 
     public void SelectStage(int level)
     {
-        Variables.stageLevel = level;
+        StaticVariables.stageLevel = level;
         SceneManager.LoadScene((int)SceneIndex.GAME);
     }
 
@@ -77,8 +77,8 @@ public class MainMenuUI : MonoBehaviour
     {
         if (currMenu == optionUI)
         {
-            Variables.bgmVolume = bgmVolume.value;
-            Variables.seVolume = seVolume.value;
+            StaticVariables.bgmVolume = bgmVolume.value;
+            StaticVariables.seVolume = seVolume.value;
         }
 
         currMenu.SetActive(false);

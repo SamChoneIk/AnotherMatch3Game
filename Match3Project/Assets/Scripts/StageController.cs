@@ -33,6 +33,7 @@ public class StageController : MonoBehaviour
 
     [Header("Stage Parts")]
     public StageState currStageState = StageState.PLAY;
+
     public Image stageBG;
     public AudioSource stageBGM;
     public AudioSource stageSE;
@@ -67,8 +68,8 @@ public class StageController : MonoBehaviour
 
     private void Start()
     {
-        seClips = Resources.LoadAll<AudioClip>(Variables.stageSoundEffectPath);
-        stageDatas = Resources.LoadAll<StageData>(Variables.stageDataPath);
+        seClips = Resources.LoadAll<AudioClip>(StaticVariables.stageSoundEffectPath);
+        stageDatas = Resources.LoadAll<StageData>(StaticVariables.stageDataPath);
 
         StageInit();
     }
@@ -85,13 +86,13 @@ public class StageController : MonoBehaviour
 
     private void LoadStageData()
     {
-        StageData stageData = stageDatas.Where(sd => sd.stageLevel == Variables.stageLevel).Single();
+        StageData stageData = stageDatas.Where(sd => sd.stageLevel == StaticVariables.stageLevel).Single();
 
-        stageBGM.volume = Variables.bgmVolume;
-        stageSE.volume = Variables.seVolume;
+        stageBGM.volume = StaticVariables.bgmVolume;
+        stageSE.volume = StaticVariables.seVolume;
 
-        bgmSlider.value = Variables.bgmVolume;
-        seSlider.value = Variables.seVolume;
+        bgmSlider.value = StaticVariables.bgmVolume;
+        seSlider.value = StaticVariables.seVolume;
 
         clearScore = stageData.clearScore;
         moveValue = stageData.move;
@@ -168,6 +169,7 @@ public class StageController : MonoBehaviour
                 if (currStageState == StageState.CLEAR)
                 {
                     resultClearScoreText.text = $"SCORE : {Mathf.FloorToInt(score).ToString("D6")}";
+
                     StageClear();
                 }
 
@@ -208,7 +210,6 @@ public class StageController : MonoBehaviour
 
     public void SoundEffectPlay(SoundEffectList seClip)
     {
-        //stageSE.Stop();
         stageSE.clip = seClips[(int)seClip];
         stageSE.Play();
     }
@@ -242,8 +243,8 @@ public class StageController : MonoBehaviour
     {
         if (currMenu == optionMenu)
         {
-            Variables.bgmVolume = bgmSlider.value;
-            Variables.seVolume = seSlider.value;
+            StaticVariables.bgmVolume = bgmSlider.value;
+            StaticVariables.seVolume = seSlider.value;
         }
 
         currMenu.SetActive(false);
@@ -253,7 +254,8 @@ public class StageController : MonoBehaviour
 
     public void StageClear()
     {
-        ++Variables.stageTotalClear;
+        ++StaticVariables.stageTotalClear;
+        StaticVariables.StageClears();
 
         pauseUI.SetActive(true);
         clearMenu.SetActive(true);
@@ -263,7 +265,7 @@ public class StageController : MonoBehaviour
 
     public void StageFail()
     {
-        ++Variables.stageTotalFail;
+        ++StaticVariables.stageTotalFail;
 
         pauseUI.SetActive(true);
         failMenu.SetActive(true);
@@ -280,7 +282,7 @@ public class StageController : MonoBehaviour
     public void NextStage()
     {
         Resume();
-        ++Variables.stageLevel;
+        ++StaticVariables.stageLevel;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 

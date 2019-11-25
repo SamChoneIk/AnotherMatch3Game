@@ -12,13 +12,13 @@ public class PlayerData
     public int stageTotalClear;
     public int stageTotalFail;
 
-    public bool stageFirstClear;
-    public bool stageAllClear;
-    public bool stage1Clear;
-    public bool stage2Clear;
-    public bool stage3Clear;
-    public bool stage4Clear;
-    public bool stage5Clear;
+    public bool stageFirst;
+    public bool stageAll;
+    public bool stage1;
+    public bool stage2;
+    public bool stage3;
+    public bool stage4;
+    public bool stage5;
 }
 
 public class PlayerSystemToJsonData : MonoBehaviour
@@ -34,24 +34,24 @@ public class PlayerSystemToJsonData : MonoBehaviour
 
     public void SavePlayerSystemData()
     {
-        playerData.bgmVolume = Variables.bgmVolume;
-        playerData.seVolume = Variables.seVolume;
-        playerData.stageTotalClear = Variables.stageTotalClear;
-        playerData.stageTotalFail = Variables.stageTotalFail;
+        playerData.bgmVolume = StaticVariables.bgmVolume;
+        playerData.seVolume = StaticVariables.seVolume;
+        playerData.stageTotalClear = StaticVariables.stageTotalClear;
+        playerData.stageTotalFail = StaticVariables.stageTotalFail;
 
-        playerData.stageFirstClear = Variables.stageFirstClear;
-        playerData.stageAllClear = Variables.stageAllClear;
-        playerData.stage1Clear = Variables.stage1Clear;
-        playerData.stage2Clear = Variables.stage2Clear;
-        playerData.stage3Clear = Variables.stage3Clear;
-        playerData.stage4Clear = Variables.stage4Clear;
-        playerData.stage5Clear = Variables.stage5Clear;
+        playerData.stageFirst = StaticVariables.stageFirst;
+        playerData.stageAll = StaticVariables.stageAll;
+        playerData.stage1 = StaticVariables.stage1;
+        playerData.stage2 = StaticVariables.stage2;
+        playerData.stage3 = StaticVariables.stage3;
+        playerData.stage4 = StaticVariables.stage4;
+        playerData.stage5 = StaticVariables.stage5;
 
-        string path = Variables.playerDataPath;
+        string path = StaticVariables.playerDataPath;
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
 
-        path += Variables.playerDataName;
+        path += StaticVariables.playerDataName;
 
         string jsonData = JsonUtility.ToJson(playerData);
         File.WriteAllText(path, jsonData);
@@ -59,26 +59,26 @@ public class PlayerSystemToJsonData : MonoBehaviour
 
     public void LoadPlayerSystemData()
     {
-        if (!File.Exists(Variables.playerDataPath + Variables.playerDataName))
+        if (!File.Exists(StaticVariables.playerDataPath + StaticVariables.playerDataName))
         {
             SavePlayerSystemData();
         }
 
-        string path = Variables.playerDataPath + Variables.playerDataName;
+        string path = StaticVariables.playerDataPath + StaticVariables.playerDataName;
         string jsonData = File.ReadAllText(path);
         playerData = JsonUtility.FromJson<PlayerData>(jsonData);
 
-        Variables.bgmVolume = playerData.bgmVolume;
-        Variables.seVolume = playerData.seVolume;
-        Variables.stageTotalClear = playerData.stageTotalClear;
-        Variables.stageTotalFail = playerData.stageTotalFail;
+        StaticVariables.bgmVolume = playerData.bgmVolume;
+        StaticVariables.seVolume = playerData.seVolume;
+        StaticVariables.stageTotalClear = playerData.stageTotalClear;
+        StaticVariables.stageTotalFail = playerData.stageTotalFail;
 
-        Variables.stageFirstClear = playerData.stageFirstClear;
-        Variables.stageAllClear = playerData.stageAllClear;
-        Variables.stage1Clear = playerData.stage1Clear;
-        Variables.stage2Clear = playerData.stage2Clear;
-        Variables.stage3Clear = playerData.stage3Clear;
-        Variables.stage4Clear = playerData.stage4Clear;
-        Variables.stage5Clear = playerData.stage5Clear;
+        StaticVariables.stageFirst = playerData.stageFirst;
+        StaticVariables.stageAll = playerData.stageAll;
+        StaticVariables.stage1 = playerData.stage1;
+        StaticVariables.stage2 = playerData.stage2;
+        StaticVariables.stage3 = playerData.stage3;
+        StaticVariables.stage4 = playerData.stage4;
+        StaticVariables.stage5 = playerData.stage5;
     }
 }

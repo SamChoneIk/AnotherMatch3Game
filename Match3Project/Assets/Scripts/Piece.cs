@@ -15,9 +15,6 @@ public class Piece : MonoBehaviour
     private int prevRow;
     private int prevColumn;
 
-    private float fallSpeed;
-    private float dragRegist = 2f;
-
     public bool isTunning = false;
 
     public bool rowBomb = false;
@@ -25,10 +22,13 @@ public class Piece : MonoBehaviour
     public bool crossBomb = false;
 
     public Piece target;
-    private Vector2 moveToPos;
 
+    private Vector2 moveToPos;
     private Vector2 startPos;
     private Vector2 endPos;
+
+    private float fallSpeed;
+    private float dragRegist = 1f;
 
     [Header("Piece Parts")]
     public SpriteRenderer itemSprite;
@@ -224,7 +224,7 @@ public class Piece : MonoBehaviour
         itemSprite.sprite = null;
         target = null;
 
-        name = Variables.disabledPieceName;
+        name = StaticVariables.disabledPieceName;
     }
 
     public void TunningNull()
