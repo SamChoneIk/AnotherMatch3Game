@@ -9,9 +9,6 @@ public class PlayerData
     public float bgmVolume;
     public float seVolume;
 
-    public int stageTotalClear;
-    public int stageTotalFail;
-
     public bool stageFirst;
     public bool stageAll;
     public bool stage1;
@@ -36,8 +33,6 @@ public class PlayerSystemToJsonData : MonoBehaviour
     {
         playerData.bgmVolume = StaticVariables.bgmVolume;
         playerData.seVolume = StaticVariables.seVolume;
-        playerData.stageTotalClear = StaticVariables.stageTotalClear;
-        playerData.stageTotalFail = StaticVariables.stageTotalFail;
 
         playerData.stageFirst = StaticVariables.stageFirst;
         playerData.stageAll = StaticVariables.stageAll;
@@ -70,8 +65,6 @@ public class PlayerSystemToJsonData : MonoBehaviour
 
         StaticVariables.bgmVolume = playerData.bgmVolume;
         StaticVariables.seVolume = playerData.seVolume;
-        StaticVariables.stageTotalClear = playerData.stageTotalClear;
-        StaticVariables.stageTotalFail = playerData.stageTotalFail;
 
         StaticVariables.stageFirst = playerData.stageFirst;
         StaticVariables.stageAll = playerData.stageAll;

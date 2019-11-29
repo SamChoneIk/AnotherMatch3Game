@@ -15,7 +15,7 @@ public class GoogleAdmobManager : MonoBehaviour
     private BannerView bannerView;
     private InterstitialAd interstitialAd;
 
-    public void Start()
+    private void Start()
     {
         MobileAds.Initialize(appID);
 

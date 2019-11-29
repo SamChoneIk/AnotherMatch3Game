@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Purchasing;
+using UnityEngine.UI;
 
 public class IAPManager : MonoBehaviour, IStoreListener
 {
@@ -10,6 +11,13 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
     private const string _android_AdID = "com.studio.app.ad";
     private const string _android_PremiumSubID = "com.studio.app.sub";
+
+    private IStoreController storeController; // 구매 과정을 제어하는 함수를 제공
+    private IExtensionProvider storeExtensionProvider; // 여러 플랫폼을 위한 확장 처리를 제공
+
+    public bool isInitialized => storeController != null && storeExtensionProvider != null;
+
+    public Text debugText;
 
     private static IAPManager instance;
     public static IAPManager Instance
@@ -22,26 +30,14 @@ public class IAPManager : MonoBehaviour, IStoreListener
             instance = FindObjectOfType<IAPManager>();
 
             if (instance == null)
-                instance = new GameObject(name: "IAP Manager").AddComponent<IAPManager>();
+                instance = new GameObject(name: "IAPManager").AddComponent<IAPManager>();
 
             return instance;
         }
     }
 
-    private IStoreController storeController; // 구매 과정을 제어하는 함수를 제공
-    private IExtensionProvider storeExtensionProvider; // 여러 플랫폼을 위한 확장 처리를 제공
-
-    public bool isInitialized => storeController != null && storeExtensionProvider != null;
-
-    private void Awake()
+    private void Start()
     {
-        if(instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        DontDestroyOnLoad(gameObject);
-
         InitUnityIAP();
     }
 
@@ -65,6 +61,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
     public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
     {
+        debugText.text = "유니티 IAP 초기화 성공";
         Debug.Log("유니티 IAP 초기화 성공");
 
         storeController = controller;
@@ -73,15 +70,18 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
     public void OnInitializeFailed(InitializationFailureReason error)
     {
+        debugText.text = $"유니티 IAP 초기화 실패{error}";
         Debug.LogError($"유니티 IAP 초기화 실패{error}");
     }
 
     public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs e)
     {
+        debugText.text = $"구매 성공 - ID : {e.purchasedProduct.definition.id}";
         Debug.Log($"구매 성공 - ID : {e.purchasedProduct.definition.id}"); // 구매한 상품의 아이디
 
         if(e.purchasedProduct.definition.id == productAd)
         {
+            debugText.text = "광고 제거";
             Debug.Log("광고 제거");
         }
 
@@ -90,6 +90,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
     public void OnPurchaseFailed(Product i, PurchaseFailureReason p)
     {
+        debugText.text = $"구매 실패 - {i.definition.id}, {p}";
         Debug.LogWarning($"구매 실패 - {i.definition.id}, {p}");
     }
 
@@ -103,11 +104,13 @@ public class IAPManager : MonoBehaviour, IStoreListener
         
         if(product != null && product.availableToPurchase)
         {
+            debugText.text = $"구매 시도 - {product.definition.id}";
             Debug.Log($"구매 시도 - {product.definition.id}");
             storeController.InitiatePurchase(product);
         }
         else
         {
+            debugText.text = $"구매 시도 불가 - {productId}";
             Debug.Log($"구매 시도 불가 - {productId}");
         }
     }
@@ -119,6 +122,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
         if(Application.platform == RuntimePlatform.Android)
         {
+            debugText.text = "구매 복구 시도";
             Debug.Log("구매 복구 시도");
         }
     }

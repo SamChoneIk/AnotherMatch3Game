@@ -33,4 +33,3 @@ public static class GPGSIds
         public const string achievement_first_stage_clear = "CgkIp4Pi7NEEEAIQAQ"; // <GPGSID>
 
 }
-

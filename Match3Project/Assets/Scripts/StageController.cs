@@ -254,7 +254,6 @@ public class StageController : MonoBehaviour
 
     public void StageClear()
     {
-        ++StaticVariables.stageTotalClear;
         StaticVariables.StageClears();
 
         pauseUI.SetActive(true);
@@ -265,8 +264,6 @@ public class StageController : MonoBehaviour
 
     public void StageFail()
     {
-        ++StaticVariables.stageTotalFail;
-
         pauseUI.SetActive(true);
         failMenu.SetActive(true);
 

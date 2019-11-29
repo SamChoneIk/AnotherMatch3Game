@@ -50,8 +50,6 @@ public static class StaticVariables
     public static int stageLevel;
     public static float bgmVolume = 1;
     public static float seVolume = 1;
-    public static int stageTotalClear = 0;
-    public static int stageTotalFail = 0;
 
     public static bool stageFirst= false;
     public static bool stageAll = false;

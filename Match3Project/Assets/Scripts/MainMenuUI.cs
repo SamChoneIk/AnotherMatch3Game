@@ -29,9 +29,6 @@ public class MainMenuUI : MonoBehaviour
         bgmVolume.value = StaticVariables.bgmVolume;
         seVolume.value = StaticVariables.seVolume;
 
-        totalClear.text = $"TOTAL CLEAR : {StaticVariables.stageTotalClear.ToString("D6")}";
-        totalFail.text = $"TOTAL FAIL : {StaticVariables.stageTotalFail.ToString("D6")}";
-
         currMenu = mainUI;
     }
 
