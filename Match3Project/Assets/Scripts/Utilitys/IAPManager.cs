@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 public class IAPManager : MonoBehaviour, IStoreListener
 {
-    public const string productAd = "remove_ad"; // NonConsumable
-    public const string productSubscription = "premium_subscription"; // Subscription
+    public const string productAd = "addestroy01"; // NonConsumable
+    //public const string productSubscription = "premium_subscription"; // Subscription
 
-    private const string _android_AdID = "com.studio.app.ad";
-    private const string _android_PremiumSubID = "com.studio.app.sub";
+    private const string _android_AdID = "com.selab.candyexcutematch";
+    //private const string _android_PremiumSubID = "com.studio.app.sub";
 
     private IStoreController storeController; // 구매 과정을 제어하는 함수를 제공
     private IExtensionProvider storeExtensionProvider; // 여러 플랫폼을 위한 확장 처리를 제공
