@@ -9,7 +9,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
     public const string productAd = "addestroy01"; // NonConsumable
     //public const string productSubscription = "premium_subscription"; // Subscription
 
-    private const string _android_AdID = "com.selab.candyexcutematch";
+    private const string _android_AdID = "com.selab.candyexcutematch.addestroy01";
     //private const string _android_PremiumSubID = "com.studio.app.sub";
 
     private IStoreController storeController; // 구매 과정을 제어하는 함수를 제공
