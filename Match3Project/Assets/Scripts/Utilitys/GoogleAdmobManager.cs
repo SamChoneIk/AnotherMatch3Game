@@ -15,6 +15,24 @@ public class GoogleAdmobManager : MonoBehaviour
     private BannerView bannerView;
     private InterstitialAd interstitialAd;
 
+    private static GoogleAdmobManager instance;
+    public static GoogleAdmobManager Instance
+    {
+        get
+        {
+            if (instance != null)
+                return instance;
+
+            instance = FindObjectOfType<GoogleAdmobManager>();
+
+            if (instance == null)
+                instance = new GameObject(name: "AdmobManager").AddComponent<GoogleAdmobManager>();
+
+            return instance;
+        }
+    }
+
+
     private void Start()
     {
         MobileAds.Initialize(appID);
@@ -31,7 +49,7 @@ public class GoogleAdmobManager : MonoBehaviour
 
         bannerView.LoadAd(request);
         bannerView.Show();
-        debugBanner.text = "배너 광고";
+        debugBanner.text += "배너 광고\n";
     }
 
     private void InitializeInterstitialAd()
@@ -41,8 +59,8 @@ public class GoogleAdmobManager : MonoBehaviour
         AdRequest request = new AdRequest.Builder().Build();
 
         interstitialAd.LoadAd(request);
-        interstitialAd.OnAdClosed += (sender, e) => debugInterstitial.text = "광고가 닫힘";
-        interstitialAd.OnAdLoaded += (sender, e) => debugInterstitial.text = "광고가 로드됨";
+        interstitialAd.OnAdClosed += (sender, e) => debugInterstitial.text += "광고가 닫힘\n";
+        interstitialAd.OnAdLoaded += (sender, e) => debugInterstitial.text += "광고가 로드됨\n";
     }
 
     public void Show()

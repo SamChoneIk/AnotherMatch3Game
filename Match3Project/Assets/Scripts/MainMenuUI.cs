@@ -13,10 +13,6 @@ public class MainMenuUI : MonoBehaviour
 
     private GameObject currMenu;
 
-    [Header("MainMenu UI Text")]
-    public Text totalClear;
-    public Text totalFail;
-
     [Header("MainMenu UI Parts")]
     public AudioSource mainMenuBGM;
     public Slider bgmVolume;

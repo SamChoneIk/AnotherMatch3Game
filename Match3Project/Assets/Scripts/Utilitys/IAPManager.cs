@@ -6,18 +6,18 @@ using UnityEngine.UI;
 
 public class IAPManager : MonoBehaviour, IStoreListener
 {
-    public const string productAd = "addestroy01"; // NonConsumable
-    //public const string productSubscription = "premium_subscription"; // Subscription
+    // 프로젝트 내의 사용될 ID
+    public const string productAd = "DestroyAd"; // NonConsumable
 
-    private const string _android_AdID = "com.selab.candyexcutematch.addestroy01";
-    //private const string _android_PremiumSubID = "com.studio.app.sub";
+    // 개발자 콘솔 내에 등록된 ID
+    private const string _android_AdID = "addestroy01";
 
     private IStoreController storeController; // 구매 과정을 제어하는 함수를 제공
     private IExtensionProvider storeExtensionProvider; // 여러 플랫폼을 위한 확장 처리를 제공
 
     public bool isInitialized => storeController != null && storeExtensionProvider != null;
 
-    public Text debugText;
+    public Text logText;
 
     private static IAPManager instance;
     public static IAPManager Instance
@@ -61,7 +61,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
     public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
     {
-        debugText.text = "유니티 IAP 초기화 성공";
+        logText.text += "유니티 IAP 초기화 성공\n";
         Debug.Log("유니티 IAP 초기화 성공");
 
         storeController = controller;
@@ -70,19 +70,19 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
     public void OnInitializeFailed(InitializationFailureReason error)
     {
-        debugText.text = $"유니티 IAP 초기화 실패{error}";
+        logText.text += $"유니티 IAP 초기화 실패{error}\n";
         Debug.LogError($"유니티 IAP 초기화 실패{error}");
     }
 
     public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs e)
     {
-        debugText.text = $"구매 성공 - ID : {e.purchasedProduct.definition.id}";
+        logText.text += $"구매 성공 - ID : {e.purchasedProduct.definition.id} ";
         Debug.Log($"구매 성공 - ID : {e.purchasedProduct.definition.id}"); // 구매한 상품의 아이디
 
         if(e.purchasedProduct.definition.id == productAd)
         {
-            debugText.text = "광고 제거";
-            Debug.Log("광고 제거");
+            logText.text += "광고 제거\n";
+            GoogleAdmobManager.Instance.DestroyAd();
         }
 
         return PurchaseProcessingResult.Complete;
@@ -90,7 +90,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
     public void OnPurchaseFailed(Product i, PurchaseFailureReason p)
     {
-        debugText.text = $"구매 실패 - {i.definition.id}, {p}";
+        logText.text += $"구매 실패 - {i.definition.id}, {p}\n";
         Debug.LogWarning($"구매 실패 - {i.definition.id}, {p}");
     }
 
@@ -104,13 +104,13 @@ public class IAPManager : MonoBehaviour, IStoreListener
         
         if(product != null && product.availableToPurchase)
         {
-            debugText.text = $"구매 시도 - {product.definition.id}";
+            logText.text += $"구매 시도 - {product.definition.id}\n";
             Debug.Log($"구매 시도 - {product.definition.id}");
             storeController.InitiatePurchase(product);
         }
         else
         {
-            debugText.text = $"구매 시도 불가 - {productId}";
+            logText.text += $"구매 시도 불가 - {productId}\n";
             Debug.Log($"구매 시도 불가 - {productId}");
         }
     }
@@ -122,7 +122,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
         if(Application.platform == RuntimePlatform.Android)
         {
-            debugText.text = "구매 복구 시도";
+            logText.text += "구매 복구 시도\n";
             Debug.Log("구매 복구 시도");
         }
     }

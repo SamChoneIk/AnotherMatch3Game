@@ -25,15 +25,15 @@ public class GooglePlayManager : MonoBehaviour
     {
         Social.localUser.Authenticate((bool success) =>
         {
-            if (success) logText.text = Social.localUser.id + " \n " + Social.localUser.userName;
-            else logText.text = "구글 로그인 실패";
+            if (success) logText.text += "${Social.localUser.id}\nSocial.localUser.userName\n";
+            else logText.text += "구글 로그인 실패\n";
         });
     }
 
     private void LogOut()
     {
         ((PlayGamesPlatform)Social.Active).SignOut();
-        logText.text = "구글 로그아웃";
+        logText.text += "구글 로그아웃\n";
     }
 
     private void ShowAchievements()

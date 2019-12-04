@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PurchaseButton : MonoBehaviour
 {
     public string targetProductId;
+
+    public Text logText;
 
     public void HandleClick()
     {
@@ -12,7 +15,7 @@ public class PurchaseButton : MonoBehaviour
         {
             if (IAPManager.Instance.HadPurchased(targetProductId))
             {
-                Debug.Log("이미 구매한 상품");
+                logText.text += "이미 구매한 상품\n";
                 return;
             }
         }
