@@ -9,8 +9,9 @@ public class GoogleAdmobManager : MonoBehaviour
     public string adBannerUnitID;
     public string adInterstitialUnitID;
 
-    public Text debugBanner;
-    public Text debugInterstitial;
+    public bool isDestroyAd = false;
+
+    public Text logText;
 
     private BannerView bannerView;
     private InterstitialAd interstitialAd;
@@ -35,11 +36,10 @@ public class GoogleAdmobManager : MonoBehaviour
 
     private void Start()
     {
-        MobileAds.Initialize(appID);
+            MobileAds.Initialize(appID);
 
-        InitializeBannerView();
-        InitializeInterstitialAd();
-        Invoke("Show", 10f);
+            InitializeBannerView();
+            InitializeInterstitialAd();
     }
 
     private void InitializeBannerView()
@@ -49,7 +49,7 @@ public class GoogleAdmobManager : MonoBehaviour
 
         bannerView.LoadAd(request);
         bannerView.Show();
-        debugBanner.text += "배너 광고\n";
+        logText.text += "배너 광고\n";
     }
 
     private void InitializeInterstitialAd()
@@ -59,8 +59,8 @@ public class GoogleAdmobManager : MonoBehaviour
         AdRequest request = new AdRequest.Builder().Build();
 
         interstitialAd.LoadAd(request);
-        interstitialAd.OnAdClosed += (sender, e) => debugInterstitial.text += "광고가 닫힘\n";
-        interstitialAd.OnAdLoaded += (sender, e) => debugInterstitial.text += "광고가 로드됨\n";
+        interstitialAd.OnAdClosed += (sender, e) => logText.text += "광고가 닫힘\n";
+        interstitialAd.OnAdLoaded += (sender, e) => logText.text += "광고가 로드됨\n";
     }
 
     public void Show()
@@ -78,6 +78,7 @@ public class GoogleAdmobManager : MonoBehaviour
 
     public void DestroyAd()
     {
+        isDestroyAd = true;
         bannerView.Destroy();
         interstitialAd.Destroy();
     }

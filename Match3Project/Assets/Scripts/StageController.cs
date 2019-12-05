@@ -264,6 +264,8 @@ public class StageController : MonoBehaviour
 
     public void StageFail()
     {
+        GoogleAdmobManager.Instance.Show();
+
         pauseUI.SetActive(true);
         failMenu.SetActive(true);
 

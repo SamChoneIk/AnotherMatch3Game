@@ -2563,8 +2563,8 @@ MonoBehaviour:
   appID: ca-app-pub-4570069551723430~8341763913
   adBannerUnitID: ca-app-pub-4570069551723430/8427138795
   adInterstitialUnitID: ca-app-pub-4570069551723430/4093497335
-  debugBanner: {fileID: 2061349542}
-  debugInterstitial: {fileID: 2061349542}
+  isDestroyAd: 0
+  logText: {fileID: 2061349542}
 --- !u!4 &1430380172
 Transform:
   m_ObjectHideFlags: 0
