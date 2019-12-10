@@ -16,8 +16,6 @@ public class PlayerData
     public bool stage3;
     public bool stage4;
     public bool stage5;
-
-    public bool isDestroyAd;
 }
 
 public class PlayerSystemToJsonData : MonoBehaviour
@@ -43,7 +41,6 @@ public class PlayerSystemToJsonData : MonoBehaviour
         playerData.stage3 = StaticVariables.stage3;
         playerData.stage4 = StaticVariables.stage4;
         playerData.stage5 = StaticVariables.stage5;
-        playerData.isDestroyAd = StaticVariables.isDestroyAd;
 
         string path = StaticVariables.playerDataPath;
         if (!Directory.Exists(path))
@@ -76,6 +73,5 @@ public class PlayerSystemToJsonData : MonoBehaviour
         StaticVariables.stage3 = playerData.stage3;
         StaticVariables.stage4 = playerData.stage4;
         StaticVariables.stage5 = playerData.stage5;
-        StaticVariables.isDestroyAd = playerData.isDestroyAd;
     }
 }

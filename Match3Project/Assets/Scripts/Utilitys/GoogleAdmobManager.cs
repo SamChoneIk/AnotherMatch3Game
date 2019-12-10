@@ -9,6 +9,8 @@ public class GoogleAdmobManager : MonoBehaviour
     public string adBannerUnitID;
     public string adInterstitialUnitID;
 
+    public bool isDestroyAd = false;
+
     public Text logText;
 
     private BannerView bannerView;
@@ -34,13 +36,10 @@ public class GoogleAdmobManager : MonoBehaviour
 
     private void Start()
     {
-        MobileAds.Initialize(appID);
+            MobileAds.Initialize(appID);
 
-        if (!StaticVariables.isDestroyAd)
-        {
             InitializeBannerView();
             InitializeInterstitialAd();
-        }
     }
 
     private void InitializeBannerView()
@@ -79,6 +78,7 @@ public class GoogleAdmobManager : MonoBehaviour
 
     public void DestroyAd()
     {
+        isDestroyAd = true;
         bannerView.Destroy();
         interstitialAd.Destroy();
     }

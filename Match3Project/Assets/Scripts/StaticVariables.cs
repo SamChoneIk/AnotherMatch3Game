@@ -59,7 +59,7 @@ public static class StaticVariables
     public static bool stage4 = false;
     public static bool stage5 = false;
 
-    public static bool isDestroyAd = false;
+    public static bool admob = false;
 
     public static string disabledPieceName = "DefaultPiece";
     public static string pieceSpritesPath = "Arts/PieceSprite";
