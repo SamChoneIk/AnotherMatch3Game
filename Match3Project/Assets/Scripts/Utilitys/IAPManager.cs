@@ -36,7 +36,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
         }
     }
 
-    private void Awake()
+    private void Start()
     {
         InitUnityIAP();
     }
@@ -82,6 +82,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
         if(e.purchasedProduct.definition.id == productAd)
         {
             logText.text += "광고 제거\n";
+            StaticVariables.isDestroyAd = true;
             GoogleAdmobManager.Instance.DestroyAd();
         }
 

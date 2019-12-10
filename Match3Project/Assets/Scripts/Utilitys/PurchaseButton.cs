@@ -16,6 +16,10 @@ public class PurchaseButton : MonoBehaviour
             if (IAPManager.Instance.HadPurchased(targetProductId))
             {
                 logText.text += "이미 구매한 상품\n";
+
+                if (!StaticVariables.isDestroyAd)
+                    StaticVariables.isDestroyAd = true;
+
                 return;
             }
         }
