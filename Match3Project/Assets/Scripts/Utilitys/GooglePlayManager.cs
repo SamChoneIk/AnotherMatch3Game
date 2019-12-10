@@ -17,11 +17,11 @@ public class GooglePlayManager : MonoBehaviour
         if (!tryLogin)
         {
             LogIn();
-            tryLogin = false;
+            tryLogin = true;
         }
     }
 
-    private void LogIn()
+    public void LogIn()
     {
         Social.localUser.Authenticate((bool success) =>
         {
@@ -30,14 +30,21 @@ public class GooglePlayManager : MonoBehaviour
         });
     }
 
-    private void LogOut()
+    public void LogOut()
     {
         ((PlayGamesPlatform)Social.Active).SignOut();
         logText.text += "구글 로그아웃\n";
+        tryLogin = false;
     }
 
-    private void ShowAchievements()
+    public void ShowAchievements()
     {
         Social.ShowAchievementsUI();
+    }
+
+    public void ShowLeaderBoard()
+    {
+        Social.ShowLeaderboardUI();
+        
     }
 }

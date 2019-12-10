@@ -24,13 +24,13 @@
 
 public static class GPGSIds
 {
-        public const string achievement_5_stage_clear = "CgkIp4Pi7NEEEAIQBg"; // <GPGSID>
-        public const string achievement_1_stage_clear = "CgkIp4Pi7NEEEAIQAg"; // <GPGSID>
-        public const string achievement_all_stage_clear = "CgkIp4Pi7NEEEAIQBw"; // <GPGSID>
-        public const string achievement_4_stage_clear = "CgkIp4Pi7NEEEAIQBQ"; // <GPGSID>
-        public const string achievement_2_stage_clear = "CgkIp4Pi7NEEEAIQAw"; // <GPGSID>
-        public const string achievement_3_stage_clear = "CgkIp4Pi7NEEEAIQBA"; // <GPGSID>
-        public const string achievement_first_stage_clear = "CgkIp4Pi7NEEEAIQAQ"; // <GPGSID>
+        public const string achievement_stage_5_clear = "CgkI-NrDidMWEAIQBA"; // <GPGSID>
+        public const string achievement_stage_3_clear = "CgkI-NrDidMWEAIQAg"; // <GPGSID>
+        public const string achievement_stage_1_clear = "CgkI-NrDidMWEAIQAA"; // <GPGSID>
+        public const string achievement_stage_4_clear = "CgkI-NrDidMWEAIQAw"; // <GPGSID>
+        public const string achievement_stage_2_clear = "CgkI-NrDidMWEAIQAQ"; // <GPGSID>
+        public const string achievement_first_game_clear = "CgkI-NrDidMWEAIQBg"; // <GPGSID>
+        public const string leaderboard_playerscore = "CgkI-NrDidMWEAIQCw"; // <GPGSID>
 
 }
 

@@ -34,14 +34,6 @@ public class PlayerSystemToJsonData : MonoBehaviour
         playerData.bgmVolume = StaticVariables.bgmVolume;
         playerData.seVolume = StaticVariables.seVolume;
 
-        playerData.stageFirst = StaticVariables.stageFirst;
-        playerData.stageAll = StaticVariables.stageAll;
-        playerData.stage1 = StaticVariables.stage1;
-        playerData.stage2 = StaticVariables.stage2;
-        playerData.stage3 = StaticVariables.stage3;
-        playerData.stage4 = StaticVariables.stage4;
-        playerData.stage5 = StaticVariables.stage5;
-
         string path = StaticVariables.playerDataPath;
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
@@ -65,13 +57,5 @@ public class PlayerSystemToJsonData : MonoBehaviour
 
         StaticVariables.bgmVolume = playerData.bgmVolume;
         StaticVariables.seVolume = playerData.seVolume;
-
-        StaticVariables.stageFirst = playerData.stageFirst;
-        StaticVariables.stageAll = playerData.stageAll;
-        StaticVariables.stage1 = playerData.stage1;
-        StaticVariables.stage2 = playerData.stage2;
-        StaticVariables.stage3 = playerData.stage3;
-        StaticVariables.stage4 = playerData.stage4;
-        StaticVariables.stage5 = playerData.stage5;
     }
 }
