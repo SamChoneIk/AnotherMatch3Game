@@ -8,9 +8,11 @@ public class IAPManager : MonoBehaviour, IStoreListener
 {
     // 프로젝트 내의 사용될 ID
     public const string productAd = "DestroyAd"; // NonConsumable
+    public const string productConsumable = "TestConsumable"; // Consumable
 
     // 개발자 콘솔 내에 등록된 ID
     private const string _android_AdID = "addestroy01";
+    private const string _android_ConsumableID = "consumable_01";
 
     private IStoreController storeController; // 구매 과정을 제어하는 함수를 제공
     private IExtensionProvider storeExtensionProvider; // 여러 플랫폼을 위한 확장 처리를 제공
@@ -36,7 +38,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
         }
     }
 
-    private void Awake()
+    private void Start()
     {
         InitUnityIAP();
     }
@@ -49,12 +51,17 @@ public class IAPManager : MonoBehaviour, IStoreListener
         // 인앱결제 설정을 빌드할 수있는 설정       // 유니티가 제공하는 스토어 설정
         var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
         // 광고 제거 상품
-        builder.AddProduct(productAd, ProductType.NonConsumable,
-            new IDs()
+        builder.AddProduct
+            (productAd, ProductType.NonConsumable, new IDs()
             {
                 {_android_AdID, GooglePlay.Name}
-            }
-            );
+            });
+
+        builder.AddProduct
+            (productConsumable, ProductType.Consumable, new IDs()
+            {
+                {_android_ConsumableID, GooglePlay.Name }
+            });
 
         UnityPurchasing.Initialize(this, builder);
     }
@@ -66,6 +73,8 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
         storeController = controller;
         storeExtensionProvider = extensions;
+
+        RestorePurchase();
     }
 
     public void OnInitializeFailed(InitializationFailureReason error)
@@ -84,6 +93,9 @@ public class IAPManager : MonoBehaviour, IStoreListener
             logText.text += "광고 제거\n";
             GoogleAdmobManager.Instance.DestroyAd();
         }
+
+        if(e.purchasedProduct.definition.id == productConsumable)
+            logText.text += "소모성 아이템 구매\n";
 
         return PurchaseProcessingResult.Complete;
     }
@@ -108,6 +120,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
             Debug.Log($"구매 시도 - {product.definition.id}");
             storeController.InitiatePurchase(product);
         }
+
         else
         {
             logText.text += $"구매 시도 불가 - {productId}\n";
@@ -120,10 +133,29 @@ public class IAPManager : MonoBehaviour, IStoreListener
         if (!isInitialized)
             return;
 
-        if(Application.platform == RuntimePlatform.Android)
+        if (Application.platform == RuntimePlatform.Android)
         {
-            logText.text += "구매 복구 시도\n";
-            Debug.Log("구매 복구 시도");
+            storeExtensionProvider.GetExtension<IGooglePlayStoreExtensions>().RestoreTransactions(result =>
+            {
+                if (result)
+                {
+                    logText.text += "사용자의 구매내역이 확인되었습니다.\n";
+
+                    if (HadPurchased(productAd))
+                    {
+                        logText.text += "광고제거 구매확인\n";
+                        StaticVariables.DestroyAd = true;
+                    }
+
+                    if (HadPurchased(productConsumable))
+                        logText.text += "소모성 아이템 구매확인\n";
+
+                    logText.text += "사용자 구매복구 완료.\n";
+                }
+
+                else
+                    logText.text += "사용자가 구매한 내역이 없습니다.\n";
+            });
         }
     }
 

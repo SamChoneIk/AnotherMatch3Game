@@ -8,14 +8,6 @@ public class PlayerData
 {
     public float bgmVolume;
     public float seVolume;
-
-    public bool stageFirst;
-    public bool stageAll;
-    public bool stage1;
-    public bool stage2;
-    public bool stage3;
-    public bool stage4;
-    public bool stage5;
 }
 
 public class PlayerSystemToJsonData : MonoBehaviour
@@ -25,20 +17,19 @@ public class PlayerSystemToJsonData : MonoBehaviour
     public void Awake()
     {
         instance = this;
-
         LoadPlayerSystemData();
     }
 
     public void SavePlayerSystemData()
     {
-        playerData.bgmVolume = StaticVariables.bgmVolume;
-        playerData.seVolume = StaticVariables.seVolume;
+        playerData.bgmVolume = StaticVariables.BgmVolume;
+        playerData.seVolume = StaticVariables.SeVolume;
 
-        string path = StaticVariables.playerDataPath;
+        string path = StaticVariables.PlayerDataPath;
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
 
-        path += StaticVariables.playerDataName;
+        path += StaticVariables.PlayerDataName;
 
         string jsonData = JsonUtility.ToJson(playerData);
         File.WriteAllText(path, jsonData);
@@ -46,16 +37,14 @@ public class PlayerSystemToJsonData : MonoBehaviour
 
     public void LoadPlayerSystemData()
     {
-        if (!File.Exists(StaticVariables.playerDataPath + StaticVariables.playerDataName))
-        {
+        if (!File.Exists(StaticVariables.PlayerDataPath + StaticVariables.PlayerDataName))
             SavePlayerSystemData();
-        }
 
-        string path = StaticVariables.playerDataPath + StaticVariables.playerDataName;
+        string path = StaticVariables.PlayerDataPath + StaticVariables.PlayerDataName;
         string jsonData = File.ReadAllText(path);
         playerData = JsonUtility.FromJson<PlayerData>(jsonData);
 
-        StaticVariables.bgmVolume = playerData.bgmVolume;
-        StaticVariables.seVolume = playerData.seVolume;
+        StaticVariables.BgmVolume = playerData.bgmVolume;
+        StaticVariables.SeVolume = playerData.seVolume;
     }
 }

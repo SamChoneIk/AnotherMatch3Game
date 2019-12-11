@@ -10,6 +10,7 @@ public class MainMenuUI : MonoBehaviour
     public GameObject mainUI;
     public GameObject stageSelectUI;
     public GameObject optionUI;
+    public GameObject shopUI;
 
     private GameObject currMenu;
 
@@ -20,10 +21,10 @@ public class MainMenuUI : MonoBehaviour
 
     private void Start()
     {
-        mainMenuBGM.volume = StaticVariables.bgmVolume;
+        mainMenuBGM.volume = StaticVariables.BgmVolume;
 
-        bgmVolume.value = StaticVariables.bgmVolume;
-        seVolume.value = StaticVariables.seVolume;
+        bgmVolume.value = StaticVariables.BgmVolume;
+        seVolume.value = StaticVariables.SeVolume;
 
         currMenu = mainUI;
     }
@@ -55,7 +56,7 @@ public class MainMenuUI : MonoBehaviour
 
     public void SelectStage(int level)
     {
-        StaticVariables.stageLevel = level;
+        StaticVariables.StageLevel = level;
         SceneManager.LoadScene((int)SceneIndex.GAME);
     }
 
@@ -66,12 +67,19 @@ public class MainMenuUI : MonoBehaviour
         currMenu.SetActive(true);
     }
 
+    public void Shop()
+    {
+        currMenu.SetActive(false);
+        currMenu = shopUI;
+        currMenu.SetActive(true);
+    }
+
     public void BackMenu()
     {
         if (currMenu == optionUI)
         {
-            StaticVariables.bgmVolume = bgmVolume.value;
-            StaticVariables.seVolume = seVolume.value;
+            StaticVariables.BgmVolume = bgmVolume.value;
+            StaticVariables.SeVolume = seVolume.value;
         }
 
         currMenu.SetActive(false);

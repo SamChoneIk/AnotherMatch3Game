@@ -45,25 +45,20 @@ public enum SoundEffectList
 
 public static class StaticVariables
 {
-    public static bool dataLoad = false;
+    public static bool DataLoad = false;
 
-    public static int stageLevel;
-    public static float bgmVolume = 1;
-    public static float seVolume = 1;
+    public static int StageLevel;
+    public static float BgmVolume = 1;
+    public static float SeVolume = 1;
 
-    public static bool destroyAd = false;
+    public static bool DestroyAd = false;
+    public static bool FirstClear = false;
 
-    public static string disabledPieceName = "DefaultPiece";
-    public static string pieceSpritesPath = "Arts/PieceSprite";
-    public static string itemSpritesPath = "Arts/ItemSprite";
-    public static string stageSoundEffectPath = "Sounds/SE";
-    public static string stageDataPath = "Data/stage";
-    public static string playerDataPath = Application.persistentDataPath + "/PlayerData/";
-    public static string playerDataName = "CEMPlayerdata.json";
-
-    public static void StageClears()
-    {
-        Social.ReportProgress(GPGSIds.achievement_first_game_clear, 100f, null);
-        Social.ReportProgress(GPGSIds.achievement_stage_1_clear, 100f, null);
-    }
+    public static string DisabledPieceName = "DefaultPiece";
+    public static string PieceSpritesPath = "Arts/PieceSprite";
+    public static string ItemSpritesPath = "Arts/ItemSprite";
+    public static string StageSoundEffectPath = "Sounds/SE";
+    public static string StageDataPath = "Data/stage";
+    public static string PlayerDataPath = Application.persistentDataPath + "/PlayerData/";
+    public static string PlayerDataName = "CEMPlayerdata.json";
 }

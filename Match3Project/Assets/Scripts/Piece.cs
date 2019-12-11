@@ -224,7 +224,7 @@ public class Piece : MonoBehaviour
         itemSprite.sprite = null;
         target = null;
 
-        name = StaticVariables.disabledPieceName;
+        name = StaticVariables.DisabledPieceName;
     }
 
     public void TunningNull()

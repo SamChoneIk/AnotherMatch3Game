@@ -68,8 +68,8 @@ public class StageController : MonoBehaviour
 
     private void Start()
     {
-        seClips = Resources.LoadAll<AudioClip>(StaticVariables.stageSoundEffectPath);
-        stageDatas = Resources.LoadAll<StageData>(StaticVariables.stageDataPath);
+        seClips = Resources.LoadAll<AudioClip>(StaticVariables.StageSoundEffectPath);
+        stageDatas = Resources.LoadAll<StageData>(StaticVariables.StageDataPath);
 
         StageInit();
     }
@@ -86,13 +86,13 @@ public class StageController : MonoBehaviour
 
     private void LoadStageData()
     {
-        StageData stageData = stageDatas.Where(sd => sd.stageLevel == StaticVariables.stageLevel).Single();
+        StageData stageData = stageDatas.Where(sd => sd.stageLevel == StaticVariables.StageLevel).Single();
 
-        stageBGM.volume = StaticVariables.bgmVolume;
-        stageSE.volume = StaticVariables.seVolume;
+        stageBGM.volume = StaticVariables.BgmVolume;
+        stageSE.volume = StaticVariables.SeVolume;
 
-        bgmSlider.value = StaticVariables.bgmVolume;
-        seSlider.value = StaticVariables.seVolume;
+        bgmSlider.value = StaticVariables.BgmVolume;
+        seSlider.value = StaticVariables.SeVolume;
 
         clearScore = stageData.clearScore;
         moveValue = stageData.move;
@@ -243,8 +243,8 @@ public class StageController : MonoBehaviour
     {
         if (currMenu == optionMenu)
         {
-            StaticVariables.bgmVolume = bgmSlider.value;
-            StaticVariables.seVolume = seSlider.value;
+            StaticVariables.BgmVolume = bgmSlider.value;
+            StaticVariables.SeVolume = seSlider.value;
         }
 
         currMenu.SetActive(false);
@@ -254,8 +254,6 @@ public class StageController : MonoBehaviour
 
     public void StageClear()
     {
-        StaticVariables.StageClears();
-
         pauseUI.SetActive(true);
         clearMenu.SetActive(true);
 
@@ -264,7 +262,8 @@ public class StageController : MonoBehaviour
 
     public void StageFail()
     {
-        GoogleAdmobManager.Instance.Show();
+        if (!StaticVariables.DestroyAd)
+            GoogleAdmobManager.Instance.Show();
 
         pauseUI.SetActive(true);
         failMenu.SetActive(true);
@@ -281,7 +280,7 @@ public class StageController : MonoBehaviour
     public void NextStage()
     {
         Resume();
-        ++StaticVariables.stageLevel;
+        ++StaticVariables.StageLevel;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
@@ -289,5 +288,39 @@ public class StageController : MonoBehaviour
     {
         Resume();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void ClearAchievements()
+    {
+        Social.ReportProgress(GPGSIds.achievement_first_game_clear, 100f, null);
+
+        switch (StaticVariables.StageLevel)
+        {
+            case 1:
+                {
+                    Social.ReportProgress(GPGSIds.achievement_stage_1_clear, 100f, null);
+                    break;
+                }
+            case 2:
+                {
+                    Social.ReportProgress(GPGSIds.achievement_stage_2_clear, 100f, null);
+                    break;
+                }
+            case 3:
+                {
+                    Social.ReportProgress(GPGSIds.achievement_stage_3_clear, 100f, null);
+                    break;
+                }
+            case 4:
+                {
+                    Social.ReportProgress(GPGSIds.achievement_stage_4_clear, 100f, null);
+                    break;
+                }
+            case 5:
+                {
+                    Social.ReportProgress(GPGSIds.achievement_stage_5_clear, 100f, null);
+                    break;
+                }
+        }
     }
 }

@@ -50,8 +50,8 @@ public class Board : MonoBehaviour
         verifyedPieces = new List<Piece>();
         hintPieces = new List<Piece>();
 
-        pieceSprites = Resources.LoadAll<Sprite>(StaticVariables.pieceSpritesPath);
-        itemSprites = Resources.LoadAll<Sprite>(StaticVariables.itemSpritesPath);
+        pieceSprites = Resources.LoadAll<Sprite>(StaticVariables.PieceSpritesPath);
+        itemSprites = Resources.LoadAll<Sprite>(StaticVariables.ItemSpritesPath);
 
         GeneratePiece();
     }
@@ -65,7 +65,7 @@ public class Board : MonoBehaviour
                 GameObject pieceGo = Instantiate(piecePrefab, Vector2.zero, Quaternion.identity);
                 Piece firstPiece = pieceGo.GetComponent<Piece>();
 
-                firstPiece.name = StaticVariables.disabledPieceName;
+                firstPiece.name = StaticVariables.DisabledPieceName;
                 firstPiece.transform.SetParent(disabledPiecesParent.transform);
 
                 disabledPieces.Add(firstPiece);

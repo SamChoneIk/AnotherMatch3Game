@@ -9,24 +9,25 @@ using GooglePlayGames.BasicApi;
 public class GooglePlayManager : MonoBehaviour
 {
     public Text logText;
-    private bool tryLogin = false;
 
     private void Awake()
     {
         PlayGamesPlatform.Activate();
-        if (!tryLogin)
-        {
-            LogIn();
-            tryLogin = true;
-        }
+        LogIn();
     }
 
     public void LogIn()
     {
         Social.localUser.Authenticate((bool success) =>
         {
-            if (success) logText.text += "${Social.localUser.id}\nSocial.localUser.userName\n";
-            else logText.text += "구글 로그인 실패\n";
+            if (success)
+            {
+                logText.text += $"환영합니다! {Social.localUser.id}\n";
+                IAPManager.Instance.RestorePurchase();
+            }
+
+            else
+                logText.text += "구글 로그인 실패\n";
         });
     }
 
@@ -34,17 +35,17 @@ public class GooglePlayManager : MonoBehaviour
     {
         ((PlayGamesPlatform)Social.Active).SignOut();
         logText.text += "구글 로그아웃\n";
-        tryLogin = false;
     }
 
     public void ShowAchievements()
     {
-        Social.ShowAchievementsUI();
+        logText.text += "업적을 확인합니다.\n";
+       Social.ShowAchievementsUI();
     }
 
     public void ShowLeaderBoard()
     {
+        logText.text += "리더보드를 확인합니다.\n";
         Social.ShowLeaderboardUI();
-        
     }
 }
