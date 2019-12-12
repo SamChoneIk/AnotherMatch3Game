@@ -165,6 +165,7 @@ public class StageController : MonoBehaviour
                 scoreText.text = $"SCORE : {Mathf.FloorToInt(score).ToString("D6")}";
                 scoreSlider.value = score;
 
+                StaticVariables.TotalScore += Mathf.FloorToInt(score);
 
                 if (currStageState == StageState.CLEAR)
                 {

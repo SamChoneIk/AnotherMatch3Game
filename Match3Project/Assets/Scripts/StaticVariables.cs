@@ -45,14 +45,14 @@ public enum SoundEffectList
 
 public static class StaticVariables
 {
-    public static bool DataLoad = false;
-
     public static int StageLevel;
+    public static int TotalScore;
+
     public static float BgmVolume = 1;
     public static float SeVolume = 1;
 
+    public static bool DataLoad = false;
     public static bool DestroyAd = false;
-    public static bool FirstClear = false;
 
     public static string DisabledPieceName = "DefaultPiece";
     public static string PieceSpritesPath = "Arts/PieceSprite";

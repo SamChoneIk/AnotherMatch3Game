@@ -12,6 +12,12 @@ public class GooglePlayManager : MonoBehaviour
 
     private void Awake()
     {
+        if(Social.localUser.authenticated)
+        {
+            logText.text += $"이미 로그인이 되어있습니다. {Social.localUser.id}\n";
+            return;
+        }
+
         PlayGamesPlatform.Activate();
         LogIn();
     }
@@ -23,11 +29,14 @@ public class GooglePlayManager : MonoBehaviour
             if (success)
             {
                 logText.text += $"환영합니다! {Social.localUser.id}\n";
-                IAPManager.Instance.RestorePurchase();
             }
 
             else
+            {
                 logText.text += "구글 로그인 실패\n";
+            }
+
+            IAPManager.Instance.GoogleLogin(success);
         });
     }
 

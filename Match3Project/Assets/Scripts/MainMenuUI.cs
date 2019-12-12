@@ -21,12 +21,18 @@ public class MainMenuUI : MonoBehaviour
 
     private void Start()
     {
+        PlayerSystemToJsonData.Instance.LoadPlayerSystemData();
         mainMenuBGM.volume = StaticVariables.BgmVolume;
-
         bgmVolume.value = StaticVariables.BgmVolume;
         seVolume.value = StaticVariables.SeVolume;
 
         currMenu = mainUI;
+
+        Social.ReportScore(StaticVariables.TotalScore, GPGSIds.leaderboard_playerscore, (result) =>
+        {
+            Debug.LogFormat($"ReportScore : {StaticVariables.TotalScore}, {result}");
+        });
+
     }
 
     private void Update()
@@ -89,7 +95,8 @@ public class MainMenuUI : MonoBehaviour
 
     public void QuitGame()
     {
-        PlayerSystemToJsonData.instance.SavePlayerSystemData();
+        PlayerSystemToJsonData.Instance.SavePlayerSystemData();
+        GoogleAdmobManager.Instance.DestroyAd();
         Application.Quit();
     }
 }

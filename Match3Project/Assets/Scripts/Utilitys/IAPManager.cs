@@ -18,6 +18,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
     private IExtensionProvider storeExtensionProvider; // 여러 플랫폼을 위한 확장 처리를 제공
 
     public bool isInitialized => storeController != null && storeExtensionProvider != null;
+    public bool googlePlayLoginSuccess;
 
     public Text logText;
 
@@ -38,15 +39,28 @@ public class IAPManager : MonoBehaviour, IStoreListener
         }
     }
 
-    private void Start()
+    public void GoogleLogin(bool success)
     {
-        InitUnityIAP();
+        if(success)
+        {
+            logText.text += "구글 로그인에 성공하였습니다.\n";
+            InitUnityIAP();
+        }
+
+        else
+        {
+            logText.text += "구글 로그인에 실패하였습니다.\nIAP 초기화를 실행하지 못하였습니다.\n";
+        }
+
+        GoogleAdmobManager.Instance.IAPInitializeDelay(success);
     }
 
     private void InitUnityIAP()
     {
         if (isInitialized)
             return;
+
+        logText.text += "IAP 초기화를 실행합니다.\n";
 
         // 인앱결제 설정을 빌드할 수있는 설정       // 유니티가 제공하는 스토어 설정
         var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
@@ -64,6 +78,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
             });
 
         UnityPurchasing.Initialize(this, builder);
+        
     }
 
     public void OnInitialized(IStoreController controller, IExtensionProvider extensions)

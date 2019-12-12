@@ -5,49 +5,18 @@ using GoogleMobileAds.Api;
 
 public class GoogleAdmobManager : MonoBehaviour
 {
-    private string appID;
-    public string AppID
-    {
-        get
-        {
-            appID = "ca-app-pub-4570069551723430~8341763913";
-            return appID;
-        }
-    }
+    private string appID = "ca-app-pub-4570069551723430~8341763913";
+    private string adBannerUnitID = "ca-app-pub-4570069551723430/8427138795";
+    private string adInterstitialUnitID = "ca-app-pub-4570069551723430/4093497335";
 
-    private string adBannerUnitID;
-    public string AdBannerUnitID
-    {
-        get
-        {
-#if UNITY_EDITOR || UNITY_STANDALONE
-            adBannerUnitID = "ca-app-pub-3940256099942544/6300978111";
-#elif UNITY_ANDROID
-            adBannerUnitID = "ca-app-pub-4570069551723430/8427138795";
-#endif
-            return adBannerUnitID;
-        }
-    }
-
-    private string adInterstitialUnitID;
-    public string AdInterstitialUnitID
-    {
-        get
-        {
-#if UNITY_EDITOR || UNITY_STANDALONE
-            adInterstitialUnitID = "ca-app-pub-3940256099942544/1033173712";
-#elif UNITY_ANDROID
-            adInterstitialUnitID = "ca-app-pub-4570069551723430/4093497335";
-#endif
-            return adInterstitialUnitID;
-        }
-    }
-
-    public Text logText;
-    private BannerView bannerView;
-    private InterstitialAd interstitialAd;
+    //private string adBannerTestID = "ca-app-pub-3940256099942544/6300978111";
+    //private string adInterstitialTestID = "ca-app-pub-3940256099942544/1033173712";
 
     public bool isInitialized = false;
+
+    private BannerView bannerView;
+    private InterstitialAd interstitialAd;
+    public Text logText;
 
     private static GoogleAdmobManager instance;
     public static GoogleAdmobManager Instance
@@ -60,23 +29,30 @@ public class GoogleAdmobManager : MonoBehaviour
             instance = FindObjectOfType<GoogleAdmobManager>();
 
             if (instance == null)
-                instance = new GameObject(name: "AdmobManager").AddComponent<GoogleAdmobManager>();
+                instance = new GameObject(name: "GoogleAdmobManager").AddComponent<GoogleAdmobManager>();
 
             return instance;
         }
     }
 
-    private void Start()
+    public void IAPInitializeDelay(bool success)
     {
-        StartCoroutine(IAPInitializeDelay());
+        if (!success)
+        {
+            InitializeAdmob();
+            return;
+        }
+
+        StartCoroutine(WaitIAPInitialize());
     }
 
-    IEnumerator IAPInitializeDelay()
+    IEnumerator WaitIAPInitialize()
     {
-        while(!IAPManager.Instance.isInitialized)
+        while (!IAPManager.Instance.isInitialized)
             yield return null;
 
         logText.text += "IAP 초기화가 완료되었습니다.\n";
+
         InitializeAdmob();
     }
 
@@ -100,7 +76,7 @@ public class GoogleAdmobManager : MonoBehaviour
 
     private void InitializeBannerView()
     {
-        bannerView = new BannerView(AdBannerUnitID, AdSize.Banner, AdPosition.Bottom);
+        bannerView = new BannerView(adBannerUnitID, AdSize.Banner, AdPosition.Bottom);
         AdRequest request = new AdRequest.Builder().Build();
 
         bannerView.LoadAd(request);
@@ -110,7 +86,7 @@ public class GoogleAdmobManager : MonoBehaviour
 
     private void InitializeInterstitialAd()
     {
-        interstitialAd = new InterstitialAd(AdInterstitialUnitID);
+        interstitialAd = new InterstitialAd(adInterstitialUnitID);
 
         AdRequest request = new AdRequest.Builder().Build();
 

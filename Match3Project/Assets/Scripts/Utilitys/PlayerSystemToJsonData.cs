@@ -8,22 +8,34 @@ public class PlayerData
 {
     public float bgmVolume;
     public float seVolume;
+    public int totalScore;
 }
 
 public class PlayerSystemToJsonData : MonoBehaviour
 {
     private PlayerData playerData = new PlayerData();
-    public static PlayerSystemToJsonData instance;
-    public void Awake()
+    private static PlayerSystemToJsonData instance;
+    public static PlayerSystemToJsonData Instance
     {
-        instance = this;
-        LoadPlayerSystemData();
+        get
+        {
+            if (instance != null)
+                return instance;
+
+            instance = FindObjectOfType<PlayerSystemToJsonData>();
+
+            if (instance == null)
+                instance = new GameObject(name : "PlayerSystemToJsonData").AddComponent<PlayerSystemToJsonData>();
+
+            return instance;
+        }
     }
 
     public void SavePlayerSystemData()
     {
         playerData.bgmVolume = StaticVariables.BgmVolume;
         playerData.seVolume = StaticVariables.SeVolume;
+        playerData.totalScore = StaticVariables.TotalScore;
 
         string path = StaticVariables.PlayerDataPath;
         if (!Directory.Exists(path))
@@ -46,5 +58,6 @@ public class PlayerSystemToJsonData : MonoBehaviour
 
         StaticVariables.BgmVolume = playerData.bgmVolume;
         StaticVariables.SeVolume = playerData.seVolume;
+        StaticVariables.TotalScore = playerData.totalScore;
     }
 }

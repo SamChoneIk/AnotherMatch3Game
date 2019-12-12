@@ -23,7 +23,8 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance != null && instance != this)
+        var findGameManager = FindObjectOfType<GameManager>();
+        if (findGameManager != this)
         {
             Destroy(gameObject);
             return;
