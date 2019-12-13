@@ -96,7 +96,6 @@ public class MainMenuUI : MonoBehaviour
     public void QuitGame()
     {
         PlayerSystemToJsonData.Instance.SavePlayerSystemData();
-        GoogleAdmobManager.Instance.DestroyAd();
         Application.Quit();
     }
 }

@@ -88,8 +88,6 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
         storeController = controller;
         storeExtensionProvider = extensions;
-
-        RestorePurchase();
     }
 
     public void OnInitializeFailed(InitializationFailureReason error)
@@ -161,9 +159,6 @@ public class IAPManager : MonoBehaviour, IStoreListener
                         logText.text += "광고제거 구매확인\n";
                         StaticVariables.DestroyAd = true;
                     }
-
-                    if (HadPurchased(productConsumable))
-                        logText.text += "소모성 아이템 구매확인\n";
 
                     logText.text += "사용자 구매복구 완료.\n";
                 }
