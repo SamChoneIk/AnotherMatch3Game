@@ -31,5 +31,13 @@ public class GameManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
+
+        PlayerSystemToJsonData.Instance.LoadPlayerSystemData();
     }
+
+    private void DataLoad()
+    {
+
+    }
+
 }

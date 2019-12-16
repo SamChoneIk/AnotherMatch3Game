@@ -140,10 +140,13 @@ public class StageController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
             Debug.Log(currMenu);
 
-        if (optionMenu.activeInHierarchy)
+        if (currMenu == optionMenu)
         {
             stageBGM.volume = bgmSlider.value;
+            StaticVariables.BgmVolume = bgmSlider.value;
+
             stageSE.volume = seSlider.value;
+            StaticVariables.SeVolume = seSlider.value;
 
             return;
         }
@@ -242,12 +245,6 @@ public class StageController : MonoBehaviour
 
     public void BackMenu()
     {
-        if (currMenu == optionMenu)
-        {
-            StaticVariables.BgmVolume = bgmSlider.value;
-            StaticVariables.SeVolume = seSlider.value;
-        }
-
         currMenu.SetActive(false);
         currMenu = pauseMenu;
         currMenu.SetActive(true);

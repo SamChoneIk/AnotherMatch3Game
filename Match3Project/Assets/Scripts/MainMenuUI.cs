@@ -21,8 +21,8 @@ public class MainMenuUI : MonoBehaviour
 
     private void Start()
     {
-        PlayerSystemToJsonData.Instance.LoadPlayerSystemData();
         mainMenuBGM.volume = StaticVariables.BgmVolume;
+
         bgmVolume.value = StaticVariables.BgmVolume;
         seVolume.value = StaticVariables.SeVolume;
 
@@ -32,13 +32,17 @@ public class MainMenuUI : MonoBehaviour
         {
             Debug.LogFormat($"ReportScore : {StaticVariables.TotalScore}, {result}");
         });
-
     }
 
     private void Update()
     {
-        if (optionUI.activeInHierarchy)
+        if (currMenu == optionUI)
+        {
+            StaticVariables.BgmVolume = bgmVolume.value;
             mainMenuBGM.volume = bgmVolume.value;
+
+            StaticVariables.SeVolume = seVolume.value;
+        }
 
         if (Application.platform == RuntimePlatform.Android)
         {
@@ -82,12 +86,6 @@ public class MainMenuUI : MonoBehaviour
 
     public void BackMenu()
     {
-        if (currMenu == optionUI)
-        {
-            StaticVariables.BgmVolume = bgmVolume.value;
-            StaticVariables.SeVolume = seVolume.value;
-        }
-
         currMenu.SetActive(false);
         currMenu = mainUI;
         currMenu.SetActive(true);
