@@ -2705,7 +2705,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ad66bb8508a6b243add8882ee11c4cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logText: {fileID: 2061349542}
 --- !u!1 &938327434
 GameObject:
   m_ObjectHideFlags: 0
@@ -4303,7 +4302,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInitialized: 0
-  logText: {fileID: 2061349542}
 --- !u!4 &1430380172
 Transform:
   m_ObjectHideFlags: 0
@@ -4496,6 +4494,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 317d517748e71f149845035cccafcec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  logText: {fileID: 2061349542}
 --- !u!4 &1446368064
 Transform:
   m_ObjectHideFlags: 0
@@ -5282,7 +5281,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   googlePlayLoginSuccess: 0
-  logText: {fileID: 2061349542}
 --- !u!4 &1859734971
 Transform:
   m_ObjectHideFlags: 0

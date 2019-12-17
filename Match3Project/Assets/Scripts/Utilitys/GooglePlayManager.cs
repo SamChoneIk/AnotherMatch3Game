@@ -8,13 +8,28 @@ using GooglePlayGames.BasicApi;
 
 public class GooglePlayManager : MonoBehaviour
 {
-    public Text logText;
+	private static GooglePlayManager instance;
+	public static GooglePlayManager Instance
+	{
+		get
+		{
+			if (instance != null)
+				return instance;
 
-    private void Awake()
+			instance = FindObjectOfType<GooglePlayManager>();
+
+			if (instance == null)
+				instance = new GameObject(name: "GooglePlayManager").AddComponent<GooglePlayManager>();
+
+			return instance;
+		}
+	}
+
+	private void Awake()
     {
         if(Social.localUser.authenticated)
         {
-            logText.text += $"이미 로그인이 되어있습니다. {Social.localUser.id}\n";
+			GameManager.Instance.WriteLog($"이미 로그인이 되어있습니다. {Social.localUser.id}\n");
             return;
         }
 
@@ -28,12 +43,12 @@ public class GooglePlayManager : MonoBehaviour
         {
             if (success)
             {
-                logText.text += $"환영합니다! {Social.localUser.id}\n";
+				GameManager.Instance.WriteLog($"환영합니다! {Social.localUser.id}\n");
             }
 
             else
             {
-                logText.text += "구글 로그인 실패\n";
+				GameManager.Instance.WriteLog("구글 로그인 실패\n");
             }
 
             IAPManager.Instance.GoogleLogin(success);
@@ -43,18 +58,129 @@ public class GooglePlayManager : MonoBehaviour
     public void LogOut()
     {
         ((PlayGamesPlatform)Social.Active).SignOut();
-        logText.text += "구글 로그아웃\n";
+		GameManager.Instance.WriteLog("구글 로그아웃\n");
     }
 
-    public void ShowAchievements()
-    {
-        logText.text += "업적을 확인합니다.\n";
-       Social.ShowAchievementsUI();
-    }
+	public void ShowAchievements()
+	{
+		GameManager.Instance.WriteLog("업적을 확인합니다.\n");
+		Social.ShowAchievementsUI();
+	}
 
     public void ShowLeaderBoard()
     {
-        logText.text += "리더보드를 확인합니다.\n";
+		GameManager.Instance.WriteLog("리더보드를 확인합니다.\n");
         Social.ShowLeaderboardUI();
     }
+
+	public void ClearAchievements()
+	{
+		Social.ReportProgress(GPGSIds.achievement_first_game_clear, 100f, (bool success) =>
+		{
+			if (success)
+			{
+				GameManager.Instance.WriteLog("처음으로 스테이지를 완료했습니다.\n");
+			}
+
+			else
+			{
+				GameManager.Instance.WriteLog("로그인이 되어있지 않거나 업적을 이미 클리어했습니다.\n");
+			}
+
+		});
+
+		switch (StaticVariables.StageLevel)
+		{
+			case 1:
+				{
+					Social.ReportProgress(GPGSIds.achievement_stage_1_clear, 100f, (bool success) =>
+					{
+						if (success)
+						{
+							GameManager.Instance.WriteLog("1 스테이지를 완료했습니다.\n");
+						}
+
+						else
+						{
+							GameManager.Instance.WriteLog("로그인이 되어있지 않거나 업적을 이미 클리어했습니다.\n");
+						}
+
+					});
+
+					break;
+				}
+			case 2:
+				{
+					Social.ReportProgress(GPGSIds.achievement_stage_2_clear, 100f, (bool success) =>
+					{
+						if (success)
+						{
+							GameManager.Instance.WriteLog("2 스테이지를 완료했습니다.\n");
+						}
+
+						else
+						{
+							GameManager.Instance.WriteLog("로그인이 되어있지 않거나 업적을 이미 클리어했습니다.\n");
+						}
+
+					});
+
+					break;
+				}
+			case 3:
+				{
+					Social.ReportProgress(GPGSIds.achievement_stage_3_clear, 100f, (bool success) =>
+					{
+						if (success)
+						{
+							GameManager.Instance.WriteLog("3 스테이지를 완료했습니다.\n");
+						}
+
+						else
+						{
+							GameManager.Instance.WriteLog("로그인이 되어있지 않거나 업적을 이미 클리어했습니다.\n");
+						}
+
+					});
+
+					break;
+				}
+			case 4:
+				{
+					Social.ReportProgress(GPGSIds.achievement_stage_4_clear, 100f, (bool success) =>
+					{
+						if (success)
+						{
+							GameManager.Instance.WriteLog("4 스테이지를 완료했습니다.\n");
+						}
+
+						else
+						{
+							GameManager.Instance.WriteLog("로그인이 되어있지 않거나 업적을 이미 클리어했습니다.\n");
+						}
+
+					});
+
+					break;
+				}
+			case 5:
+				{
+					Social.ReportProgress(GPGSIds.achievement_stage_5_clear, 100f, (bool success) =>
+					{
+						if (success)
+						{
+							GameManager.Instance.WriteLog("5 스테이지를 완료했습니다.\n");
+						}
+
+						else
+						{
+							GameManager.Instance.WriteLog("로그인이 되어있지 않거나 업적을 이미 클리어했습니다.\n");
+						}
+
+					});
+
+					break;
+				}
+		}
+	}
 }

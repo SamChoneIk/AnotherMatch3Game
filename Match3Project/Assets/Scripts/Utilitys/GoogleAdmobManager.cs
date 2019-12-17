@@ -16,7 +16,6 @@ public class GoogleAdmobManager : MonoBehaviour
 
     private BannerView bannerView;
     private InterstitialAd interstitialAd;
-    public Text logText;
 
     private static GoogleAdmobManager instance;
     public static GoogleAdmobManager Instance
@@ -51,17 +50,19 @@ public class GoogleAdmobManager : MonoBehaviour
         while (!IAPManager.Instance.isInitialized)
             yield return null;
 
-        logText.text += "IAP 초기화가 완료되었습니다.\n";
+		GameManager.Instance.WriteLog("IAP 초기화가 완료되었습니다.\n");
 
         InitializeAdmob();
     }
 
     private void InitializeAdmob()
     {
-        logText.text += "Admob 초기화를 실행합니다.\n";
+		GameManager.Instance.WriteLog("Admob 초기화를 실행합니다.\n");
+
         if (StaticVariables.DestroyAd)
         {
-            logText.text += "광고가 제거되었습니다.\n";
+			GameManager.Instance.WriteLog("광고가 제거되었습니다.\n");
+
             isInitialized = true;
             return;
         }
@@ -81,20 +82,20 @@ public class GoogleAdmobManager : MonoBehaviour
 
         bannerView.LoadAd(request);
         bannerView.Show();
-        logText.text += "배너광고 초기화가 완료되었습니다.\n";
+
+		GameManager.Instance.WriteLog("배너광고 초기화가 완료되었습니다.\n");
     }
 
     private void InitializeInterstitialAd()
     {
         interstitialAd = new InterstitialAd(adInterstitialUnitID);
-
         AdRequest request = new AdRequest.Builder().Build();
 
         interstitialAd.LoadAd(request);
-        interstitialAd.OnAdClosed += (sender, e) => logText.text += "광고가 닫힘\n";
-        interstitialAd.OnAdLoaded += (sender, e) => logText.text += "광고가 로드됨\n";
+        interstitialAd.OnAdClosed += (sender, e) => GameManager.Instance.WriteLog("광고가 닫힘\n");
+        interstitialAd.OnAdLoaded += (sender, e) => GameManager.Instance.WriteLog("광고가 로드됨\n");
 
-        logText.text += "전면광고 초기화가 완료되었습니다.\n";
+		GameManager.Instance.WriteLog("전면광고 초기화가 완료되었습니다.\n");
     }
 
     public void Show()
@@ -112,7 +113,9 @@ public class GoogleAdmobManager : MonoBehaviour
 
     public void DestroyAd()
     {
-        StaticVariables.DestroyAd = true;
+		if (!StaticVariables.DestroyAd)
+			StaticVariables.DestroyAd = true;
+
         bannerView.Hide();
 
         bannerView.Destroy();

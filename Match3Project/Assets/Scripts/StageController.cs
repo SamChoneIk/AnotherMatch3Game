@@ -137,9 +137,6 @@ public class StageController : MonoBehaviour
                 Resume();
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-            Debug.Log(currMenu);
-
         if (currMenu == optionMenu)
         {
             stageBGM.volume = bgmSlider.value;
@@ -245,13 +242,17 @@ public class StageController : MonoBehaviour
 
     public void BackMenu()
     {
-        currMenu.SetActive(false);
+		PlayerSystemToJsonData.Instance.SavePlayerSystemData();
+
+		currMenu.SetActive(false);
         currMenu = pauseMenu;
         currMenu.SetActive(true);
     }
 
     public void StageClear()
     {
+		GooglePlayManager.Instance.ClearAchievements();
+
         pauseUI.SetActive(true);
         clearMenu.SetActive(true);
 
@@ -271,7 +272,9 @@ public class StageController : MonoBehaviour
 
     public void BackToMainMenu()
     {
-        Resume();
+		PlayerSystemToJsonData.Instance.SavePlayerSystemData();
+
+		Resume();
         SceneManager.LoadScene((int)SceneIndex.MAIN);
     }
 
@@ -288,37 +291,5 @@ public class StageController : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public void ClearAchievements()
-    {
-        Social.ReportProgress(GPGSIds.achievement_first_game_clear, 100f, null);
-
-        switch (StaticVariables.StageLevel)
-        {
-            case 1:
-                {
-                    Social.ReportProgress(GPGSIds.achievement_stage_1_clear, 100f, null);
-                    break;
-                }
-            case 2:
-                {
-                    Social.ReportProgress(GPGSIds.achievement_stage_2_clear, 100f, null);
-                    break;
-                }
-            case 3:
-                {
-                    Social.ReportProgress(GPGSIds.achievement_stage_3_clear, 100f, null);
-                    break;
-                }
-            case 4:
-                {
-                    Social.ReportProgress(GPGSIds.achievement_stage_4_clear, 100f, null);
-                    break;
-                }
-            case 5:
-                {
-                    Social.ReportProgress(GPGSIds.achievement_stage_5_clear, 100f, null);
-                    break;
-                }
-        }
-    }
+   
 }

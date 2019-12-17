@@ -28,9 +28,13 @@ public class MainMenuUI : MonoBehaviour
 
         currMenu = mainUI;
 
-        Social.ReportScore(StaticVariables.TotalScore, GPGSIds.leaderboard_playerscore, (result) =>
+        Social.ReportScore(StaticVariables.TotalScore, GPGSIds.leaderboard_playerscore, (success) =>
         {
-            Debug.LogFormat($"ReportScore : {StaticVariables.TotalScore}, {result}");
+            GameManager.Instance.WriteLog($"ReportScore : {StaticVariables.TotalScore}, {success} \n");
+			if(success)
+				GameManager.Instance.WriteLog("Reported score successfully\n");
+			else
+				GameManager.Instance.WriteLog("Failed to report score\n");
         });
     }
 
@@ -86,14 +90,15 @@ public class MainMenuUI : MonoBehaviour
 
     public void BackMenu()
     {
-        currMenu.SetActive(false);
+		PlayerSystemToJsonData.Instance.SavePlayerSystemData();
+
+		currMenu.SetActive(false);
         currMenu = mainUI;
         currMenu.SetActive(true);
     }
 
     public void QuitGame()
     {
-        PlayerSystemToJsonData.Instance.SavePlayerSystemData();
-        Application.Quit();
+		Application.Quit();
     }
 }

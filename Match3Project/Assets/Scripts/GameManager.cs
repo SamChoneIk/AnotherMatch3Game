@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager instance;
+	public Text logText;
+
+	private static GameManager instance;
     public static GameManager Instance
     {
         get
@@ -35,9 +38,8 @@ public class GameManager : MonoBehaviour
         PlayerSystemToJsonData.Instance.LoadPlayerSystemData();
     }
 
-    private void DataLoad()
+    public void WriteLog(string text)
     {
-
+		logText.text += text;
     }
-
 }

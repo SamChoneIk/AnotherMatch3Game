@@ -8,7 +8,7 @@ public class PlayerData
 {
     public float bgmVolume;
     public float seVolume;
-    public int totalScore;
+	public int totalScore;
 }
 
 public class PlayerSystemToJsonData : MonoBehaviour

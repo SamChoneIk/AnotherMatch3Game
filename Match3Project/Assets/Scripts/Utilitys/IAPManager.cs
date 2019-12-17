@@ -20,8 +20,6 @@ public class IAPManager : MonoBehaviour, IStoreListener
     public bool isInitialized => storeController != null && storeExtensionProvider != null;
     public bool googlePlayLoginSuccess;
 
-    public Text logText;
-
     private static IAPManager instance;
     public static IAPManager Instance
     {
@@ -43,13 +41,13 @@ public class IAPManager : MonoBehaviour, IStoreListener
     {
         if(success)
         {
-            logText.text += "구글 로그인에 성공하였습니다.\n";
+			GameManager.Instance.WriteLog("구글 로그인에 성공하였습니다.\n");
             InitUnityIAP();
         }
 
         else
         {
-            logText.text += "구글 로그인에 실패하였습니다.\nIAP 초기화를 실행하지 못하였습니다.\n";
+			GameManager.Instance.WriteLog("구글 로그인에 실패하였습니다.\nIAP 초기화를 실행하지 못하였습니다.\n");
         }
 
         GoogleAdmobManager.Instance.IAPInitializeDelay(success);
@@ -60,7 +58,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
         if (isInitialized)
             return;
 
-        logText.text += "IAP 초기화를 실행합니다.\n";
+		GameManager.Instance.WriteLog("IAP 초기화를 실행합니다.\n");
 
         // 인앱결제 설정을 빌드할 수있는 설정       // 유니티가 제공하는 스토어 설정
         var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
@@ -83,7 +81,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
     public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
     {
-        logText.text += "유니티 IAP 초기화 성공\n";
+		GameManager.Instance.WriteLog("유니티 IAP 초기화 성공\n");
         Debug.Log("유니티 IAP 초기화 성공");
 
         storeController = controller;
@@ -92,30 +90,30 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
     public void OnInitializeFailed(InitializationFailureReason error)
     {
-        logText.text += $"유니티 IAP 초기화 실패{error}\n";
+		GameManager.Instance.WriteLog($"유니티 IAP 초기화 실패{error}\n");
         Debug.LogError($"유니티 IAP 초기화 실패{error}");
     }
 
     public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs e)
     {
-        logText.text += $"구매 성공 - ID : {e.purchasedProduct.definition.id} ";
+		GameManager.Instance.WriteLog($"구매 성공 - ID : {e.purchasedProduct.definition.id}");
         Debug.Log($"구매 성공 - ID : {e.purchasedProduct.definition.id}"); // 구매한 상품의 아이디
 
         if(e.purchasedProduct.definition.id == productAd)
         {
-            logText.text += "광고 제거\n";
+			GameManager.Instance.WriteLog("광고 제거\n");
             GoogleAdmobManager.Instance.DestroyAd();
         }
 
         if(e.purchasedProduct.definition.id == productConsumable)
-            logText.text += "소모성 아이템 구매\n";
+			GameManager.Instance.WriteLog("소모성 아이템 구매\n");
 
         return PurchaseProcessingResult.Complete;
     }
 
     public void OnPurchaseFailed(Product i, PurchaseFailureReason p)
     {
-        logText.text += $"구매 실패 - {i.definition.id}, {p}\n";
+		GameManager.Instance.WriteLog($"구매 실패 - {i.definition.id}, {p}\n");
         Debug.LogWarning($"구매 실패 - {i.definition.id}, {p}");
     }
 
@@ -129,14 +127,14 @@ public class IAPManager : MonoBehaviour, IStoreListener
         
         if(product != null && product.availableToPurchase)
         {
-            logText.text += $"구매 시도 - {product.definition.id}\n";
+			GameManager.Instance.WriteLog($"구매 시도 - {product.definition.id}\n");
             Debug.Log($"구매 시도 - {product.definition.id}");
             storeController.InitiatePurchase(product);
         }
 
         else
         {
-            logText.text += $"구매 시도 불가 - {productId}\n";
+			GameManager.Instance.WriteLog($"구매 시도 불가 - {productId}\n");
             Debug.Log($"구매 시도 불가 - {productId}");
         }
     }
@@ -150,21 +148,21 @@ public class IAPManager : MonoBehaviour, IStoreListener
         {
             storeExtensionProvider.GetExtension<IGooglePlayStoreExtensions>().RestoreTransactions(result =>
             {
-                if (result)
-                {
-                    logText.text += "사용자의 구매내역이 확인되었습니다.\n";
+				if (result)
+				{
+					GameManager.Instance.WriteLog("사용자의 구매내역이 확인되었습니다.\n");
 
-                    if (HadPurchased(productAd))
-                    {
-                        logText.text += "광고제거 구매확인\n";
-                        StaticVariables.DestroyAd = true;
-                    }
+					if (HadPurchased(productAd))
+					{
+						GameManager.Instance.WriteLog("광고제거 구매확인\n");
+						StaticVariables.DestroyAd = true;
+					}
 
-                    logText.text += "사용자 구매복구 완료.\n";
-                }
+					GameManager.Instance.WriteLog("사용자 구매복구 완료.\n");
+				}
 
-                else
-                    logText.text += "사용자가 구매한 내역이 없습니다.\n";
+				else
+					GameManager.Instance.WriteLog("사용자가 구매한 내역이 없습니다.\n");
             });
         }
     }
