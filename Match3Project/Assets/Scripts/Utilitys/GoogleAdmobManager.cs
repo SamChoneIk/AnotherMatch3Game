@@ -57,14 +57,19 @@ public class GoogleAdmobManager : MonoBehaviour
 
     private void InitializeAdmob()
     {
+		if (isInitialized)
+		{
+			GameManager.Instance.WriteLog("Admob 초기화가 되어있습니다.\n");
+			return;
+		}
+
 		GameManager.Instance.WriteLog("Admob 초기화를 실행합니다.\n");
 
         if (StaticVariables.DestroyAd)
         {
 			GameManager.Instance.WriteLog("광고가 제거되었습니다.\n");
-
             isInitialized = true;
-            return;
+			return;
         }
 
         MobileAds.Initialize(appID);

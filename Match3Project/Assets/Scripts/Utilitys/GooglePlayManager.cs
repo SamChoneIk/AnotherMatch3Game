@@ -25,26 +25,27 @@ public class GooglePlayManager : MonoBehaviour
 		}
 	}
 
-	private void Awake()
-    {
-        if(Social.localUser.authenticated)
-        {
+	public void GooglePlayManagerInit()
+	{
+		if (Social.localUser.authenticated)
+		{
 			GameManager.Instance.WriteLog($"이미 로그인이 되어있습니다. {Social.localUser.id}\n");
-            return;
-        }
 
-        PlayGamesPlatform.Activate();
-        LogIn();
-    }
+			return;
+		}
+
+		PlayGamesPlatform.Activate();
+		LogIn();
+	}
 
     public void LogIn()
     {
-        Social.localUser.Authenticate((bool success) =>
+        Social.localUser.Authenticate((success) =>
         {
             if (success)
             {
 				GameManager.Instance.WriteLog($"환영합니다! {Social.localUser.id}\n");
-            }
+			}
 
             else
             {
@@ -61,6 +62,15 @@ public class GooglePlayManager : MonoBehaviour
 		GameManager.Instance.WriteLog("구글 로그아웃\n");
     }
 
+	public void GoogleLogInButton()
+	{
+		if (Social.localUser.authenticated)
+			LogOut();
+
+		Social.
+		LogIn();
+	}
+
 	public void ShowAchievements()
 	{
 		GameManager.Instance.WriteLog("업적을 확인합니다.\n");
@@ -72,6 +82,19 @@ public class GooglePlayManager : MonoBehaviour
 		GameManager.Instance.WriteLog("리더보드를 확인합니다.\n");
         Social.ShowLeaderboardUI();
     }
+
+	public void RefreshAchievements()
+	{
+		Social.ReportScore(StaticVariables.TotalScore, GPGSIds.leaderboard_playerscore, (_success) =>
+		{
+			GameManager.Instance.WriteLog($"ReportScore : {StaticVariables.TotalScore}, {_success} \n");
+
+			if (_success)
+				GameManager.Instance.WriteLog("Reported score successfully\n");
+			else
+				GameManager.Instance.WriteLog("Failed to report score\n");
+		});
+	}
 
 	public void ClearAchievements()
 	{

@@ -27,16 +27,7 @@ public class MainMenuUI : MonoBehaviour
         seVolume.value = StaticVariables.SeVolume;
 
         currMenu = mainUI;
-
-        Social.ReportScore(StaticVariables.TotalScore, GPGSIds.leaderboard_playerscore, (success) =>
-        {
-            GameManager.Instance.WriteLog($"ReportScore : {StaticVariables.TotalScore}, {success} \n");
-			if(success)
-				GameManager.Instance.WriteLog("Reported score successfully\n");
-			else
-				GameManager.Instance.WriteLog("Failed to report score\n");
-        });
-    }
+	}
 
     private void Update()
     {

@@ -24,19 +24,31 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void Awake()
-    {
-        var findGameManager = FindObjectOfType<GameManager>();
-        if (findGameManager != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
+	private void Awake()
+	{
+		if (Social.localUser.authenticated)
+		{
+			WriteLog("구글 로그인\n");
+			if (IAPManager.Instance.isInitialized)
+				WriteLog("IAP 초기화 완료\n");
+			if(StaticVariables.DestroyAd)
+				GoogleAdmobManager.Instance.DestroyAd();
 
-        DontDestroyOnLoad(gameObject);
+			GooglePlayManager.Instance.RefreshAchievements();
+		}
 
-        PlayerSystemToJsonData.Instance.LoadPlayerSystemData();
-    }
+		var findGameManager = FindObjectOfType<GameManager>();
+		if (findGameManager != this)
+		{
+			Destroy(gameObject);
+			return;
+		}
+
+		DontDestroyOnLoad(gameObject);
+
+		PlayerSystemToJsonData.Instance.LoadPlayerSystemData();
+		GooglePlayManager.Instance.GooglePlayManagerInit();
+	}
 
     public void WriteLog(string text)
     {

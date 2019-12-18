@@ -14,11 +14,9 @@ public class PurchaseButton : MonoBehaviour
         {
             if (IAPManager.Instance.HadPurchased(targetProductId))
             {
-                if (!StaticVariables.DestroyAd)
-                    StaticVariables.DestroyAd = true;
-
-                logText.text += "이미 구매한 상품\n";
-                return;
+                GameManager.Instance.WriteLog("이미 구매한 상품\n");
+				GoogleAdmobManager.Instance.DestroyAd();
+				return;
             }
         }
 

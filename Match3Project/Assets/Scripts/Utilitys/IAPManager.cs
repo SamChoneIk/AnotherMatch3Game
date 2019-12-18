@@ -47,7 +47,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
         else
         {
-			GameManager.Instance.WriteLog("구글 로그인에 실패하였습니다.\nIAP 초기화를 실행하지 못하였습니다.\n");
+			GameManager.Instance.WriteLog("IAP 초기화를 실행하지 못하였습니다.\n");
         }
 
         GoogleAdmobManager.Instance.IAPInitializeDelay(success);
@@ -155,7 +155,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
 					if (HadPurchased(productAd))
 					{
 						GameManager.Instance.WriteLog("광고제거 구매확인\n");
-						StaticVariables.DestroyAd = true;
+						GoogleAdmobManager.Instance.DestroyAd();
 					}
 
 					GameManager.Instance.WriteLog("사용자 구매복구 완료.\n");
