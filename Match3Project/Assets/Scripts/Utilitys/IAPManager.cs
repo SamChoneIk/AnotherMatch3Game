@@ -141,6 +141,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
     public void RestorePurchase()
     {
+		GameManager.Instance.WriteLog("구매 복구 버튼\n");
         if (!isInitialized)
             return;
 

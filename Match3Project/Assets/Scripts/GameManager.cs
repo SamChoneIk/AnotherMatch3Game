@@ -31,12 +31,10 @@ public class GameManager : MonoBehaviour
 			WriteLog("구글 로그인\n");
 			if (IAPManager.Instance.isInitialized)
 				WriteLog("IAP 초기화 완료\n");
-			if(StaticVariables.DestroyAd)
+			if (StaticVariables.DestroyAd)
 				GoogleAdmobManager.Instance.DestroyAd();
-
-			GooglePlayManager.Instance.RefreshAchievements();
 		}
-
+	
 		var findGameManager = FindObjectOfType<GameManager>();
 		if (findGameManager != this)
 		{

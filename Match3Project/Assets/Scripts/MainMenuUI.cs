@@ -19,14 +19,17 @@ public class MainMenuUI : MonoBehaviour
     public Slider bgmVolume;
     public Slider seVolume;
 
-    private void Start()
-    {
-        mainMenuBGM.volume = StaticVariables.BgmVolume;
+	private void Start()
+	{
+		if (Social.localUser.authenticated)
+			GooglePlayManager.Instance.RefreshAchievements();
 
-        bgmVolume.value = StaticVariables.BgmVolume;
-        seVolume.value = StaticVariables.SeVolume;
+		mainMenuBGM.volume = StaticVariables.BgmVolume;
 
-        currMenu = mainUI;
+		bgmVolume.value = StaticVariables.BgmVolume;
+		seVolume.value = StaticVariables.SeVolume;
+
+		currMenu = mainUI;
 	}
 
     private void Update()
@@ -79,7 +82,25 @@ public class MainMenuUI : MonoBehaviour
         currMenu.SetActive(true);
     }
 
-    public void BackMenu()
+	public void ShowAchievements()
+	{
+		if (Social.localUser.authenticated)
+			return;
+
+		GameManager.Instance.WriteLog("업적을 확인합니다.\n");
+		Social.ShowAchievementsUI();
+	}
+
+	public void ShowLeaderBoard()
+	{
+		if (Social.localUser.authenticated)
+			return;
+
+		GameManager.Instance.WriteLog("리더보드를 확인합니다.\n");
+		Social.ShowLeaderboardUI();
+	}
+
+	public void BackMenu()
     {
 		PlayerSystemToJsonData.Instance.SavePlayerSystemData();
 
@@ -88,8 +109,19 @@ public class MainMenuUI : MonoBehaviour
         currMenu.SetActive(true);
     }
 
+	public void GoogleLogin()
+	{
+		GooglePlayManager.Instance.LogIn();
+	}
+
+	public void GoogleLogout()
+	{
+		GooglePlayManager.Instance.LogOut();
+	}
+
     public void QuitGame()
     {
+		GameManager.Instance.WriteLog("게임을 종료합니다.");
 		Application.Quit();
     }
 }

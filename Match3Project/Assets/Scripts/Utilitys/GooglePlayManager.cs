@@ -30,7 +30,6 @@ public class GooglePlayManager : MonoBehaviour
 		if (Social.localUser.authenticated)
 		{
 			GameManager.Instance.WriteLog($"이미 로그인이 되어있습니다. {Social.localUser.id}\n");
-
 			return;
 		}
 
@@ -67,21 +66,8 @@ public class GooglePlayManager : MonoBehaviour
 		if (Social.localUser.authenticated)
 			LogOut();
 
-		Social.
 		LogIn();
 	}
-
-	public void ShowAchievements()
-	{
-		GameManager.Instance.WriteLog("업적을 확인합니다.\n");
-		Social.ShowAchievementsUI();
-	}
-
-    public void ShowLeaderBoard()
-    {
-		GameManager.Instance.WriteLog("리더보드를 확인합니다.\n");
-        Social.ShowLeaderboardUI();
-    }
 
 	public void RefreshAchievements()
 	{

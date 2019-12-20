@@ -125,18 +125,6 @@ public class StageController : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (currMenu == null)
-                PauseMenu();
-
-            if (currMenu == optionMenu)
-                BackMenu();
-
-            if (currMenu == pauseMenu)
-                Resume();
-        }
-
         if (currMenu == optionMenu)
         {
             stageBGM.volume = bgmSlider.value;
@@ -170,12 +158,10 @@ public class StageController : MonoBehaviour
                 if (currStageState == StageState.CLEAR)
                 {
                     resultClearScoreText.text = $"SCORE : {Mathf.FloorToInt(score).ToString("D6")}";
-
-                    StageClear();
+                    StageResult(true);
                 }
-
                 else if (currStageState == StageState.FAIL)
-                    StageFail();
+					StageResult(false);
             }
         }
     }
@@ -249,25 +235,25 @@ public class StageController : MonoBehaviour
         currMenu.SetActive(true);
     }
 
-    public void StageClear()
+    public void StageResult(bool clear)
     {
-		GooglePlayManager.Instance.ClearAchievements();
+		pauseUI.SetActive(true);
+		
+		if (clear)
+		{
+			GooglePlayManager.Instance.ClearAchievements();
+			clearMenu.SetActive(true);
+			currMenu = clearMenu;
+		}
 
-        pauseUI.SetActive(true);
-        clearMenu.SetActive(true);
+		else
+		{
+			if (!StaticVariables.DestroyAd)
+				GoogleAdmobManager.Instance.Show();
 
-        currMenu = clearMenu;
-    }
-
-    public void StageFail()
-    {
-        if (!StaticVariables.DestroyAd)
-            GoogleAdmobManager.Instance.Show();
-
-        pauseUI.SetActive(true);
-        failMenu.SetActive(true);
-
-        currMenu = failMenu;
+			failMenu.SetActive(true);
+			currMenu = failMenu;
+		}
     }
 
     public void BackToMainMenu()

@@ -9,7 +9,8 @@ public class PurchaseButton : MonoBehaviour
     public Text logText;
 
     public void HandleClick()
-    {
+	{
+		GameManager.Instance.WriteLog($"{targetProductId} 아이템을 구매\n");
         if(targetProductId == IAPManager.productAd)
         {
             if (IAPManager.Instance.HadPurchased(targetProductId))
@@ -22,4 +23,9 @@ public class PurchaseButton : MonoBehaviour
 
         IAPManager.Instance.Purchase(targetProductId);
     }
+
+	public void RestorePurchase()
+	{
+		IAPManager.Instance.RestorePurchase();
+	}
 }
