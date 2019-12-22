@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 4942596600588156870}
   m_Layer: 0
   m_Name: PiecePrefab
-  m_TagString: Blue
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -208,16 +208,11 @@ MonoBehaviour:
   value: 0
   row: 0
   column: 0
-  prevRow: 0
-  prevColumn: 0
-  fallSpeed: 0
-  dragRegist: 0.5
   isTunning: 0
   rowBomb: 0
   columnBomb: 0
   crossBomb: 0
   target: {fileID: 0}
-  moveToPos: {x: 0, y: 0}
   itemSprite: {fileID: 7041771212347651925}
   pieceEffects: []
 --- !u!1001 &2389262573946455996

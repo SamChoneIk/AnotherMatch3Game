@@ -12,9 +12,6 @@ public class Board : MonoBehaviour
     public int vertical = 8;
     public int fallOffset = 5;
 
-    public int matchedScore = 30;
-    public int decreaseMoveValue = 1;
-
     public float delayTime = 0.08f;
     public float effectDelayTime = 0.5f;
     public float pieceFallSpeed;
@@ -29,6 +26,8 @@ public class Board : MonoBehaviour
     public Sprite[] pieceSprites;
     public Sprite[] itemSprites;
 
+    public StageController stageCtrl;
+
     private List<Piece> matchedPieces;
     private List<Piece> disabledPieces;
     private List<Piece> verifyedPieces;
@@ -39,8 +38,6 @@ public class Board : MonoBehaviour
 
     private void Start()
     {
-        StageController.instance.board = this;
-
         currBoardState = BoardState.WORK;
 
         pieceArray = new GameObject[horizontal, vertical];
@@ -52,6 +49,9 @@ public class Board : MonoBehaviour
 
         pieceSprites = Resources.LoadAll<Sprite>(StaticVariables.PieceSpritesPath);
         itemSprites = Resources.LoadAll<Sprite>(StaticVariables.ItemSpritesPath);
+
+        stageCtrl = GameObject.FindGameObjectWithTag(StaticVariables.StageController).GetComponent<StageController>();
+        stageCtrl.board = this;
 
         GeneratePiece();
     }
@@ -152,9 +152,14 @@ public class Board : MonoBehaviour
         return false;
     }
 
+    public bool IsStageStopped()
+    {
+        return stageCtrl.currStageState == StageState.CLEAR || stageCtrl.currStageState == StageState.FAIL;
+    }
+
     private void Update()
     {
-        if (StageController.instance.currStageState == StageState.CLEAR || StageController.instance.currStageState == StageState.FAIL)
+        if (IsStageStopped())
             return;
 
         switch (currBoardState)
@@ -216,7 +221,8 @@ public class Board : MonoBehaviour
                     break;
                 }
         }
-        DebugSystem();
+
+        //DebugSystem();
     }
 
     private void FindMatchedPiece(bool findMatched = false)
@@ -257,7 +263,7 @@ public class Board : MonoBehaviour
 
         else
         {
-            StageController.instance.combo = 0;
+            stageCtrl.combo = 0;
             currBoardState = BoardState.ORDER;
         }
     }
@@ -671,7 +677,7 @@ public class Board : MonoBehaviour
     {
         if (selectedPiece != null)
         {
-            StageController.instance.DecreaseMove(decreaseMoveValue);
+            stageCtrl.DecreaseMove(stageCtrl.decreaseMoveValue);
             selectedPiece = null;
         }
 
@@ -681,14 +687,14 @@ public class Board : MonoBehaviour
             piece.SetDisabledPiece();
         }
 
-        StageController.instance.SoundEffectPlay(SoundEffectList.MATCHED);
+        stageCtrl.SoundEffectPlay(SoundEffectList.MATCHED);
 
         yield return new WaitForSeconds(effectDelayTime);
 
-        ++StageController.instance.combo;
+        ++stageCtrl.combo;
         foreach (var piece in matchedPieces)
         {
-            StageController.instance.IncreaseScore(matchedScore);
+            stageCtrl.IncreaseScore(stageCtrl.matchedScore);
 
             piece.transform.SetParent(disabledPiecesParent.transform);
             piece.gameObject.SetActive(false);

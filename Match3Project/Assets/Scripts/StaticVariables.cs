@@ -54,6 +54,8 @@ public static class StaticVariables
     public static bool DataLoad = false;
     public static bool DestroyAd = false;
 
+    public static string StageController = "StageController";
+
     public static string DisabledPieceName = "DefaultPiece";
     public static string PieceSpritesPath = "Arts/PieceSprite";
     public static string ItemSpritesPath = "Arts/ItemSprite";

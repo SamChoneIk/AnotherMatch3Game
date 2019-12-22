@@ -129,8 +129,7 @@ public class Piece : MonoBehaviour
     {
         if (currState == PieceState.WAIT && board.currBoardState == BoardState.ORDER && Time.timeScale > 0)
         {
-            if (StageController.instance.currStageState == StageState.CLEAR ||
-                StageController.instance.currStageState == StageState.FAIL)
+            if (board.IsStageStopped())
                 return;
 
             Vector2 dir = (endPos - startPos);
@@ -177,7 +176,7 @@ public class Piece : MonoBehaviour
             board.selectedPiece = this;
             board.currBoardState = BoardState.WORK;
 
-            StageController.instance.SoundEffectPlay(SoundEffectList.SWAP);
+            board.stageCtrl.SoundEffectPlay(SoundEffectList.SWAP);
 
         }
     }
@@ -234,7 +233,7 @@ public class Piece : MonoBehaviour
         isTunning = false;
         board.selectedPiece = null;
 
-        StageController.instance.SoundEffectPlay(SoundEffectList.TUNNING);
+        board.stageCtrl.SoundEffectPlay(SoundEffectList.TUNNING);
 
         board.currBoardState = BoardState.ORDER;
     }

@@ -41,6 +41,9 @@ public class StageController : MonoBehaviour
     private StageData[] stageDatas;
     private AudioClip[] seClips;
 
+    public int matchedScore = 30;
+    public int decreaseMoveValue = 1;
+
     public float scoringSpeed = 0f;
     public int combo = 0;
 
@@ -51,12 +54,8 @@ public class StageController : MonoBehaviour
     private int stars = 0;
 
     public Board board;
-
-    public static StageController instance;
     private void Awake()
     {
-        instance = this;
-
 #if UNITY_EDITOR || UNITY_EDITOR_WIN || UNITY_EDITOR_OSX || UNITY_STANDALONE
         Camera.main.orthographicSize = 6;
 #endif
