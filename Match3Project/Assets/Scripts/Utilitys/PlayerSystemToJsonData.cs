@@ -59,5 +59,7 @@ public class PlayerSystemToJsonData : MonoBehaviour
         StaticVariables.BgmVolume = playerData.bgmVolume;
         StaticVariables.SeVolume = playerData.seVolume;
         StaticVariables.TotalScore = playerData.totalScore;
+
+		StaticVariables.DataLoad = true;
     }
 }

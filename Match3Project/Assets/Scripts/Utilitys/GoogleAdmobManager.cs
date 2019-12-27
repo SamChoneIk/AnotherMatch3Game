@@ -50,7 +50,7 @@ public class GoogleAdmobManager : MonoBehaviour
         while (!IAPManager.Instance.isInitialized)
             yield return null;
 
-		GameManager.Instance.WriteLog("IAP 초기화가 완료되었습니다.\n");
+		//GameManager.Instance.WriteLog("IAP 초기화가 완료되었습니다.\n");
 
         InitializeAdmob();
     }
@@ -59,15 +59,15 @@ public class GoogleAdmobManager : MonoBehaviour
     {
 		if (isInitialized)
 		{
-			GameManager.Instance.WriteLog("Admob 초기화가 되어있습니다.\n");
+			//GameManager.Instance.WriteLog("Admob 초기화가 되어있습니다.\n");
 			return;
 		}
 
-		GameManager.Instance.WriteLog("Admob 초기화를 실행합니다.\n");
+		//GameManager.Instance.WriteLog("Admob 초기화를 실행합니다.\n");
 
         if (StaticVariables.DestroyAd)
         {
-			GameManager.Instance.WriteLog("광고가 제거되었습니다.\n");
+			//GameManager.Instance.WriteLog("광고가 제거되었습니다.\n");
             isInitialized = true;
 			return;
         }
@@ -88,7 +88,7 @@ public class GoogleAdmobManager : MonoBehaviour
         bannerView.LoadAd(request);
         bannerView.Show();
 
-		GameManager.Instance.WriteLog("배너광고 초기화가 완료되었습니다.\n");
+		//GameManager.Instance.WriteLog("배너광고 초기화가 완료되었습니다.\n");
     }
 
     private void InitializeInterstitialAd()
@@ -97,10 +97,10 @@ public class GoogleAdmobManager : MonoBehaviour
         AdRequest request = new AdRequest.Builder().Build();
 
         interstitialAd.LoadAd(request);
-        interstitialAd.OnAdClosed += (sender, e) => GameManager.Instance.WriteLog("광고가 닫힘\n");
-        interstitialAd.OnAdLoaded += (sender, e) => GameManager.Instance.WriteLog("광고가 로드됨\n");
+        //interstitialAd.OnAdClosed += (sender, e) => GameManager.Instance.WriteLog("광고가 닫힘\n");
+        //interstitialAd.OnAdLoaded += (sender, e) => GameManager.Instance.WriteLog("광고가 로드됨\n");
 
-		GameManager.Instance.WriteLog("전면광고 초기화가 완료되었습니다.\n");
+		//GameManager.Instance.WriteLog("전면광고 초기화가 완료되었습니다.\n");
     }
 
     public void Show()

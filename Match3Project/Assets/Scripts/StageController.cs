@@ -154,13 +154,11 @@ public class StageController : MonoBehaviour
 
                 StaticVariables.TotalScore += Mathf.FloorToInt(score);
 
-                if (currStageState == StageState.CLEAR)
+                if (currStageState == StageState.CLEAR || currStageState == StageState.FAIL)
                 {
                     resultClearScoreText.text = $"SCORE : {Mathf.FloorToInt(score).ToString("D6")}";
-                    StageResult(true);
+                    StageResult(currStageState == StageState.CLEAR ? true : false);
                 }
-                else if (currStageState == StageState.FAIL)
-					StageResult(false);
             }
         }
     }

@@ -77,7 +77,6 @@ public class Board : MonoBehaviour
         {
             for (int row = 0; row < horizontal; ++row)
             {
-                // 검토하고 null체크 제거
                 if (regenerate)
                 {
                     if (selectedPiece != null)
@@ -150,11 +149,6 @@ public class Board : MonoBehaviour
         }
 
         return false;
-    }
-
-    public bool IsStageStopped()
-    {
-        return stageCtrl.currStageState == StageState.CLEAR || stageCtrl.currStageState == StageState.FAIL;
     }
 
     private void Update()
@@ -237,13 +231,19 @@ public class Board : MonoBehaviour
                 if (row > 0 && row < horizontal - 1)
                 {
                     if (pieceArray[row + 1, column] != null && pieceArray[row - 1, column] != null)
-                        AddMatchedPiece(GetPiece(row, column), GetPiece(row + 1, column), GetPiece(row - 1, column), findMatched);
+                        AddMatchedPiece(GetPiece(row, column), 
+										GetPiece(row + 1, column), 
+										GetPiece(row - 1, column), 
+										findMatched);
                 }
 
                 if (column > 0 && column < vertical - 1)
                 {
                     if (pieceArray[row, column + 1] != null && pieceArray[row, column - 1] != null)
-                        AddMatchedPiece(GetPiece(row, column), GetPiece(row, column + 1), GetPiece(row, column - 1), findMatched);
+                        AddMatchedPiece(GetPiece(row, column), 
+										GetPiece(row, column + 1), 
+										GetPiece(row, column - 1), 
+										findMatched);
                 }
 
                 if (isMatched)
@@ -278,17 +278,19 @@ public class Board : MonoBehaviour
                 return;
             }
 
-            if (!matchedPieces.Contains(sidePiece1))
-                matchedPieces.Add(sidePiece1);
+			else
+			{
+				if (!matchedPieces.Contains(sidePiece1))
+					matchedPieces.Add(sidePiece1);
 
-            if (!matchedPieces.Contains(currPiece))
-                matchedPieces.Add(currPiece);
+				if (!matchedPieces.Contains(currPiece))
+					matchedPieces.Add(currPiece);
 
-            if (!matchedPieces.Contains(sidePiece2))
-                matchedPieces.Add(sidePiece2);
+				if (!matchedPieces.Contains(sidePiece2))
+					matchedPieces.Add(sidePiece2);
 
-            if (!findMatched)
-                UsedItem(sidePiece1, currPiece, sidePiece2);
+				UsedItem(sidePiece1, currPiece, sidePiece2);
+			}
         }
     }
 
@@ -310,10 +312,7 @@ public class Board : MonoBehaviour
                     continue;
 
                 verifyedPieces.Add(matchedPieces[i]);
-
                 FindDirectionMatchedPiece(matchedPieces[i], ref rows, ref cols);
-
-               // Debug.Log("rows = " + rows + " & " + "columns = " + cols);
 
                 if (rows >= 2 && cols >= 2)
                 {
@@ -330,8 +329,6 @@ public class Board : MonoBehaviour
 
                     else
                         bombPiece = verifyedPieces[Random.Range(prevCount, verifyedPieces.Count)];
-
-                    //Debug.Log("generate CrossBomb");
 
                     bombPiece.crossBomb = true;
                     bombPiece.value = pieceSprites.Length + 1;
@@ -395,8 +392,6 @@ public class Board : MonoBehaviour
                 else
                     bombPiece = verifyedPieces[Random.Range(prevCount, verifyedPieces.Count)];
 
-                //Debug.Log("generate RowBomb");
-
                 bombPiece.rowBomb = true;
                 bombPiece.itemSprite.sprite = itemSprites[1];
 
@@ -456,8 +451,6 @@ public class Board : MonoBehaviour
                 else
                     bombPiece = verifyedPieces[Random.Range(prevCount, verifyedPieces.Count)];
 
-                //Debug.Log("generate ColumnBomb");
-
                 bombPiece.columnBomb = true;
                 bombPiece.itemSprite.sprite = itemSprites[0];
 
@@ -493,15 +486,14 @@ public class Board : MonoBehaviour
         {
             for (int i = 1; ; ++i)
             {
-                if (piece.row + ((int)dir.x * i) > horizontal - 1 || piece.column + ((int)dir.y * i) > vertical - 1 ||
-                    piece.row + ((int)dir.x * i) < 0 || piece.column + ((int)dir.y * i) < 0)
+                if (piece.row + ((int)dir.x * i) >= horizontal || piece.column + ((int)dir.y * i) >= vertical ||
+                    piece.row + ((int)dir.x * i) <= -1 || piece.column + ((int)dir.y * i) <= 1)
                     break;
 
                 Piece check = GetPiece(piece.row + ((int)dir.x * i), piece.column + ((int)dir.y * i));
 
                 // 매치된 블럭일 때
-                if (matchedPieces.Contains(check) && !verifyedPieces.Contains(check) &&
-                  check.value == piece.value)
+                if (matchedPieces.Contains(check) && !verifyedPieces.Contains(check) && check.value == piece.value)
                 {
                     // 체크가 끝난 블럭은 검사에서 제외
                     verifyedPieces.Add(check);
@@ -857,7 +849,12 @@ public class Board : MonoBehaviour
         }
     }
 
-    private void DebugSystem()
+	public bool IsStageStopped()
+	{
+		return stageCtrl.currStageState == StageState.CLEAR || stageCtrl.currStageState == StageState.FAIL;
+	}
+
+	private void DebugSystem()
     {
         // debug Array Check
         if (Input.GetKeyDown(KeyCode.A))

@@ -10,12 +10,12 @@ public class PurchaseButton : MonoBehaviour
 
     public void HandleClick()
 	{
-		GameManager.Instance.WriteLog($"{targetProductId} 아이템을 구매\n");
+		//GameManager.Instance.WriteLog($"{targetProductId} 아이템을 구매\n");
         if(targetProductId == IAPManager.productAd)
         {
             if (IAPManager.Instance.HadPurchased(targetProductId))
             {
-                GameManager.Instance.WriteLog("이미 구매한 상품\n");
+                //GameManager.Instance.WriteLog("이미 구매한 상품\n");
 				GoogleAdmobManager.Instance.DestroyAd();
 				return;
             }

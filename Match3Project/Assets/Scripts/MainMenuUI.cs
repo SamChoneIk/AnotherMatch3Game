@@ -87,7 +87,7 @@ public class MainMenuUI : MonoBehaviour
 		if (Social.localUser.authenticated)
 			return;
 
-		GameManager.Instance.WriteLog("업적을 확인합니다.\n");
+		//GameManager.Instance.WriteLog("업적을 확인합니다.\n");
 		Social.ShowAchievementsUI();
 	}
 
@@ -96,7 +96,7 @@ public class MainMenuUI : MonoBehaviour
 		if (Social.localUser.authenticated)
 			return;
 
-		GameManager.Instance.WriteLog("리더보드를 확인합니다.\n");
+		//GameManager.Instance.WriteLog("리더보드를 확인합니다.\n");
 		Social.ShowLeaderboardUI();
 	}
 
@@ -121,7 +121,7 @@ public class MainMenuUI : MonoBehaviour
 
     public void QuitGame()
     {
-		GameManager.Instance.WriteLog("게임을 종료합니다.");
+		//GameManager.Instance.WriteLog("게임을 종료합니다.");
 		Application.Quit();
     }
 }
