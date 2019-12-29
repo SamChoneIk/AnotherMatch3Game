@@ -233,7 +233,7 @@ public class Piece : MonoBehaviour
         isTunning = false;
         board.selectedPiece = null;
 
-        board.stageCtrl.SoundEffectPlay(SoundEffectList.TUNNING);
+        //board.stageCtrl.SoundEffectPlay(SoundEffectList.TUNNING);
 
         board.currBoardState = BoardState.ORDER;
     }

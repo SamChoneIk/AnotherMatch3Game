@@ -192,12 +192,6 @@ public class StageController : MonoBehaviour
         moveText.text = moveValue.ToString();
     }
 
-    public void SoundEffectPlay(SoundEffectList seClip)
-    {
-        stageSE.clip = seClips[(int)seClip];
-        stageSE.Play();
-    }
-
     public void PauseMenu()
     {
         Time.timeScale = 0;
@@ -274,5 +268,10 @@ public class StageController : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-   
+    public void SoundEffectPlay(SoundEffectList seClip)
+    {
+        stageSE.Stop();
+        stageSE.clip = seClips[(int)seClip];
+        stageSE.Play();
+    }
 }

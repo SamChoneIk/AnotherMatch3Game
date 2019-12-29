@@ -8,24 +8,24 @@ using GooglePlayGames.BasicApi;
 
 public class GooglePlayManager : MonoBehaviour
 {
-	private static GooglePlayManager instance;
-	public static GooglePlayManager Instance
-	{
-		get
-		{
-			if (instance != null)
-				return instance;
+    private static GooglePlayManager instance;
+    public static GooglePlayManager Instance
+    {
+        get
+        {
+            if (instance != null)
+                return instance;
 
-			instance = FindObjectOfType<GooglePlayManager>();
+            instance = FindObjectOfType<GooglePlayManager>();
 
-			if (instance == null)
-				instance = new GameObject(name: "GooglePlayManager").AddComponent<GooglePlayManager>();
+            if (instance == null)
+                instance = new GameObject(name: "GooglePlayManager").AddComponent<GooglePlayManager>();
 
-			return instance;
-		}
-	}
+            return instance;
+        }
+    }
 
-	public void GooglePlayManagerInit()
+	public void Awake()
 	{
 		PlayGamesPlatform.Activate();
 		LogIn();

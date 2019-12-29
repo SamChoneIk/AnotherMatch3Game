@@ -30,7 +30,7 @@ public class Board : MonoBehaviour
 
     private List<Piece> matchedPieces;
     private List<Piece> disabledPieces;
-    private List<Piece> verifyedPieces;
+    private List<Piece> verifiedPieces;
     private List<Piece> hintPieces;
 
     private float hintAccumTime;
@@ -44,7 +44,7 @@ public class Board : MonoBehaviour
 
         matchedPieces = new List<Piece>();
         disabledPieces = new List<Piece>();
-        verifyedPieces = new List<Piece>();
+        verifiedPieces = new List<Piece>();
         hintPieces = new List<Piece>();
 
         pieceSprites = Resources.LoadAll<Sprite>(StaticVariables.PieceSpritesPath);
@@ -156,6 +156,13 @@ public class Board : MonoBehaviour
         if (IsStageStopped())
             return;
 
+        BoardStates();
+
+        //DebugSystem();
+    }
+
+    private void BoardStates()
+    {
         switch (currBoardState)
         {
             case BoardState.WORK:
@@ -189,6 +196,7 @@ public class Board : MonoBehaviour
 
                     else
                     {
+                        stageCtrl.SoundEffectPlay(SoundEffectList.TUNNING);
                         selectedPiece.target.MoveToBack();
                         selectedPiece.MoveToBack();
                     }
@@ -215,11 +223,9 @@ public class Board : MonoBehaviour
                     break;
                 }
         }
-
-        //DebugSystem();
     }
 
-    private void FindMatchedPiece(bool findMatched = false)
+    private void FindMatchedPiece(bool checkingBoard = false)
     {
         if (isMatched)
             isMatched = false;
@@ -234,7 +240,7 @@ public class Board : MonoBehaviour
                         AddMatchedPiece(GetPiece(row, column), 
 										GetPiece(row + 1, column), 
 										GetPiece(row - 1, column), 
-										findMatched);
+										checkingBoard);
                 }
 
                 if (column > 0 && column < vertical - 1)
@@ -243,7 +249,7 @@ public class Board : MonoBehaviour
                         AddMatchedPiece(GetPiece(row, column), 
 										GetPiece(row, column + 1), 
 										GetPiece(row, column - 1), 
-										findMatched);
+										checkingBoard);
                 }
 
                 if (isMatched)
@@ -251,7 +257,7 @@ public class Board : MonoBehaviour
             }
         }
 
-        if (findMatched && !isMatched)
+        if (checkingBoard && !isMatched)
             return;
 
         if (matchedPieces.Count > 0)
@@ -268,11 +274,11 @@ public class Board : MonoBehaviour
         }
     }
 
-    private void AddMatchedPiece(Piece currPiece, Piece sidePiece1, Piece sidePiece2, bool findMatched)
+    private void AddMatchedPiece(Piece currPiece, Piece sidePiece1, Piece sidePiece2, bool checkingBoard)
     {
         if (currPiece.value == sidePiece1.value && currPiece.value == sidePiece2.value)
         {
-            if (findMatched)
+            if (checkingBoard)
             {
                 isMatched = true;
                 return;
@@ -308,10 +314,10 @@ public class Board : MonoBehaviour
         {
             for (int i = 0; i < matchedPieces.Count - 1; ++i)
             {
-                if (verifyedPieces.Contains(matchedPieces[i]))
+                if (verifiedPieces.Contains(matchedPieces[i]))
                     continue;
 
-                verifyedPieces.Add(matchedPieces[i]);
+                verifiedPieces.Add(matchedPieces[i]);
                 FindDirectionMatchedPiece(matchedPieces[i], ref rows, ref cols);
 
                 if (rows >= 2 && cols >= 2)
@@ -328,7 +334,7 @@ public class Board : MonoBehaviour
                     }
 
                     else
-                        bombPiece = verifyedPieces[Random.Range(prevCount, verifyedPieces.Count)];
+                        bombPiece = verifiedPieces[Random.Range(prevCount, verifiedPieces.Count)];
 
                     bombPiece.crossBomb = true;
                     bombPiece.value = pieceSprites.Length + 1;
@@ -336,16 +342,16 @@ public class Board : MonoBehaviour
 
                     matchedPieces.Remove(bombPiece);
 
-                    prevCount = verifyedPieces.Count - 1;
+                    prevCount = verifiedPieces.Count - 1;
                 }
 
                 else
                 {
-                    if (verifyedPieces.Count >= 3)
-                        verifyedPieces.RemoveRange(prevCount, (verifyedPieces.Count - 1) - prevCount);
+                    if (verifiedPieces.Count >= 3)
+                        verifiedPieces.RemoveRange(prevCount, (verifiedPieces.Count - 1) - prevCount);
 
                     else
-                        verifyedPieces.Clear();
+                        verifiedPieces.Clear();
                 }
 
                 rows = 0;
@@ -356,7 +362,7 @@ public class Board : MonoBehaviour
         // Row Bomb
         for (int i = 0; i < matchedPieces.Count - 1; ++i)
         {
-            if (verifyedPieces.Contains(matchedPieces[i]))
+            if (verifiedPieces.Contains(matchedPieces[i]))
                 continue;
 
             for (int r = 1; r < horizontal - 1; ++r)
@@ -368,7 +374,7 @@ public class Board : MonoBehaviour
 
                 if (matchedPieces.Contains(check) && matchedPieces[i].value == check.value)
                 {
-                    verifyedPieces.Add(check);
+                    verifiedPieces.Add(check);
                     rows++;
                 }
 
@@ -390,23 +396,23 @@ public class Board : MonoBehaviour
                 }
                 
                 else
-                    bombPiece = verifyedPieces[Random.Range(prevCount, verifyedPieces.Count)];
+                    bombPiece = verifiedPieces[Random.Range(prevCount, verifiedPieces.Count)];
 
                 bombPiece.rowBomb = true;
                 bombPiece.itemSprite.sprite = itemSprites[1];
 
                 matchedPieces.Remove(bombPiece);
 
-                prevCount = verifyedPieces.Count - 1;
+                prevCount = verifiedPieces.Count - 1;
             }
 
             else
             {
-                if (verifyedPieces.Count >= 3)
-                    verifyedPieces.RemoveRange(prevCount, (verifyedPieces.Count - 1) - prevCount);
+                if (verifiedPieces.Count >= 3)
+                    verifiedPieces.RemoveRange(prevCount, (verifiedPieces.Count - 1) - prevCount);
 
                 else
-                    verifyedPieces.Clear();
+                    verifiedPieces.Clear();
             }
 
             rows = 0;
@@ -415,7 +421,7 @@ public class Board : MonoBehaviour
         // Column Bomb
         for (int i = 0; i < matchedPieces.Count - 1; ++i)
         {
-            if (verifyedPieces.Contains(matchedPieces[i]))
+            if (verifiedPieces.Contains(matchedPieces[i]))
                 continue;
 
             for (int c = 1; c < vertical - 1; ++c)
@@ -427,7 +433,7 @@ public class Board : MonoBehaviour
 
                 if (matchedPieces.Contains(check) && matchedPieces[i].value == check.value)
                 {
-                    verifyedPieces.Add(check);
+                    verifiedPieces.Add(check);
                     cols++;
                 }
 
@@ -449,23 +455,23 @@ public class Board : MonoBehaviour
                 }
 
                 else
-                    bombPiece = verifyedPieces[Random.Range(prevCount, verifyedPieces.Count)];
+                    bombPiece = verifiedPieces[Random.Range(prevCount, verifiedPieces.Count)];
 
                 bombPiece.columnBomb = true;
                 bombPiece.itemSprite.sprite = itemSprites[0];
 
                 matchedPieces.Remove(bombPiece);
 
-                prevCount = verifyedPieces.Count - 1;
+                prevCount = verifiedPieces.Count - 1;
             }
 
             else
             {
-                if (verifyedPieces.Count >= 3)
-                    verifyedPieces.RemoveRange(prevCount, verifyedPieces.Count  - prevCount);
+                if (verifiedPieces.Count >= 3)
+                    verifiedPieces.RemoveRange(prevCount, verifiedPieces.Count  - prevCount);
 
                 else
-                    verifyedPieces.Clear();
+                    verifiedPieces.Clear();
             }
 
             cols = 0;
@@ -487,16 +493,20 @@ public class Board : MonoBehaviour
             for (int i = 1; ; ++i)
             {
                 if (piece.row + ((int)dir.x * i) >= horizontal || piece.column + ((int)dir.y * i) >= vertical ||
-                    piece.row + ((int)dir.x * i) <= -1 || piece.column + ((int)dir.y * i) <= 1)
+                    piece.row + ((int)dir.x * i) <= -1         || piece.column + ((int)dir.y * i) <= 1)
                     break;
 
-                Piece check = GetPiece(piece.row + ((int)dir.x * i), piece.column + ((int)dir.y * i));
+                Piece check = GetPiece(piece.row    + ((int)dir.x * i), 
+                                       piece.column + ((int)dir.y * i));
 
                 // 매치된 블럭일 때
-                if (matchedPieces.Contains(check) && !verifyedPieces.Contains(check) && check.value == piece.value)
+                if (matchedPieces.Contains(check) && check.value == piece.value)
                 {
+                    if (verifiedPieces.Contains(check))
+                        break;
+
                     // 체크가 끝난 블럭은 검사에서 제외
-                    verifyedPieces.Add(check);
+                    verifiedPieces.Add(check);
 
                     // 검사하는 블럭에 상하좌우에 다른 매치된 블럭이 있을 경우
                     if (FindNeighborPiece(check))
@@ -523,32 +533,28 @@ public class Board : MonoBehaviour
         if (piece.row + 1 < horizontal - 1)
         {
             Piece right = GetPiece(piece.row + 1, piece.column);
-            if (matchedPieces.Contains(right) && !verifyedPieces.Contains(right) && 
-                piece.value == right.value)
+            if (matchedPieces.Contains(right) && !verifiedPieces.Contains(right) &&  piece.value == right.value)
                 return true;
         }
 
         if (piece.row - 1 > 0)
         {
             Piece left = GetPiece(piece.row - 1, piece.column);
-            if (matchedPieces.Contains(left) && !verifyedPieces.Contains(left) && 
-                piece.value == left.value)
+            if (matchedPieces.Contains(left) && !verifiedPieces.Contains(left) && piece.value == left.value)
                 return true;
         }
 
         if (piece.column + 1 < vertical - 1)
         {
             Piece up = GetPiece(piece.row, piece.column + 1);
-            if (matchedPieces.Contains(up) && !verifyedPieces.Contains(up) && 
-                piece.value == up.value)
+            if (matchedPieces.Contains(up) && !verifiedPieces.Contains(up) && piece.value == up.value)
                 return true;
         }
 
         if (piece.column - 1 > 0)
         {
             Piece down = GetPiece(piece.row, piece.column - 1);
-            if (matchedPieces.Contains(down) && !verifyedPieces.Contains(down) &&
-                piece.value == down.value)
+            if (matchedPieces.Contains(down) && !verifiedPieces.Contains(down) && piece.value == down.value)
                 return true;
         }
 
@@ -630,8 +636,8 @@ public class Board : MonoBehaviour
                 if (!matchedPieces.Contains(rowPiece))
                     matchedPieces.Add(rowPiece);
 
-                if (!verifyedPieces.Contains(rowPiece))
-                    verifyedPieces.Add(rowPiece);
+                if (!verifiedPieces.Contains(rowPiece))
+                    verifiedPieces.Add(rowPiece);
             }
         }
     }
@@ -659,8 +665,8 @@ public class Board : MonoBehaviour
                 if (!matchedPieces.Contains(columnPiece))
                     matchedPieces.Add(columnPiece);
 
-                if (!verifyedPieces.Contains(columnPiece))
-                    verifyedPieces.Add(columnPiece);
+                if (!verifiedPieces.Contains(columnPiece))
+                    verifiedPieces.Add(columnPiece);
             }
         }
     }
@@ -695,7 +701,7 @@ public class Board : MonoBehaviour
         }
 
         matchedPieces.Clear();
-        verifyedPieces.Clear();
+        verifiedPieces.Clear();
 
         StartCoroutine(FallingPieces());
     }

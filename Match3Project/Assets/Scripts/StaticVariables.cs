@@ -52,6 +52,7 @@ public static class StaticVariables
     public static float SeVolume = 1;
 
     public static bool DataLoad = false;
+    public static bool loginSuccess = false;
     public static bool DestroyAd = false;
 
     public static string StageController = "StageController";
