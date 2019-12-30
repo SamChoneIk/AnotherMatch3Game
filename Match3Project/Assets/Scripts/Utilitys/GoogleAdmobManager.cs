@@ -6,6 +6,7 @@ using GoogleMobileAds.Api;
 public class GoogleAdmobManager : MonoBehaviour
 {
     private string appID = "ca-app-pub-4570069551723430~8341763913";
+
     private string adBannerUnitID = "ca-app-pub-4570069551723430/8427138795";
     private string adInterstitialUnitID = "ca-app-pub-4570069551723430/4093497335";
 

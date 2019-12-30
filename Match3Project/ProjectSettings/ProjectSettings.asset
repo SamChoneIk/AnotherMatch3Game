@@ -119,7 +119,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 0.302
+  bundleVersion: 0.303
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -163,7 +163,7 @@ PlayerSettings:
     Android: com.selab.candyexcutematch
     Standalone: com.atentz.3match
   buildNumber: {}
-  AndroidBundleVersionCode: 27
+  AndroidBundleVersionCode: 28
   AndroidMinSdkVersion: 19
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 2
@@ -256,8 +256,7 @@ PlayerSettings:
   AndroidTargetArchitectures: 3
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: "C:/Users/ahfl2/OneDrive/\uBC14\uD0D5 \uD654\uBA74/CandyExecuteMatch
-    Resources/CandyExecuteMatch.keystore"
+  AndroidKeystoreName: C:/Users/Atents/Documents/tizmaos01/CandyExecuteMatch.keystore
   AndroidKeyaliasName: cematch
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0

@@ -34,9 +34,21 @@ public class IAPManager : MonoBehaviour, IStoreListener
         }
     }
 
-    public void GoogleLogin(bool success)
+	private void Awake()
+	{
+		var findIAPManager = FindObjectOfType<IAPManager>();
+		if (findIAPManager != this)
+		{
+			Destroy(gameObject);
+			return;
+		}
+
+		DontDestroyOnLoad(gameObject);
+	}
+
+	public void GoogleLogin(bool success)
     {
-        if(success)
+		if (success)
             InitUnityIAP();
 
         GoogleAdmobManager.Instance.IAPInitializeDelay(success);

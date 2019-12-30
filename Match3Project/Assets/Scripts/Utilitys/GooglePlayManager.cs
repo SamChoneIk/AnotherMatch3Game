@@ -27,6 +27,15 @@ public class GooglePlayManager : MonoBehaviour
 
 	public void Awake()
 	{
+		var findPlayManager = FindObjectOfType<GooglePlayManager>();
+		if (findPlayManager != this)
+		{
+			Destroy(gameObject);
+			return;
+		}
+
+		DontDestroyOnLoad(gameObject);
+
 		PlayGamesPlatform.Activate();
 		LogIn();
 	}

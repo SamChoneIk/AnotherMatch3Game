@@ -24,6 +24,12 @@ public class MainMenuUI : MonoBehaviour
 		if (Social.localUser.authenticated)
 			GooglePlayManager.Instance.RefreshAchievements();
 
+		if(StaticVariables.DataLoad)
+			PlayerSystemToJsonData.Instance.SavePlayerSystemData();
+
+		else if (!StaticVariables.DataLoad)
+			PlayerSystemToJsonData.Instance.LoadPlayerSystemData();
+
 		mainMenuBGM.volume = StaticVariables.BgmVolume;
 
 		bgmVolume.value = StaticVariables.BgmVolume;
@@ -84,19 +90,11 @@ public class MainMenuUI : MonoBehaviour
 
 	public void ShowAchievements()
 	{
-		if (Social.localUser.authenticated)
-			return;
-
-		//GameManager.Instance.WriteLog("업적을 확인합니다.\n");
 		Social.ShowAchievementsUI();
 	}
 
 	public void ShowLeaderBoard()
 	{
-		if (Social.localUser.authenticated)
-			return;
-
-		//GameManager.Instance.WriteLog("리더보드를 확인합니다.\n");
 		Social.ShowLeaderboardUI();
 	}
 
@@ -121,7 +119,6 @@ public class MainMenuUI : MonoBehaviour
 
     public void QuitGame()
     {
-		//GameManager.Instance.WriteLog("게임을 종료합니다.");
 		Application.Quit();
     }
 }

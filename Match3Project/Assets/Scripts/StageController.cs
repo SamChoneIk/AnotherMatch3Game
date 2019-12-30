@@ -219,8 +219,6 @@ public class StageController : MonoBehaviour
 
     public void BackMenu()
     {
-		PlayerSystemToJsonData.Instance.SavePlayerSystemData();
-
 		currMenu.SetActive(false);
         currMenu = pauseMenu;
         currMenu.SetActive(true);
@@ -249,8 +247,6 @@ public class StageController : MonoBehaviour
 
     public void BackToMainMenu()
     {
-		PlayerSystemToJsonData.Instance.SavePlayerSystemData();
-
 		Resume();
         SceneManager.LoadScene((int)SceneIndex.MAIN);
     }
