@@ -129,7 +129,7 @@ public class Piece : MonoBehaviour
     {
         if (currState == PieceState.WAIT && board.currBoardState == BoardState.ORDER && Time.timeScale > 0)
         {
-            if (board.IsStageStopped())
+            if (board.stageCtrl.IsStageStopped())
                 return;
 
             Vector2 dir = (endPos - startPos);

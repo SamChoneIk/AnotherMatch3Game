@@ -27,6 +27,7 @@ public class StageController : MonoBehaviour
     public Slider bgmSlider;
     public Slider seSlider;
     public Slider scoreSlider;
+
     public Button nextLevelButton;
     public Sprite starSprite;
     public Image[] clearStars;
@@ -63,6 +64,8 @@ public class StageController : MonoBehaviour
 #if UNITY_IOS || UNITY_IPHONE || UNITY_ANDROID || UNITY_WEBGL
         Camera.main.orthographicSize = 7;
 #endif
+
+
     }
 
     private void Start()
@@ -109,20 +112,8 @@ public class StageController : MonoBehaviour
 
     private void Update()
     {
-       if (Application.platform == RuntimePlatform.Android)
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                if (currMenu == null)
-                    PauseMenu();
-
-                if (currMenu == optionMenu)
-                    BackMenu();
-
-                if (currMenu == pauseMenu)
-                    Resume();
-            }
-        }
+        if (!IsStageStopped())
+            board.BoardStates();
 
         if (currMenu == optionMenu)
         {
@@ -269,5 +260,11 @@ public class StageController : MonoBehaviour
         stageSE.Stop();
         stageSE.clip = seClips[(int)seClip];
         stageSE.Play();
+    }
+
+    public bool IsStageStopped()
+    {
+        return currStageState == StageState.CLEAR || 
+               currStageState == StageState.FAIL;
     }
 }

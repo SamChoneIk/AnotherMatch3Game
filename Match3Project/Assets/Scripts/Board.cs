@@ -50,7 +50,6 @@ public class Board : MonoBehaviour
         pieceSprites = Resources.LoadAll<Sprite>(StaticVariables.PieceSpritesPath);
         itemSprites = Resources.LoadAll<Sprite>(StaticVariables.ItemSpritesPath);
 
-        stageCtrl = GameObject.FindGameObjectWithTag(StaticVariables.StageController).GetComponent<StageController>();
         stageCtrl.board = this;
 
         GeneratePiece();
@@ -151,17 +150,7 @@ public class Board : MonoBehaviour
         return false;
     }
 
-    private void Update()
-    {
-        if (IsStageStopped())
-            return;
-
-        BoardStates();
-
-        //DebugSystem();
-    }
-
-    private void BoardStates()
+    public void BoardStates()
     {
         switch (currBoardState)
         {
@@ -173,16 +162,19 @@ public class Board : MonoBehaviour
                     hintAccumTime = 0;
 
                     // 블럭이 움직이고 있을 때
-                    if (selectedPiece == null || FindMovingPiece())
+                    if (selectedPiece == null || 
+                        FindMovingPiece())
                         return;
 
-                    if (selectedPiece.isTunning && selectedPiece.target.isTunning)
+                    if (selectedPiece.isTunning && 
+                        selectedPiece.target.isTunning)
                     {
                         selectedPiece.TunningNull();
                         return;
                     }
 
-                    if (selectedPiece.crossBomb || selectedPiece.target.crossBomb)
+                    if (selectedPiece.crossBomb ||
+                        selectedPiece.target.crossBomb)
                     {
                         UsedCrossBomb(selectedPiece);
                         UsedCrossBomb(selectedPiece.target);
@@ -216,7 +208,9 @@ public class Board : MonoBehaviour
                                 GeneratePiece(true);
 
                             else
+                            {
                                 HintPieceSwitch(true);
+                            }
                         }
                     }
 
@@ -854,11 +848,6 @@ public class Board : MonoBehaviour
             hintPieces.Clear();
         }
     }
-
-	public bool IsStageStopped()
-	{
-		return stageCtrl.currStageState == StageState.CLEAR || stageCtrl.currStageState == StageState.FAIL;
-	}
 
 	private void DebugSystem()
     {

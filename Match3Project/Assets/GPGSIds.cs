@@ -30,7 +30,7 @@ public static class GPGSIds
         public const string achievement_stage_4_clear = "CgkI-NrDidMWEAIQAw"; // <GPGSID>
         public const string achievement_stage_2_clear = "CgkI-NrDidMWEAIQAQ"; // <GPGSID>
         public const string achievement_first_game_clear = "CgkI-NrDidMWEAIQBg"; // <GPGSID>
-        public const string leaderboard_playerscore = "CgkI-NrDidMWEAIQCw"; // <GPGSID>
+        public const string leaderboard_playerscore = "CgkI-NrDidMWEAIQDA"; // <GPGSID>
 
 }
 
