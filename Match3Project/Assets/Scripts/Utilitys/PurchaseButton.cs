@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class PurchaseButton : MonoBehaviour
 {
-    public string targetProductId;
+  /*  public string targetProductId;
     public Text logText;
 
     public void HandleClick()
@@ -13,19 +13,19 @@ public class PurchaseButton : MonoBehaviour
 		//GameManager.Instance.WriteLog($"{targetProductId} 아이템을 구매\n");
         if(targetProductId == IAPManager.productAd)
         {
-            if (IAPManager.Instance.HadPurchased(targetProductId))
+            if (GameManager.Instance.iapMgr.HadPurchased(targetProductId))
             {
                 //GameManager.Instance.WriteLog("이미 구매한 상품\n");
-				GoogleAdmobManager.Instance.DestroyAd();
+				//GoogleAdmobManager.Instance.DestroyAd();
 				return;
             }
         }
 
-        IAPManager.Instance.Purchase(targetProductId);
+        GameManager.Instance.iapMgr.Purchase(targetProductId);
     }
 
 	public void RestorePurchase()
 	{
-		IAPManager.Instance.RestorePurchase();
-	}
+        GameManager.Instance.iapMgr.RestorePurchase();
+	}*/
 }

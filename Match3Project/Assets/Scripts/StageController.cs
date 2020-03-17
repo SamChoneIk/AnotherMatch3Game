@@ -5,6 +5,20 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
 
+public enum StageState
+{
+    Play,
+    Clear,
+    Fail,
+}
+
+public enum SoundEffectList
+{
+    SWAP = 0,
+    TUNNING = 1,
+    MATCHED = 2,
+}
+
 public class StageController : MonoBehaviour
 {
     [Header("Stage UI Menus")]
@@ -33,13 +47,12 @@ public class StageController : MonoBehaviour
     public Image[] clearStars;
 
     [Header("Stage Parts")]
-    public StageState currStageState = StageState.PLAY;
+    public StageState currStageState = StageState.Play;
 
     public Image stageBG;
     public AudioSource stageBGM;
     public AudioSource stageSE;
 
-    private StageData[] stageDatas;
     private AudioClip[] seClips;
 
     public int matchedScore = 30;
@@ -57,28 +70,21 @@ public class StageController : MonoBehaviour
     public Board board;
     private void Awake()
     {
-#if UNITY_EDITOR || UNITY_EDITOR_WIN || UNITY_EDITOR_OSX || UNITY_STANDALONE
-        Camera.main.orthographicSize = 6;
-#endif
-
-#if UNITY_IOS || UNITY_IPHONE || UNITY_ANDROID || UNITY_WEBGL
-        Camera.main.orthographicSize = 7;
-#endif
-
 
     }
 
     private void Start()
     {
         seClips = Resources.LoadAll<AudioClip>(StaticVariables.StageSoundEffectPath);
-        stageDatas = Resources.LoadAll<StageData>(StaticVariables.StageDataPath);
 
         StageInit();
+
+        board.InitializeBoard();
     }
 
     private void StageInit()
     {
-        LoadStageData();
+        //LoadStageData();
 
         stageClearScoreText.text = $"CLEAR SCORE : {Mathf.FloorToInt(clearScore).ToString("D6")}";
         scoreSlider.maxValue = clearScore;
@@ -88,8 +94,8 @@ public class StageController : MonoBehaviour
 
     private void LoadStageData()
     {
-        StageData stageData = stageDatas.Where(sd => sd.stageLevel == StaticVariables.StageLevel).Single();
-
+        //StageData stageData = stageDatas.Where(sd => sd.stageLevel == StaticVariables.StageLevel).Single();
+        StageData stageData = GameManager.Instance.GetStageLevel(1);
         stageBGM.volume = StaticVariables.BgmVolume;
         stageSE.volume = StaticVariables.SeVolume;
 
@@ -106,12 +112,15 @@ public class StageController : MonoBehaviour
         moveValue = stageData.move;
         clearScore = stageData.clearScore;
 
-        nextLevelButton.gameObject.SetActive(stageData.stageLevel == stageDatas.Length ? false : true);
-        lastStageMessageText.gameObject.SetActive(stageData.stageLevel == stageDatas.Length ? true : false);
+       // nextLevelButton.gameObject.SetActive(stageData.stageLevel == stageData. ? false : true);
+        //lastStageMessageText.gameObject.SetActive(stageData.stageLevel == stageData.Length ? true : false);
     }
 
     private void Update()
     {
+        board.BoardStates();
+        board.DebugSystem();
+        return;
         if (!IsStageStopped())
             board.BoardStates();
 
@@ -137,7 +146,7 @@ public class StageController : MonoBehaviour
             if (score >= nextScore - 1)
             {
                 if (moveValue == 0)
-                    currStageState = stars > 0 ? StageState.CLEAR : StageState.FAIL;
+                    currStageState = stars > 0 ? StageState.Clear : StageState.Fail;
 
                 score = nextScore;
                 scoreText.text = $"SCORE : {Mathf.FloorToInt(score).ToString("D6")}";
@@ -145,10 +154,10 @@ public class StageController : MonoBehaviour
 
                 StaticVariables.TotalScore += Mathf.FloorToInt(score);
 
-                if (currStageState == StageState.CLEAR || currStageState == StageState.FAIL)
+                if (currStageState == StageState.Clear || currStageState == StageState.Fail)
                 {
                     resultClearScoreText.text = $"SCORE : {Mathf.FloorToInt(score).ToString("D6")}";
-                    StageResult(currStageState == StageState.CLEAR ? true : false);
+                    StageResult(currStageState == StageState.Clear ? true : false);
                 }
             }
         }
@@ -156,7 +165,7 @@ public class StageController : MonoBehaviour
 
     public void CheckTheGameState()
     {
-        if (currStageState == StageState.CLEAR || currStageState == StageState.FAIL)
+        if (currStageState == StageState.Clear || currStageState == StageState.Fail)
             return;
 
         if (nextScore >= clearScore * 0.5 && stars == 0)
@@ -168,7 +177,7 @@ public class StageController : MonoBehaviour
         else if (nextScore >= clearScore && stars == 2)
         {
             clearStars[stars].sprite = starSprite;
-            currStageState = StageState.CLEAR;
+            currStageState = StageState.Clear;
         }
     }
 
@@ -221,15 +230,15 @@ public class StageController : MonoBehaviour
 		
 		if (clear)
 		{
-			GooglePlayManager.Instance.ClearAchievements();
-			clearMenu.SetActive(true);
-			currMenu = clearMenu;
+		//	GooglePlayManager.Instance.ClearAchievements();
+		//	clearMenu.SetActive(true);
+		//	currMenu = clearMenu;
 		}
 
 		else
 		{
-			if (!StaticVariables.DestroyAd)
-				GoogleAdmobManager.Instance.Show();
+		//	if (!StaticVariables.DestroyAd)
+		//		GoogleAdmobManager.Instance.Show();
 
 			failMenu.SetActive(true);
 			currMenu = failMenu;
@@ -264,7 +273,7 @@ public class StageController : MonoBehaviour
 
     public bool IsStageStopped()
     {
-        return currStageState == StageState.CLEAR || 
-               currStageState == StageState.FAIL;
+        return currStageState == StageState.Clear || 
+               currStageState == StageState.Fail;
     }
 }

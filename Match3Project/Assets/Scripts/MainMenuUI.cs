@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class MainMenuUI : MonoBehaviour
 {
@@ -21,14 +20,14 @@ public class MainMenuUI : MonoBehaviour
 
 	private void Start()
 	{
-		if (Social.localUser.authenticated)
-			GooglePlayManager.Instance.RefreshAchievements();
+		//if (Social.localUser.authenticated)
+		//	GooglePlayManager.Instance.RefreshAchievements();
 
-		if(StaticVariables.DataLoad)
-			PlayerSystemToJsonData.Instance.SavePlayerSystemData();
+		//if(StaticVariables.DataLoad)
+		//	PlayerSystemToJsonData.Instance.SavePlayerSystemData();
 
-		else if (!StaticVariables.DataLoad)
-			PlayerSystemToJsonData.Instance.LoadPlayerSystemData();
+		//else if (!StaticVariables.DataLoad)
+		//	PlayerSystemToJsonData.Instance.LoadPlayerSystemData();
 
 		mainMenuBGM.volume = StaticVariables.BgmVolume;
 
@@ -40,6 +39,10 @@ public class MainMenuUI : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetMouseButtonDown(0))
+            GameManager.Instance.SceneLoad("StageSelect");
+
+
         if (currMenu == optionUI)
         {
             StaticVariables.BgmVolume = bgmVolume.value;
@@ -71,7 +74,6 @@ public class MainMenuUI : MonoBehaviour
     public void SelectStage(int level)
     {
         StaticVariables.StageLevel = level;
-        SceneManager.LoadScene((int)SceneIndex.GAME);
     }
 
     public void Option()
@@ -100,14 +102,14 @@ public class MainMenuUI : MonoBehaviour
 
 	public void BackMenu()
     {
-		PlayerSystemToJsonData.Instance.SavePlayerSystemData();
+		//PlayerSystemToJsonData.Instance.SavePlayerSystemData();
 
 		currMenu.SetActive(false);
         currMenu = mainUI;
         currMenu.SetActive(true);
     }
 
-	public void GoogleLogin()
+	/*public void GoogleLogin()
 	{
 		GooglePlayManager.Instance.LogIn();
 	}
@@ -115,7 +117,7 @@ public class MainMenuUI : MonoBehaviour
 	public void GoogleLogout()
 	{
 		GooglePlayManager.Instance.LogOut();
-	}
+	}*/
 
     public void QuitGame()
     {

@@ -270,12 +270,12 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 345
-        y: 5524
-        width: 907
-        height: 1307
+        y: 5530
+        width: 910
+        height: 1300
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 85, y: 100, z: 85, w: 85}
+      border: {x: 90, y: 90, z: 90, w: 80}
       outline: []
       physicsShape: []
       tessellationDetail: 0

@@ -164,7 +164,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
-  m_MaskInteraction: 1
+  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!61 &149499234491561783
 BoxCollider2D:
@@ -213,6 +213,7 @@ MonoBehaviour:
   columnBomb: 0
   crossBomb: 0
   target: {fileID: 0}
+  backTile: {fileID: 0}
   itemSprite: {fileID: 7041771212347651925}
   pieceEffects: []
 --- !u!1001 &2389262573946455996

@@ -256,8 +256,7 @@ PlayerSettings:
   AndroidTargetArchitectures: 3
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: "C:/Users/ahfl2/OneDrive/\uBC14\uD0D5 \uD654\uBA74/CandyExecuteMatch
-    Resources/CandyExecuteMatch.keystore"
+  AndroidKeystoreName: "B:/\uC791\uC5C5\uACF5\uAC04/CandyExecuteMatch Resources/CandyExecuteMatch.keystore"
   AndroidKeyaliasName: cematch
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0

@@ -1,9 +1,29 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-[System.Serializable]
+[Serializable]
+public class StageData
+{
+    public int stageLevel;
+
+    public int horizontal;
+    public int vertical;
+
+    public int clearScore;
+    public int move;
+
+    public Vector2[] blankSpace;
+    public Vector2[] breakableTile;
+    //public ArrayLayout lay;
+
+    public Sprite backgroundSprite;
+    public AudioClip backgroundMusic;
+}
+
+[Serializable]
 public class PlayerData
 {
     public float bgmVolume;
@@ -11,27 +31,11 @@ public class PlayerData
 	public int totalScore;
 }
 
-public class PlayerSystemToJsonData : MonoBehaviour
+public static class PlayerSystemToJsonData
 {
-    private PlayerData playerData = new PlayerData();
-    private static PlayerSystemToJsonData instance;
-    public static PlayerSystemToJsonData Instance
-    {
-        get
-        {
-            if (instance != null)
-                return instance;
+    public static PlayerData playerData = new PlayerData();
 
-            instance = FindObjectOfType<PlayerSystemToJsonData>();
-
-            if (instance == null)
-                instance = new GameObject(name : "PlayerSystemToJsonData").AddComponent<PlayerSystemToJsonData>();
-
-            return instance;
-        }
-    }
-
-    public void SavePlayerSystemData()
+    public static void SavePlayerSystemData()
     {
         playerData.bgmVolume = StaticVariables.BgmVolume;
         playerData.seVolume = StaticVariables.SeVolume;
@@ -47,7 +51,7 @@ public class PlayerSystemToJsonData : MonoBehaviour
         File.WriteAllText(path, jsonData);
     }
 
-    public void LoadPlayerSystemData()
+    public static void LoadPlayerSystemData()
     {
         if (!File.Exists(StaticVariables.PlayerDataPath + StaticVariables.PlayerDataName))
             SavePlayerSystemData();

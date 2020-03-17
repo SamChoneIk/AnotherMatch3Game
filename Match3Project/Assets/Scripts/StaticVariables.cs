@@ -2,24 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum StageState
-{
-    PLAY,
-    CLEAR,
-    FAIL,
-}
 
-public enum BoardState
-{
-    ORDER,
-    WORK,
-}
 
-public enum PieceState
-{
-    WAIT,
-    MOVE
-}
+
 
 public enum SceneIndex
 {
@@ -27,21 +12,9 @@ public enum SceneIndex
     GAME = 1,
 }
 
-public enum PieceEffect
-{
-    PIECEEXPLOSION = 0,
-    COLUMNBOMB = 1,
-    CROSSBOMB = 2,
-    ROWBOMB = 3,
-    HINTEFFECT = 4,
-}
 
-public enum SoundEffectList
-{
-    SWAP = 0,
-    TUNNING = 1,
-    MATCHED = 2,
-}
+
+
 
 public static class StaticVariables
 {
