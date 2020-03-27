@@ -269,13 +269,13 @@ TextureImporter:
       name: PuzzleUIByfuntique_0
       rect:
         serializedVersion: 2
-        x: 345
-        y: 5530
-        width: 910
-        height: 1300
+        x: 358
+        y: 5538
+        width: 881
+        height: 1286
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 90, y: 90, z: 90, w: 80}
+      border: {x: 85, y: 85, z: 85, w: 85}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -290,10 +290,10 @@ TextureImporter:
       name: PuzzleUIByfuntique_1
       rect:
         serializedVersion: 2
-        x: 1498
-        y: 6611
-        width: 97
-        height: 96
+        x: 1502
+        y: 6613
+        width: 89
+        height: 90
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -311,10 +311,10 @@ TextureImporter:
       name: PuzzleUIByfuntique_2
       rect:
         serializedVersion: 2
-        x: 120
+        x: 125
         y: 5162
-        width: 1201
-        height: 246
+        width: 1192
+        height: 240
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -332,10 +332,10 @@ TextureImporter:
       name: PuzzleUIByfuntique_3
       rect:
         serializedVersion: 2
-        x: 251
-        y: 4810
-        width: 118
-        height: 118
+        x: 263
+        y: 4831
+        width: 93
+        height: 93
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -353,10 +353,10 @@ TextureImporter:
       name: PuzzleUIByfuntique_4
       rect:
         serializedVersion: 2
-        x: 226
-        y: 4719
-        width: 679
-        height: 50
+        x: 229
+        y: 4724
+        width: 672
+        height: 43
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -374,10 +374,10 @@ TextureImporter:
       name: PuzzleUIByfuntique_5
       rect:
         serializedVersion: 2
-        x: 158
+        x: 161
         y: 4207
-        width: 517
-        height: 305
+        width: 509
+        height: 301
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -437,10 +437,10 @@ TextureImporter:
       name: PuzzleUIByfuntique_8
       rect:
         serializedVersion: 2
-        x: 673
-        y: 3661
-        width: 423
-        height: 427
+        x: 683
+        y: 3672
+        width: 403
+        height: 410
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1298,10 +1298,10 @@ TextureImporter:
       name: PuzzleUIByfuntique_49
       rect:
         serializedVersion: 2
-        x: 135
-        y: 1297
-        width: 574
-        height: 246
+        x: 146
+        y: 1308
+        width: 559
+        height: 230
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1319,10 +1319,10 @@ TextureImporter:
       name: PuzzleUIByfuntique_50
       rect:
         serializedVersion: 2
-        x: 767
-        y: 1247
-        width: 273
-        height: 246
+        x: 777
+        y: 1261
+        width: 254
+        height: 226
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1340,10 +1340,10 @@ TextureImporter:
       name: PuzzleUIByfuntique_51
       rect:
         serializedVersion: 2
-        x: 108
-        y: 902
-        width: 638
-        height: 280
+        x: 117
+        y: 912
+        width: 627
+        height: 264
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1361,10 +1361,10 @@ TextureImporter:
       name: PuzzleUIByfuntique_52
       rect:
         serializedVersion: 2
-        x: 811
-        y: 818
-        width: 266
-        height: 281
+        x: 817
+        y: 828
+        width: 248
+        height: 265
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1382,10 +1382,10 @@ TextureImporter:
       name: PuzzleUIByfuntique_53
       rect:
         serializedVersion: 2
-        x: 148
-        y: 503
-        width: 595
-        height: 278
+        x: 161
+        y: 514
+        width: 576
+        height: 261
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1403,10 +1403,10 @@ TextureImporter:
       name: PuzzleUIByfuntique_54
       rect:
         serializedVersion: 2
-        x: 838
-        y: 376
-        width: 182
-        height: 276
+        x: 845
+        y: 381
+        width: 167
+        height: 268
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1424,10 +1424,10 @@ TextureImporter:
       name: PuzzleUIByfuntique_55
       rect:
         serializedVersion: 2
-        x: 110
-        y: 169
-        width: 551
-        height: 253
+        x: 117
+        y: 179
+        width: 559
+        height: 230
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1445,10 +1445,10 @@ TextureImporter:
       name: PuzzleUIByfuntique_56
       rect:
         serializedVersion: 2
-        x: 785
-        y: 83
-        width: 264
-        height: 253
+        x: 794
+        y: 91
+        width: 245
+        height: 243
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

@@ -4,42 +4,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-[Serializable]
-public class StageData
-{
-    public int stageLevel;
-
-    public int horizontal;
-    public int vertical;
-
-    public int clearScore;
-    public int move;
-
-    public Vector2[] blankSpace;
-    public Vector2[] breakableTile;
-    //public ArrayLayout lay;
-
-    public Sprite backgroundSprite;
-    public AudioClip backgroundMusic;
-}
 
 [Serializable]
 public class PlayerData
 {
-    public float bgmVolume;
-    public float seVolume;
-	public int totalScore;
+    public int lastStageClearLevel;
+    public int totalScore;
+
+    public float bgmVolume = 1;
+    public float seVolume = 1;
+
+    public bool destroyAd = false;
 }
 
 public static class PlayerSystemToJsonData
 {
-    public static PlayerData playerData = new PlayerData();
+    public static PlayerData playerData;
 
     public static void SavePlayerSystemData()
     {
+        playerData.lastStageClearLevel = StaticVariables.LoadLevel;
+        playerData.totalScore = StaticVariables.TotalScore;
+
         playerData.bgmVolume = StaticVariables.BgmVolume;
         playerData.seVolume = StaticVariables.SeVolume;
-        playerData.totalScore = StaticVariables.TotalScore;
+
+        playerData.destroyAd = StaticVariables.DestroyAd;
 
         string path = StaticVariables.PlayerDataPath;
         if (!Directory.Exists(path))

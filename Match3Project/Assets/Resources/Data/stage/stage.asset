@@ -16,8 +16,13 @@ MonoBehaviour:
   - stageLevel: 1
     horizontal: 6
     vertical: 7
-    clearScore: 99999
-    move: 999
+    clearScore: 5000
+    move: 40
+    xCapacity: 0
+    yCapacity: 0
+    orthographicSizeCapacity: 0
+    lastClearStar: 0
+    lastClearScore: 0
     blankSpace:
     - {x: 0, y: 0}
     - {x: 5, y: 0}
@@ -25,6 +30,8 @@ MonoBehaviour:
     - {x: 5, y: 6}
     - {x: 0, y: 3}
     - {x: 5, y: 3}
+    - {x: 2, y: 6}
+    - {x: 3, y: 6}
     breakableTile:
     - {x: 2, y: 4}
     - {x: 3, y: 4}
@@ -32,5 +39,134 @@ MonoBehaviour:
     - {x: 3, y: 3}
     - {x: 2, y: 2}
     - {x: 3, y: 2}
+    - {x: 2, y: 1}
+    - {x: 3, y: 1}
     backgroundSprite: {fileID: 21300000, guid: 39319f6760050ef40ae82dbb32b4e48f, type: 3}
     backgroundMusic: {fileID: 8300000, guid: f2fedd3d07c4dfd4ea10f61280261791, type: 3}
+    pieceSprites:
+    - {fileID: 21300000, guid: 380eeb482b85519418118928b193a396, type: 3}
+    - {fileID: 21300000, guid: 8e844542340f7284a984941e95149bf0, type: 3}
+    - {fileID: 21300000, guid: 29aa665c5b288bc4a87fb9979cb4a975, type: 3}
+    - {fileID: 21300000, guid: 63c7208a3eac5e241afbdaf9594f85a0, type: 3}
+    itemSprites:
+    - {fileID: 21300000, guid: e8f8dde687420b94b9ef166371c8ed9a, type: 3}
+    - {fileID: 21300000, guid: 23f79bfceddc5ef44a016ffc166d5d4e, type: 3}
+    - {fileID: 21300000, guid: feb5cca94ecbb724ea749be1158a1d99, type: 3}
+    firstNodeSprite: {fileID: 21300000, guid: f8d527302e8a2a248a945d06b8f6babb, type: 3}
+    clearNodeSprite: {fileID: 21300000, guid: 380eeb482b85519418118928b193a396, type: 3}
+    emptyStarSprite: {fileID: -2491946676371565966, guid: b912558c071e5f74390f3a1be271e8dc,
+      type: 3}
+    clearStarSprite: {fileID: -4070552855583261919, guid: b912558c071e5f74390f3a1be271e8dc,
+      type: 3}
+  - stageLevel: 2
+    horizontal: 5
+    vertical: 6
+    clearScore: 99999
+    move: 999
+    xCapacity: 0
+    yCapacity: 0
+    orthographicSizeCapacity: 0
+    lastClearStar: 0
+    lastClearScore: 0
+    blankSpace:
+    - {x: 0, y: 5}
+    - {x: 1, y: 5}
+    - {x: 3, y: 5}
+    - {x: 4, y: 5}
+    - {x: 0, y: 4}
+    - {x: 4, y: 4}
+    breakableTile: []
+    backgroundSprite: {fileID: 21300000, guid: e3bbba3bff5f7ba4289815655d299720, type: 3}
+    backgroundMusic: {fileID: 8300000, guid: e716b2eeb60a5c149ad74096ee2d8d62, type: 3}
+    pieceSprites: []
+    itemSprites: []
+    firstNodeSprite: {fileID: 21300000, guid: f8d527302e8a2a248a945d06b8f6babb, type: 3}
+    clearNodeSprite: {fileID: 21300000, guid: 8e844542340f7284a984941e95149bf0, type: 3}
+    emptyStarSprite: {fileID: -2491946676371565966, guid: b912558c071e5f74390f3a1be271e8dc,
+      type: 3}
+    clearStarSprite: {fileID: -4070552855583261919, guid: b912558c071e5f74390f3a1be271e8dc,
+      type: 3}
+  - stageLevel: 3
+    horizontal: 5
+    vertical: 6
+    clearScore: 99999
+    move: 999
+    xCapacity: 0
+    yCapacity: 0
+    orthographicSizeCapacity: 0
+    lastClearStar: 0
+    lastClearScore: 0
+    blankSpace:
+    - {x: 0, y: 5}
+    - {x: 1, y: 5}
+    - {x: 3, y: 5}
+    - {x: 4, y: 5}
+    - {x: 0, y: 4}
+    - {x: 4, y: 4}
+    breakableTile: []
+    backgroundSprite: {fileID: 21300000, guid: db0767f8f3dc4434a89225d6c1127c4f, type: 3}
+    backgroundMusic: {fileID: 8300000, guid: 079b16d65b3b04fe8aee9e756c46e985, type: 3}
+    pieceSprites: []
+    itemSprites: []
+    firstNodeSprite: {fileID: 21300000, guid: f8d527302e8a2a248a945d06b8f6babb, type: 3}
+    clearNodeSprite: {fileID: 21300000, guid: 29aa665c5b288bc4a87fb9979cb4a975, type: 3}
+    emptyStarSprite: {fileID: -2491946676371565966, guid: b912558c071e5f74390f3a1be271e8dc,
+      type: 3}
+    clearStarSprite: {fileID: -4070552855583261919, guid: b912558c071e5f74390f3a1be271e8dc,
+      type: 3}
+  - stageLevel: 4
+    horizontal: 5
+    vertical: 6
+    clearScore: 99999
+    move: 999
+    xCapacity: 0
+    yCapacity: 0
+    orthographicSizeCapacity: 0
+    lastClearStar: 0
+    lastClearScore: 0
+    blankSpace:
+    - {x: 0, y: 5}
+    - {x: 1, y: 5}
+    - {x: 3, y: 5}
+    - {x: 4, y: 5}
+    - {x: 0, y: 4}
+    - {x: 4, y: 4}
+    breakableTile: []
+    backgroundSprite: {fileID: 21300000, guid: f32f0b8ef22d3894486be5ac079b7877, type: 3}
+    backgroundMusic: {fileID: 8300000, guid: bc6adb26ec98f7349ab7a1db0557be6d, type: 3}
+    pieceSprites: []
+    itemSprites: []
+    firstNodeSprite: {fileID: 21300000, guid: f8d527302e8a2a248a945d06b8f6babb, type: 3}
+    clearNodeSprite: {fileID: 21300000, guid: 63c7208a3eac5e241afbdaf9594f85a0, type: 3}
+    emptyStarSprite: {fileID: -2491946676371565966, guid: b912558c071e5f74390f3a1be271e8dc,
+      type: 3}
+    clearStarSprite: {fileID: -4070552855583261919, guid: b912558c071e5f74390f3a1be271e8dc,
+      type: 3}
+  - stageLevel: 5
+    horizontal: 5
+    vertical: 6
+    clearScore: 99999
+    move: 999
+    xCapacity: 0
+    yCapacity: 0
+    orthographicSizeCapacity: 0
+    lastClearStar: 0
+    lastClearScore: 0
+    blankSpace:
+    - {x: 0, y: 5}
+    - {x: 1, y: 5}
+    - {x: 3, y: 5}
+    - {x: 4, y: 5}
+    - {x: 0, y: 4}
+    - {x: 4, y: 4}
+    breakableTile: []
+    backgroundSprite: {fileID: 21300000, guid: d3421dca6ec154c4f81d1ad571a54ad1, type: 3}
+    backgroundMusic: {fileID: 8300000, guid: 34edcae8313115c4a891e046df15a69d, type: 3}
+    pieceSprites: []
+    itemSprites: []
+    firstNodeSprite: {fileID: 21300000, guid: f8d527302e8a2a248a945d06b8f6babb, type: 3}
+    clearNodeSprite: {fileID: 21300000, guid: 9e059a4de16dd224fb9207ef9f17140e, type: 3}
+    emptyStarSprite: {fileID: -2491946676371565966, guid: b912558c071e5f74390f3a1be271e8dc,
+      type: 3}
+    clearStarSprite: {fileID: -4070552855583261919, guid: b912558c071e5f74390f3a1be271e8dc,
+      type: 3}

@@ -8,17 +8,17 @@ using GooglePlayGames.BasicApi;
 
 public class GooglePlayManager : MonoBehaviour
 {
-	public void InitializeGooglePlayManager()
-	{
-		PlayGamesPlatform.Activate();
-		LogIn();
-	}
+    public void InitializeGooglePlay()
+    {
+        PlayGamesPlatform.Activate();
+        LogIn();
+    }
 
-    public void LogIn()
+    private void LogIn()
     {
         Social.localUser.Authenticate((success) =>
         {
-            //IAPManager.Instance.GoogleLogin(success);
+            StaticVariables.LoginSuccess = success;
         });
     }
 
@@ -27,54 +27,51 @@ public class GooglePlayManager : MonoBehaviour
         ((PlayGamesPlatform)Social.Active).SignOut();
     }
 
-	public void GoogleLogInButton()
-	{
-		if (Social.localUser.authenticated)
-			LogOut();
+    public void GoogleLogInButton()
+    {
+        LogIn();
+    }
 
-		LogIn();
-	}
+    public void ShowLeaderBoard()
+    {
+        Social.ShowLeaderboardUI();
+    }
 
-	public void RefreshAchievements()
-	{
-		Social.ReportScore(StaticVariables.TotalScore, GPGSIds.leaderboard_playerscore, null);
-	}
+    public void ShowAchievements()
+    {
+        Social.ShowAchievementsUI();
+    }
 
-	public void ClearAchievements()
-	{
-		Social.ReportProgress(GPGSIds.achievement_first_game_clear, 100f, null);
+    public void RefreshAchievements()
+    {
+        Social.ReportScore(StaticVariables.TotalScore, GPGSIds.leaderboard_playerscore, null);
+    }
 
-		switch (StaticVariables.StageLevel)
-		{
-			case 1:
-				{
-					Social.ReportProgress(GPGSIds.achievement_stage_1_clear, 100f, null);
-					break;
-				}
+    public void ClearAchievements()
+    {
+        Social.ReportProgress(GPGSIds.achievement_first_game_clear, 100f, null);
 
-			case 2:
-				{
-					Social.ReportProgress(GPGSIds.achievement_stage_2_clear, 100f, null);
-					break;
-				}
+        switch (StaticVariables.LoadLevel)
+        {
+            case 1:
+                Social.ReportProgress(GPGSIds.achievement_stage_1_clear, 100f, null);
+                break;
 
-			case 3:
-				{
-					Social.ReportProgress(GPGSIds.achievement_stage_3_clear, 100f, null);
-					break;
-				}
+            case 2:
+                Social.ReportProgress(GPGSIds.achievement_stage_2_clear, 100f, null);
+                break;
 
-			case 4:
-				{
-					Social.ReportProgress(GPGSIds.achievement_stage_4_clear, 100f, null);
-					break;
-				}
+            case 3:
+                Social.ReportProgress(GPGSIds.achievement_stage_3_clear, 100f, null);
+                break;
 
-			case 5:
-				{
-					Social.ReportProgress(GPGSIds.achievement_stage_5_clear, 100f, null);
-					break;
-				}
-		}
-	}
+            case 4:
+                Social.ReportProgress(GPGSIds.achievement_stage_4_clear, 100f, null);
+                break;
+
+            case 5:
+                Social.ReportProgress(GPGSIds.achievement_stage_5_clear, 100f, null);
+                break;
+        }
+    }
 }

@@ -78,7 +78,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
+  m_MaskInteraction: 2
   m_SpriteSortPoint: 0
 --- !u!114 &263261076233759606
 MonoBehaviour:
@@ -94,3 +94,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initHp: 1
   breakHp: 0.5
+  tileBreak: 0
+  damaged: 0

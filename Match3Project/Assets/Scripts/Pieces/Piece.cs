@@ -87,7 +87,7 @@ public class Piece : MonoBehaviour
 
         moveToPos = new Vector2(row, column);
 
-        //if (!crossBomb)
+        if (!crossBomb)
             pieceSprite.sprite = board.pieceSprites[value];
     }
 
@@ -121,7 +121,7 @@ public class Piece : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if(board.currBoardState == BoardState.WORK)
+        if(board.currBoardState == BoardState.Work)
             return;
 
         board.selectedPiece = this; // 클릭하면 현재 선택된 Piece로 할당한다.
@@ -139,7 +139,7 @@ public class Piece : MonoBehaviour
 
     private void CalculratePiece()
     {
-        if (currState == PieceState.WAIT && board.currBoardState == BoardState.ORDER && Time.timeScale > 0)
+        if (currState == PieceState.WAIT && board.currBoardState == BoardState.Order && Time.timeScale > 0)
         {
             Vector2 dir = endPos - startPos;
 
@@ -183,10 +183,13 @@ public class Piece : MonoBehaviour
             currState = PieceState.MOVE; // Piece를 이동
             target.currState = PieceState.MOVE;
 
-            board.selectedPiece = this;
-            board.currBoardState = BoardState.WORK;
+            board.movedPieces.Add(this);
+            board.movedPieces.Add(target);
 
-           // board.stageCtrl.SoundEffectPlay(SoundEffectList.SWAP);
+            board.selectedPiece = this;
+            board.currBoardState = BoardState.Work;
+
+            GameManager.Instance.SoundEffectPlay(SEClip.Swap);
         }
     }
 
@@ -200,6 +203,7 @@ public class Piece : MonoBehaviour
         isTunning = true;
 
         currState = PieceState.MOVE;
+        board.movedPieces.Add(this);
     }
 
     /// <summary>
@@ -241,8 +245,8 @@ public class Piece : MonoBehaviour
         isTunning = false;
         board.selectedPiece = null;
 
-        //board.stageCtrl.SoundEffectPlay(SoundEffectList.TUNNING);
+        //GameManager.Instance.SoundEffectPlay(SEClip.Tunning);
 
-        board.currBoardState = BoardState.ORDER;
+        board.currBoardState = BoardState.Order;
     }
 }
