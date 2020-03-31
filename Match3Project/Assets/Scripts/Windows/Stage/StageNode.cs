@@ -11,34 +11,34 @@ public class StageNode : MonoBehaviour
     private Button stageNodeButton;
 
     private UIManager uImgr;
-    public void InitStageNode(StageData stage)
+    public void InitStageNode(ClearStageData stage)
     {
         uImgr = UImenu.manager;
 
-        for (int i = 0; i < stage.lastClearStar; ++i)
+        for (int i = 0; i < stage.star; ++i)
         {
-            fillStars[i].sprite = stage.clearStarSprite;
+            fillStars[i].sprite = uImgr.fillStarSprite;
         }
 
         stageNodeImage = GetComponent<Image>();
-        if (stage.lastClearScore > 0)
-            stageNodeImage.sprite = stage.clearNodeSprite;
+        if (stage.score > 0)
+            stageNodeImage.sprite = uImgr.clearStageNodeSprites[stage.level-1];
 
         else
-            stageNodeImage.sprite = stage.firstNodeSprite;
+            stageNodeImage.sprite = uImgr.firstStageNodeSprite;
 
         stageNodeButton = GetComponent<Button>();
         stageNodeButton.onClick.AddListener(() => SetStageMessage(stage));
     }
 
-    public void SetStageMessage(StageData stage)
+    public void SetStageMessage(ClearStageData stage)
     {
-        StaticVariables.LoadLevel = stage.stageLevel;
+        StaticVariables.LoadLevel = stage.level;
 
-        MessageWindow message = uImgr.OnTheWindow(Menus.Message) as MessageWindow;
+        MessageWindow message = uImgr.GetWindow(Menus.Message) as MessageWindow;
         message.m_build = new MessageBuilder().
             SetMessageTitle(StaticVariables.SelectStageName).
-            SetMessageText(stage.lastClearScore.ToString("D8")).
+            SetMessageText($"{StaticVariables.Score}{stage.score.ToString("D8")}").
             SetButtonsInfo(ButtonColor.YellowButton, StaticVariables.GameStart, () => GameManager.Instance.SceneLoad("Game")).
             SetButtonsInfo(ButtonColor.GreenButton, StaticVariables.Back, () => message.OnStageMessage(false, stage)).
             Build();

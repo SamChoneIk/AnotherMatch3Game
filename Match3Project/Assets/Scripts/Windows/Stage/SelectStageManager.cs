@@ -9,8 +9,9 @@ public class SelectStageManager : MonoBehaviour, IPointerDownHandler, IPointerUp
 {
     [Header("Select Stage Components")]
     public RectTransform stageNodesParent;
-    public RectTransform playerNode;
     public RectTransform stageBg;
+
+    public Sprite clearStageSprite;
 
     private StageNode[] stageNodes;
     private StageNode currentNode;
@@ -24,17 +25,19 @@ public class SelectStageManager : MonoBehaviour, IPointerDownHandler, IPointerUp
     public float distance = 15.0f;
     public float clampX;
 
-    private bool isMove;
     private bool screenMoved;
 
     public void Start()
     {
         uIMgr = UImenu.manager;
 
+        PauseWindow quitButton = uIMgr.GetWindow(Menus.Pause) as PauseWindow;
+        quitButton.ChangedButton(SceneType.StageSelect);
+
         SetStageNode();
-        SetPlayerNode();
 
         GameManager.Instance.BackgroundMusicPlay(BGMClip.SelectStage);
+        GameManager.Instance.googleMgr.RefreshAchievements();
     }
 
     private void SetStageNode()
@@ -43,24 +46,7 @@ public class SelectStageManager : MonoBehaviour, IPointerDownHandler, IPointerUp
 
         for (int i = 0; i < stageNodes.Length; ++i)
         {
-            stageNodes[i].InitStageNode(GameManager.Instance.GetStageDataWithLevel(i+1));
-        }
-    }
-
-    private void SetPlayerNode()
-    {
-        if (StaticVariables.LoadLevel > 0)
-        {
-            playerNode.localPosition = stageNodes[StaticVariables.LoadLevel].transform.localPosition;
-
-            if (StaticVariables.LoadLevel != 5)
-                nextNode = stageNodes[StaticVariables.LoadLevel + 1];
-        }
-
-        else
-        {
-            playerNode.transform.position = stageNodes[0].transform.position;
-            nextNode = stageNodes[1];
+            stageNodes[i].InitStageNode(PlayerSystemToJsonData.playerData.GetStageData(i+1));
         }
     }
 
@@ -72,32 +58,6 @@ public class SelectStageManager : MonoBehaviour, IPointerDownHandler, IPointerUp
 
             return;
         }
-
-       if(isMove)
-        {
-            Debug.Log(Vector2.Distance(playerNode.transform.position, nextNode.transform.position));
-
-            if(Vector2.Distance(playerNode.transform.position, nextNode.transform.position) > distance)
-               playerNode.position = Vector2.Lerp(playerNode.position, nextNode.transform.position, Time.deltaTime + duration);
-
-            else
-            {
-                playerNode.position = nextNode.transform.position;
-                int idx = Array.FindIndex(stageNodes, n => n == nextNode) + 1;
-
-                if (idx >= stageNodes.Length)
-                    idx = 0;
-
-                nextNode = stageNodes[idx];
-
-                isMove = false;
-            }
-        }
-
-        else
-        {
-
-        }
     }
 
     public void GoogleLoginButton()
@@ -107,7 +67,7 @@ public class SelectStageManager : MonoBehaviour, IPointerDownHandler, IPointerUp
 
     public void ShopButton()
     {
-
+        uIMgr.OnTheWindow(Menus.Shop);
     }
 
     public void GoogleLeaderBoardButton()
@@ -125,26 +85,8 @@ public class SelectStageManager : MonoBehaviour, IPointerDownHandler, IPointerUp
         uIMgr.OnTheWindow(Menus.Pause);
     }
 
-    public void PlayerMoveStart()
-    {
-        StartCoroutine(PlayerMove());
-    }
-
-    private IEnumerator PlayerMove()
-    {
-        if (isMove)
-            yield break;
-
-        yield return new WaitForSeconds(1f);
-
-        isMove = true;
-    }
-
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (isMove)
-            return;
-
         startPos = Input.mousePosition;
 
         screenMoved = true;
@@ -152,9 +94,6 @@ public class SelectStageManager : MonoBehaviour, IPointerDownHandler, IPointerUp
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (isMove)
-            return;
-
         screenMoved = false;
     }
 }

@@ -22,7 +22,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
 		if (success)
             InitializeUnityIAP();
 
-        //GoogleAdmobManager.Instance.IAPInitializeDelay(success);
+        GameManager.Instance.admobMgr.IAPInitializeDelay(success);
     }
 
     public void InitializeUnityIAP()

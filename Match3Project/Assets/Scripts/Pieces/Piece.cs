@@ -121,7 +121,8 @@ public class Piece : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if(board.currBoardState == BoardState.Work)
+        if(board.currBoardState == BoardState.Work || 
+           board.gameStageMgr.IsStageStopped())
             return;
 
         board.selectedPiece = this; // 클릭하면 현재 선택된 Piece로 할당한다.
@@ -130,6 +131,10 @@ public class Piece : MonoBehaviour
 
     private void OnMouseUp()
     {
+        if (board.currBoardState == BoardState.Work ||
+            board.gameStageMgr.IsStageStopped())
+            return;
+
         if (board.selectedPiece == null)
             return;
 

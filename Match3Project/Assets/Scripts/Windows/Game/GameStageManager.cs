@@ -54,6 +54,9 @@ public class GameStageManager : MonoBehaviour
     {
         uIMgr = UImenu.manager;
 
+        PauseWindow quitButton = uIMgr.GetWindow(Menus.Pause) as PauseWindow;
+        quitButton.ChangedButton(SceneType.Game);
+
         clearScore = board.stageData.clearScore;
         moveValue = board.stageData.move;
 
@@ -69,16 +72,19 @@ public class GameStageManager : MonoBehaviour
 
         currStageState = StageState.Play;
 
-        GameManager.Instance.BackgroundMusicPlay(GetStageClip());
+        GameManager.Instance.BackgroundMusicPlay(board.stageData.backgroundMusic);
     }
 
     public void Update()
     {
-        if (!IsStageStopped())
-            board.BoardStates();
+        if (!uIMgr.onTheMenu)
+        {
+            if (!IsStageStopped())
+                board.BoardStates();
 
-        if (score != nextScore)
-            IncreasingScore();
+            if (score != nextScore)
+                IncreasingScore();
+        }
     }
 
     public void IncreasingScore()
@@ -87,7 +93,9 @@ public class GameStageManager : MonoBehaviour
         scoreText.text = $"{StaticVariables.Score} {Mathf.FloorToInt(score).ToString("D6")}";
         scoreSlider.value = score;
 
-        if (score >= nextScore - 1)
+        CheckTheGameState();
+
+        if (score >= nextScore - 5)
         {
             if (moveValue == 0)
                 currStageState = stars > 0 ? StageState.Clear : StageState.Fail;
@@ -96,29 +104,30 @@ public class GameStageManager : MonoBehaviour
             scoreText.text = $"{StaticVariables.Score} {Mathf.FloorToInt(score).ToString("D6")}";
             scoreSlider.value = score;
 
-            StaticVariables.TotalScore += Mathf.FloorToInt(score);
-
-            CheckTheGameState();
-
-            if (currStageState == StageState.Clear || 
-                currStageState == StageState.Fail)
+            if (IsStageStopped() && board.currBoardState == BoardState.Order)
             {
-                //StageResult(currStageState == StageState.Clear ? true : false);
+                PlayerSystemToJsonData.playerData.SetStageData(board.stageData.stageLevel - 1, (int)score, stars);
+                GameManager.Instance.StageResult(currStageState);
             }
+
+            StaticVariables.TotalScore += Mathf.FloorToInt(score);
         }
     }
 
     public void CheckTheGameState()
     {
-        if (currStageState == StageState.Clear || 
-            currStageState == StageState.Fail)
+        if (IsStageStopped())
             return;
 
         if (nextScore >= clearScore * 0.5 && stars == 0)
+        {
             stars++;
+        }
 
-        else if (nextScore >= clearScore * 0.75 && stars == 1)
+        if (nextScore >= clearScore * 0.5 && stars == 1)
+        {
             stars++;
+        }
 
         else if (nextScore >= clearScore && stars == 2)
         {
@@ -140,8 +149,8 @@ public class GameStageManager : MonoBehaviour
 
     public bool IsStageStopped()
     {
-        return board.currBoardState == BoardState.Order && 
-            (currStageState == StageState.Clear || currStageState == StageState.Fail);
+        return currStageState == StageState.Clear || 
+            currStageState == StageState.Fail;
     }
 
     public void PauseButton()

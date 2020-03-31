@@ -19,6 +19,7 @@ public class GooglePlayManager : MonoBehaviour
         Social.localUser.Authenticate((success) =>
         {
             StaticVariables.LoginSuccess = success;
+            GameManager.Instance.iapMgr.GoogleLogin(success);
         });
     }
 
@@ -44,6 +45,7 @@ public class GooglePlayManager : MonoBehaviour
 
     public void RefreshAchievements()
     {
+        Debug.Log("playerScore 새로고침");
         Social.ReportScore(StaticVariables.TotalScore, GPGSIds.leaderboard_playerscore, null);
     }
 
@@ -55,22 +57,27 @@ public class GooglePlayManager : MonoBehaviour
         {
             case 1:
                 Social.ReportProgress(GPGSIds.achievement_stage_1_clear, 100f, null);
+                Debug.Log("스테이지1 클리어");
                 break;
 
             case 2:
                 Social.ReportProgress(GPGSIds.achievement_stage_2_clear, 100f, null);
+                Debug.Log("스테이지2 클리어");
                 break;
 
             case 3:
                 Social.ReportProgress(GPGSIds.achievement_stage_3_clear, 100f, null);
+                Debug.Log("스테이지3 클리어");
                 break;
 
             case 4:
                 Social.ReportProgress(GPGSIds.achievement_stage_4_clear, 100f, null);
+                Debug.Log("스테이지4 클리어");
                 break;
 
             case 5:
                 Social.ReportProgress(GPGSIds.achievement_stage_5_clear, 100f, null);
+                Debug.Log("스테이지5 클리어");
                 break;
         }
     }

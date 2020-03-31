@@ -26,17 +26,13 @@ public class Message
     private string messageText;
     public string MessageText => messageText;
 
-    private int clearStar;
-    public int ClearStar => clearStar;
-
     private List<CustomButton> buttons;
 
-    public Message(MessageTypes m_type, string m_title, string m_text, int c_star, List<CustomButton> btns)
+    public Message(MessageTypes m_type, string m_title, string m_text, List<CustomButton> btns)
     {
         messageType = m_type;
         messageTitle = m_title;
         messageText = m_text;
-        clearStar = c_star;
 
         buttons = new List<CustomButton>();
         buttons.AddRange(btns);
@@ -53,7 +49,6 @@ public class MessageBuilder
     private MessageTypes messageType;
     private string messageTitle;
     private string messageText;
-    private int clearStar;
 
     private List<CustomButton> buttons;
 
@@ -80,12 +75,6 @@ public class MessageBuilder
         return this;
     }
 
-    public MessageBuilder SetClearStar(int c_star)
-    {
-        clearStar = c_star;
-        return this;
-    }
-
     public MessageBuilder SetButtonsInfo(ButtonColor b_color, string b_text, UnityAction b_action)
     {
         buttons.Add(new CustomButton(b_color, b_text, b_action));
@@ -94,7 +83,7 @@ public class MessageBuilder
 
     public Message Build()
     {
-        Message messageBuild = new Message(messageType, messageTitle, messageText, clearStar, buttons);
+        Message messageBuild = new Message(messageType, messageTitle, messageText, buttons);
         return messageBuild;
     }
 }
@@ -157,6 +146,7 @@ public class MessageWindow : UImenu
             popupMessageText.text = m_build.MessageText;
 
             CreateButton(m_build.GetButton(), false);
+
         }
 
         else
@@ -167,11 +157,11 @@ public class MessageWindow : UImenu
         }
     }
 
-    public void OnStageMessage(bool display, StageData stage)
+    public void OnStageMessage(bool display, ClearStageData stageData)
     {
         if (display)
         {
-            manager.OnTheWindow(Menus.Message, display);
+            Open();
 
             if (popupMessage.activeInHierarchy)
                 popupMessage.SetActive(false);
@@ -179,11 +169,11 @@ public class MessageWindow : UImenu
             stageMessage.gameObject.SetActive(display);
 
             windowsTitleText.text = m_build.MessageTitle;
-            stageMessageScore.text = $"{StaticVariables.Score}{m_build.MessageText}";
+            stageMessageScore.text = $"{m_build.MessageText}";
 
-            for (int i = 0; i < m_build.ClearStar; ++i)
+            for (int i = 0; i < stageData.star; ++i)
             {
-                stageMessageFillStars[i].sprite = stage.clearStarSprite;
+                stageMessageFillStars[i].sprite = manager.fillStarSprite;
             }
 
             CreateButton(m_build.GetButton(), true);
@@ -191,9 +181,13 @@ public class MessageWindow : UImenu
 
         else
         {
+            for (int i = 0; i < 3; ++i)
+            {
+                stageMessageFillStars[i].sprite = manager.emptyStarSprite;
+            }
+
             DestroyButton();
-            manager.OnTheWindow(Menus.Message, display);
-            return;
+            Close();
         }
     }
 

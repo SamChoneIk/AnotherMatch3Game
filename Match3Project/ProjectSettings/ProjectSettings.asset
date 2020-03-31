@@ -119,7 +119,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 0.306
+  bundleVersion: 0.401
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -163,7 +163,7 @@ PlayerSettings:
     Android: com.selab.candyexcutematch
     Standalone: com.atentz.3match
   buildNumber: {}
-  AndroidBundleVersionCode: 31
+  AndroidBundleVersionCode: 32
   AndroidMinSdkVersion: 19
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 2
@@ -256,7 +256,8 @@ PlayerSettings:
   AndroidTargetArchitectures: 3
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: "B:/\uC791\uC5C5\uACF5\uAC04/CandyExecuteMatch Resources/CandyExecuteMatch.keystore"
+  AndroidKeystoreName: "B:/\uC791\uC5C5\uACF5\uAC04/\uD504\uB85C\uADF8\uB798\uBC0D/CandyExecuteMatch
+    Resources/CandyExecuteMatch.keystore"
   AndroidKeyaliasName: cematch
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0
@@ -629,7 +630,8 @@ PlayerSettings:
   scriptingRuntimeVersion: 1
   gcIncremental: 0
   gcWBarrierValidation: 0
-  apiCompatibilityLevelPerPlatform: {}
+  apiCompatibilityLevelPerPlatform:
+    Android: 6
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: Template_2D

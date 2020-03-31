@@ -41,7 +41,7 @@ public class Board : MonoBehaviour
     private List<Piece> hintPieces;
     private CamPivot camPivot;
     private UIManager uIMgr;
-    private GameStageManager gameStageMgr;
+    public GameStageManager gameStageMgr;
 
     [Header("Board Variables")]
     private int horizontal;
@@ -80,7 +80,7 @@ public class Board : MonoBehaviour
         tiles = new Tile[horizontal, vertical];
 
         camPivot = Camera.main.GetComponent<CamPivot>();
-        camPivot.SetCameraPivot(horizontal, vertical);
+        camPivot.SetCameraPivot(horizontal, vertical, stageData.camPivotX, stageData.camPivotY, stageData.camPivotSize);
 
         CreateBackgroundTile();
         CreateBreakableTile();
@@ -281,17 +281,16 @@ public class Board : MonoBehaviour
                     return;
                 }
 
-                if (selectedPiece.crossBomb || selectedPiece.target.crossBomb)
+                if (selectedPiece.crossBomb || 
+                    selectedPiece.target.crossBomb)
                 {
                     UsedCrossBomb(selectedPiece);
                     UsedCrossBomb(selectedPiece.target);
-                    FindMatchedPiece();
+                    StartCoroutine(DisabledMatchedPiece());
                     return;
                 }
 
-
                 FindMatchedPiece(true);
-
                 if (isMatched)
                     FindMatchedPiece();
 
@@ -400,6 +399,9 @@ public class Board : MonoBehaviour
 
     private void AddMatchedPiece(Piece sidePiece1, Piece currPiece, Piece sidePiece2, bool checking)
     {
+       // if (sidePiece1.crossBomb || currPiece.crossBomb || sidePiece2.crossBomb)
+         //   return ;
+
         if (EqualValuePiece(currPiece, sidePiece1) &&
             EqualValuePiece(currPiece, sidePiece2))
         {
@@ -808,9 +810,14 @@ public class Board : MonoBehaviour
     {
         for (int row = 0; row < horizontal; ++row)
         {
-            if (IsBlankSpace(row, column) ||
-                IsBreakableTile(row, column))
+            if (IsBlankSpace(row, column))
                 continue;
+
+            if(IsBreakableTile(row, column))
+            {
+                GetBreakableTile(row, column).BreakableTileDamage();
+                continue;
+            }
 
             Piece rowPiece = GetPiece(row, column);
 
@@ -823,7 +830,7 @@ public class Board : MonoBehaviour
             if (rowPiece.crossBomb)
             {
                 UsedCrossBomb(rowPiece); // 없앨려는 Piece가 Cross Bomb 아이템일 경우
-                rowPiece.crossBomb = false; // Cross Bomb을 비활성화
+               //rowPiece.crossBomb = false; // Cross Bomb을 비활성화
             }
 
             if (!matchedPieces.Contains(rowPiece)) // 매치리스트에 넣는다.
@@ -838,9 +845,14 @@ public class Board : MonoBehaviour
     {
         for (int column = 0; column < vertical; ++column)
         {
-            if (IsBlankSpace(row, column) ||
-                IsBreakableTile(row, column))
+            if (IsBlankSpace(row, column))
                 continue;
+
+            if (IsBreakableTile(row, column))
+            {
+                GetBreakableTile(row, column).BreakableTileDamage();
+                continue;
+            }
 
             Piece columnPiece = GetPiece(row, column);
 
@@ -853,7 +865,7 @@ public class Board : MonoBehaviour
             if (columnPiece.crossBomb)
             {
                 UsedCrossBomb(columnPiece);
-                columnPiece.crossBomb = false;
+                //columnPiece.crossBomb = false;
             }
 
             if (!matchedPieces.Contains(columnPiece))

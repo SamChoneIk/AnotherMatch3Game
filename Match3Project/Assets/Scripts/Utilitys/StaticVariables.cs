@@ -13,6 +13,7 @@ public static class StaticVariables
     public static bool LoginSuccess = false;
     public static bool DataLoad = false;
     public static bool DestroyAd = false;
+    public static bool GameStarts = false;
 
     public static string SelectStageName => $"STAGE {LoadLevel}";
     public static string GetStage => $"Stage{LoadLevel}";
@@ -25,6 +26,8 @@ public static class StaticVariables
     public static string Replay = "REPLAY";
     public static string Cancel = "CANCEL";
     public static string Back = "BACK";
+    public static string Quit = "QUIT";
+    public static string BackToMenu = "BACK TO MENU";
 
     public static string DisabledPieceName = "DefaultPiece";
     public static string PieceSpritesPath = "Arts/PieceSprite";

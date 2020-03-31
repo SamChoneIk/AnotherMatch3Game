@@ -14,6 +14,10 @@ public class StageData
     public int clearScore;
     public int move;
 
+    public float camPivotX;
+    public float camPivotY;
+    public float camPivotSize;
+
     public Vector2[] blankSpace;
     public Vector2[] breakableTile;
 
@@ -22,19 +26,4 @@ public class StageData
 
     public Sprite[] pieceSprites;
     public Sprite[] itemSprites;
-
-    public Sprite firstNodeSprite;
-    public Sprite clearNodeSprite;
-
-    public Sprite emptyStarSprite;
-    public Sprite clearStarSprite;
-
-    public int lastClearScore;
-    public int lastClearStar;
-
-    public void SaveData(int score, int star)
-    {
-        lastClearScore = score;
-        lastClearStar = star;
-    }
 }

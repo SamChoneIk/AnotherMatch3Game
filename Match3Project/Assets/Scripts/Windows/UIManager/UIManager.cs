@@ -7,7 +7,12 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     public bool onTheMenu = false;
-    private float timeScales => onTheMenu ? 0.0f : 1.0f; 
+    private float timeScales => onTheMenu ? 0.0f : 1.0f;
+
+    public Sprite fillStarSprite;
+    public Sprite emptyStarSprite;
+    public Sprite[] clearStageNodeSprites;
+    public Sprite firstStageNodeSprite;
 
     [HideInInspector]
     public UImenu[] menus;
@@ -22,7 +27,7 @@ public class UIManager : MonoBehaviour
 
     public void MenuOpen(int id)
     {
-        OnTheWindow((Menus)id, false);
+        OnTheWindow((Menus)id);
     }
 
     public void MenuClose(int id = -1)
@@ -32,13 +37,16 @@ public class UIManager : MonoBehaviour
 
     public UImenu OnTheWindow(Menus id, bool close = false)
     {
+        onTheMenu = !close;
+        Time.timeScale = timeScales;
+
         if (close)
         {
             if (id == Menus.None)
             {
                 if (currentMenuID != id)
                 {
-                    ToggleVisible(currentMenuID, true);
+                    ToggleVisible(currentMenuID, close);
                     currentMenuID = id;
                 }
 
@@ -48,11 +56,13 @@ public class UIManager : MonoBehaviour
                 return null;
             }
 
-            if (previousMenuID != Menus.None)
+            //if (previousMenuID != Menus.None)
                 currentMenuID = previousMenuID;
 
             previousMenuID = id;
-            ToggleVisible(previousMenuID, true);
+
+            if (previousMenuID != Menus.None)
+                ToggleVisible(previousMenuID, close);
 
             if (currentMenuID != Menus.None)
                 ToggleVisible(currentMenuID);
@@ -63,14 +73,16 @@ public class UIManager : MonoBehaviour
             if (id == Menus.None)
                 return null;
 
-            if (currentMenuID != Menus.None)
+           // if (currentMenuID != Menus.None)
                 previousMenuID = currentMenuID;
 
             currentMenuID = id;
-            ToggleVisible(currentMenuID);
+
+            if (currentMenuID != Menus.None)
+                ToggleVisible(currentMenuID);
 
             if (previousMenuID != Menus.None)
-                ToggleVisible(previousMenuID, true);
+                ToggleVisible(previousMenuID, close);
         }
 
         return GetWindow(id);

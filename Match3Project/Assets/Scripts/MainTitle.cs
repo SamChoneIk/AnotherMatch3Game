@@ -9,7 +9,10 @@ public class MainTitle : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (!StaticVariables.GameStarts && Input.GetMouseButtonDown(0))
+        {
+            StaticVariables.GameStarts = !StaticVariables.GameStarts;
             GameManager.Instance.SceneLoad("StageSelect");
+        }
     }
 }

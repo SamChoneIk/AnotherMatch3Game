@@ -1,17 +1,10 @@
-﻿using System.Collections;
+﻿using System.Text;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
-
-public enum SceneIndex
-{
-    Logo,
-    MainMenu,
-    StageSelect,
-    Game,
-}
 
 public enum BGMClip
 {
@@ -25,13 +18,6 @@ public enum SEClip
 
 public class GameManager : Singleton<GameManager>
 {
-    [Header("Sounds")]
-    public AudioSource gameBgm;
-    public AudioClip[] gameBgmClip;
-
-    public AudioSource gameSe;
-    public AudioClip[] gameSeClip;
-
     [Header("Stage Data")]
     public StageDataScriptableObject stageData_SO;
 
@@ -40,48 +26,50 @@ public class GameManager : Singleton<GameManager>
     public IAPManager iapMgr;
     public GoogleAdmobManager admobMgr;
 
-    [Header("Loading UI")]
+    [Header("Audio Components")]
+    public AudioSource gameBgm;
+    public AudioClip[] gameBgmClip;
+
+    public AudioSource gameSe;
+    public AudioClip[] gameSeClip;
+
+    [Header("UI Components")]
     public GameObject loadingBar;
 
     private SelectStageManager selectStage;
     private UIManager uIMgr;
-    private MessageWindow messageWindow;
 
     private float delta;
     protected override void Awake()
     {
         base.Awake();
+    }
 
+    private void Start()
+    {
+        uIMgr = UImenu.manager;
+        Application.targetFrameRate = 60;
         PlayerSystemToJsonData.LoadPlayerSystemData();
 
-        if (PlayerSystemToJsonData.playerData == null)
-            PlayerSystemToJsonData.SavePlayerSystemData();
-
-        googleMgr= GetComponentInChildren<GooglePlayManager>(true);
         googleMgr.InitializeGooglePlay();
 
-        iapMgr = GetComponentInChildren<IAPManager>(true);
-        iapMgr.InitializeUnityIAP();
-
-        admobMgr = GetComponentInChildren<GoogleAdmobManager>(true);
-        admobMgr.InitializeAdmob();
+        VolumeControl(PlayerSystemToJsonData.playerData.bgmVolume, PlayerSystemToJsonData.playerData.seVolume);
 
         if (stageData_SO == null)
             stageData_SO = Resources.Load<StageDataScriptableObject>(StaticVariables.StageDataPath);
+
+        SceneLoad("Main");
     }
 
     public void VolumeControl(float bgm, float se)
     {
         gameBgm.volume = bgm;
         gameSe.volume = se;
-    }
 
-    private void Start()
-    {
-        uIMgr = UImenu.manager;
-        messageWindow = uIMgr.GetWindow(Menus.Message) as MessageWindow;
+        OptionWindow option = uIMgr.GetWindow(Menus.Option) as OptionWindow;
 
-        SceneLoad("Main");
+        option.bgmVolume.value = gameBgm.volume;
+        option.seVolume.value = gameSe.volume;
     }
 
     public StageData GetStageDataWithLevel(int level)
@@ -89,54 +77,71 @@ public class GameManager : Singleton<GameManager>
         return stageData_SO.stageDatas.Find(s => s.stageLevel == level);
     }
 
-    public void StageResult(StageData stage, StageState result)
+    public void StageResult(StageState result)
     {
-        string title = "";
-        string buttonUp = "";
-        string buttonDown = "";
-
+        ClearStageData stageData = PlayerSystemToJsonData.playerData.GetStageData(StaticVariables.LoadLevel);
         MessageBuilder messageBuilder = new MessageBuilder();
-
+        StringBuilder sb = new StringBuilder();
+        sb.Append($"{StaticVariables.Score}{stageData.score.ToString("D8")}");
+        
         switch (result)
         {
             case StageState.Clear:
-                StaticVariables.LoadLevel = stage.stageLevel + 1;
-                messageBuilder.SetMessageTitle($"{StaticVariables.SelectStageName}{StaticVariables.Clear}");
-                messageBuilder.SetMessageText(stage.lastClearScore.ToString("D8"));
-
+                messageBuilder.SetMessageTitle($"{StaticVariables.SelectStageName} {StaticVariables.Clear}");
+                googleMgr.ClearAchievements();
                 if (StaticVariables.LoadLevel < stageData_SO.stageDatas.Count)
+                {
+                    ++StaticVariables.LoadLevel;
                     messageBuilder.SetButtonsInfo(ButtonColor.YellowButton, StaticVariables.NextStage, () => SceneLoad("Game"));
+                }
+
+                else
+                    sb.Append("\nTHANK YOU FOR PLAY !!");
 
                 messageBuilder.SetButtonsInfo(ButtonColor.GreenButton, StaticVariables.Back, () => SceneLoad("StageSelect"));
-
                 break;
-            case StageState.Fail:
 
+            case StageState.Fail:
+                messageBuilder.SetMessageTitle($"{StaticVariables.SelectStageName} {StaticVariables.Fail}");
+                messageBuilder.SetMessageText("다시 도전해보세요...");
+                messageBuilder.SetButtonsInfo(ButtonColor.YellowButton, StaticVariables.Replay, () => SceneLoad("Game"));
+                messageBuilder.SetButtonsInfo(ButtonColor.GreenButton, StaticVariables.Back, () => SceneLoad("StageSelect"));
                 break;
         }
+        messageBuilder.SetMessageText(sb.ToString());
 
-        MessageWindow message = uIMgr.OnTheWindow(Menus.Message) as MessageWindow;
+        MessageWindow message = uIMgr.GetWindow(Menus.Message) as MessageWindow;
         message.m_build = messageBuilder.Build();
-        message.OnStageMessage(true, stage);
+        message.OnStageMessage(true, stageData);
     }
 
-    public void SaveStageData(int level, int score, int stars)
+    public void GameQuitMessage(bool isGame)
     {
-        GetStageDataWithLevel(level).SaveData(score, stars);
-    }
+        MessageWindow message = uIMgr.GetWindow(Menus.Message) as MessageWindow;
 
-    public void GameQuit()
-    {
-        MessageWindow message = uIMgr.OnTheWindow(Menus.Message) as MessageWindow;
+        if (isGame)
+        {
+            message.m_build = new MessageBuilder()
+                            .SetMessageTitle("나가기")
+                            .SetMessageText("메인 메뉴로 나가시겠습니까?")
+                            .SetButtonsInfo(ButtonColor.YellowButton, "BACK TO GAME", () => SceneLoad("StageSelect"))
+                            .SetButtonsInfo(ButtonColor.GreenButton, "CANCEL", () => message.OnPopupMessage(false))
+                            .Build();
 
-        message.m_build = new MessageBuilder()
-            .SetMessageTitle("게임 종료")
-            .SetMessageText("게임을 종료하시겠습니까?")
-            .SetButtonsInfo(ButtonColor.YellowButton, "QUIT", () => Application.Quit())
-            .SetButtonsInfo(ButtonColor.GreenButton, "CANCEL", () => message.OnPopupMessage(false))
-            .Build();
+            message.OnPopupMessage(true);
+        }
 
-        message.OnPopupMessage(true);
+        else
+        {
+            message.m_build = new MessageBuilder()
+                            .SetMessageTitle("게임 종료")
+                            .SetMessageText("게임을 종료하시겠습니까?")
+                            .SetButtonsInfo(ButtonColor.YellowButton, "QUIT", () => Application.Quit())
+                            .SetButtonsInfo(ButtonColor.GreenButton, "CANCEL", () => message.OnPopupMessage(false))
+                            .Build();
+
+            message.OnPopupMessage(true);
+        }
     }
 
     public void SceneLoad(string scenes)
@@ -146,32 +151,33 @@ public class GameManager : Singleton<GameManager>
 
     IEnumerator AsyncLoadScene(string scenes)
     {
+        MessageWindow message = uIMgr.GetWindow(Menus.Message) as MessageWindow;
+
+        if (message.gameObject.activeInHierarchy)
+            message.OnStageMessage(false, PlayerSystemToJsonData.playerData.GetStageData(StaticVariables.LoadLevel));
+
+        uIMgr.MenuClose();
+
+        if (SceneManager.GetActiveScene().name != "Loading")
+            SceneManager.LoadScene("Loading");
+        loadingBar.SetActive(true);
+
+        yield return new WaitForSeconds(2f);
         AsyncOperation async = SceneManager.LoadSceneAsync(scenes, LoadSceneMode.Single);
         async.allowSceneActivation = false;
 
-        //OnMessage(async.allowSceneActivation);
-
-        loadingBar.SetActive(!async.allowSceneActivation);
-
-        yield return new WaitForSeconds(1f);
 
         while (!async.isDone)
         {
             //Debug.Log($"async Progress : {async.progress}% nasync.allowSceneActivation = {async.allowSceneActivation}");
 
-            if (async.progress >= 0.9f)
-            {
-                //if(uIMgr.currentMenuID != Menus.None)
-                    //uIMgr.MenuClose();
-
+           if (async.progress >= 0.9f)
                 async.allowSceneActivation = true;
-            }
 
             yield return null;
         }
 
-        loadingBar.SetActive(!async.allowSceneActivation);
-        uIMgr.MenuClose();
+        loadingBar.SetActive(false);
     }
 
     public void SoundEffectPlay(SEClip seClip)
@@ -200,5 +206,10 @@ public class GameManager : Singleton<GameManager>
         gameBgm.Stop();
         gameBgm.clip = bgmClip;
         gameBgm.Play();
+    }
+
+    public void OnApplicationQuit()
+    {
+        PlayerSystemToJsonData.SavePlayerSystemData();
     }
 }
