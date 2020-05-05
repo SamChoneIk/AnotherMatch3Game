@@ -17,14 +17,6 @@ public class GoogleAdmobManager : MonoBehaviour
 
     private BannerView bannerView;
     private InterstitialAd interstitialAd;
-    public void IAPInitializeDelay(bool success)
-    {
-        if (!success)
-        {
-            InitializeAdmob();
-            return;
-        }
-    }
 
     public void InitializeAdmob()
     {
@@ -43,6 +35,8 @@ public class GoogleAdmobManager : MonoBehaviour
         InitializeInterstitialAd();
 
         isInitialized = true;
+
+        Debug.Log($"admob 초기화 결과 : {isInitialized}");
     }
 
     private void InitializeBannerView()
@@ -60,8 +54,8 @@ public class GoogleAdmobManager : MonoBehaviour
         AdRequest request = new AdRequest.Builder().Build();
 
         interstitialAd.LoadAd(request);
-        //interstitialAd.OnAdClosed += (sender, e) => GameManager.Instance.WriteLog("광고가 닫힘\n");
-        //interstitialAd.OnAdLoaded += (sender, e) => GameManager.Instance.WriteLog("광고가 로드됨\n");
+        interstitialAd.OnAdClosed += (sender, e) => Debug.Log("광고가 닫힘\n");
+        interstitialAd.OnAdLoaded += (sender, e) => Debug.Log("광고가 로드됨\n");
     }
 
     public void Show()

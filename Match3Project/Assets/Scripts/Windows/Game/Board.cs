@@ -87,19 +87,29 @@ public class Board : MonoBehaviour
         CreatePiece();
     }
 
+    /// <summary>
+    /// Piece를 생성하기 전에 들어갈 Background Tile을 만듭니다.
+    /// </summary>
     private void CreateBackgroundTile()
     {
+        // 높이만큼 생성합니다
         for (int column = 0; column < vertical; ++column)
         {
+            // 넓이만큼 생성합니다.
             for (int row = 0; row < horizontal; ++row)
             {
+                // BlankSpace로 정한 위치엔 생성을 제외합니다.
                 if (IsBlankSpace(row, column))
                     continue;
 
+                // Tile 객체를 위치에 생성합니다.
                 Tile backTile = Instantiate(backgroundTilePrefab, new Vector2(row, column), Quaternion.identity).GetComponent<Tile>();
+                // 해당 Tile 배열에 생성한 Tile을 저장합니다.
                 tiles[row, column] = backTile;
 
+                // Tile의 이름을 Tile[row, column]으로 변경합니다.
                 backTile.name = $"Tile [{row} , {column}]";
+                // Tile을 Parent 오브젝트의 Child로 만듭니다.
                 backTile.transform.SetParent(transform);
             }
         }
@@ -126,62 +136,87 @@ public class Board : MonoBehaviour
             }
         }
     }
-
+    /// <summary>
+    /// Background Tile 위에 Piece를 생성합니다.
+    /// </summary>
+    /// <param name="regenerate">재생성을 위해 boolean 변수를 받습니다 true</param>
     private void CreatePiece(bool regenerate = false)
     {
+        // 게임을 시작할때 Piece 객체를 미리 생성합니다. (오브젝트 풀)
         if (!regenerate)
         {
             for (int i = 0; i < horizontal * vertical + Mathf.RoundToInt((horizontal * vertical) * 0.5f); ++i)
             {
+                // Piece를 생성합니다.
                 Piece firstPiece = Instantiate(piecePrefab, Vector2.zero, Quaternion.identity).GetComponent<Piece>();
 
+                // Piece의 이름은 DisabledPiece로 변경합니다.
                 firstPiece.name = StaticVariables.DisabledPieceName;
+                // 생성한 Piece는 Background Tile에 생성하기 전에 다른 Parent에 위치 시킵니다.(분류하기 위함) 
                 firstPiece.transform.SetParent(disabledPiecesParent.transform);
 
+                // 생성한 Piece를 List에 추가합니다(Enqueue)
                 disabledPieces.Enqueue(firstPiece);
+                // 생성한 Piece를 비활성화합니다.
                 firstPiece.gameObject.SetActive(false);
             }
         }
 
+        // 재생성할때 보드의 상태를 Init로 변경합니다.
         if (regenerate)
             currBoardState = BoardState.Init;
 
+        // 높이만큼 생성합니다
         for (int column = 0; column < vertical; ++column)
         {
+            // 넓이만큼 생성합니다.
             for (int row = 0; row < horizontal; ++row)
             {
+                // BlankSpace나 BreakableTile로 정한 위치엔 생성을 제외합니다.
                 if (IsBlankSpace(row, column) || 
                     IsBreakableTile(row, column))
                     continue;
 
+                // Piece 객체를 선언합니다.
                 Piece piece = null;
 
+                // 재생성
                 if (regenerate)
                 {
+                    // 재생성 할땐 그 자리에 위치한 Piece를 가져옵니다.
                     piece = GetPiece(row, column);
 
+                    // Piece의 색상값을 변경합니다.
                     piece.SetPieceValue(randomValue);
+                    // 위에서 떨어지는 효과를 위해 Piece의 위치를 생성될 위치보다 위로 위치시킵니다.
                     piece.transform.position = new Vector2(piece.row, piece.column + fallOffset);
                 }
 
+                // 생성
                 else
                 {
+                    // 미리 생성한 Piece를 리스트에서 가져옵니다.(Dequeue)
                     piece = disabledPieces.Dequeue();
 
+                    // 정의되지 않은 Piece를 설정합니다.
                     piece.SetPiece(this, randomValue, row, column);
+                    // 생성한 Tile에 Piece를 할당합니다.
                     SetTileInPiece(row, column, piece);
-
+                    // 위에서 떨어지는 효과를 위해 Piece의 위치를 생성될 위치보다 위로 위치시킵니다.
                     piece.transform.position = new Vector2(piece.row, piece.column + fallOffset);
+                    // Piece를 활성화합니다.
                     piece.gameObject.SetActive(true);
                 }
             }
         }
 
+        // 생성했을때 매치되는 상황을 배제하기 위해 Tile을 검사합니다.
         CheckingTheMatchedPieced();
-
-        currBoardState = BoardState.Init;
     }
 
+    /// <summary>
+    /// 매치된 Piece의 색상값을 변경합니다.
+    /// </summary>
     private void CheckingTheMatchedPieced()
     {
         for (int column = 0; column < vertical; ++column)
@@ -203,6 +238,8 @@ public class Board : MonoBehaviour
                 movedPieces.Add(checkPiece);
             }
         }
+
+        currBoardState = BoardState.Order;
     }
 
     private bool IsMatchedPiece(Piece piece)

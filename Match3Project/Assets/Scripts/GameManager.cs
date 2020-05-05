@@ -52,6 +52,8 @@ public class GameManager : Singleton<GameManager>
         PlayerSystemToJsonData.LoadPlayerSystemData();
 
         googleMgr.InitializeGooglePlay();
+        iapMgr.InitializeUnityIAP();
+        admobMgr.InitializeAdmob();
 
         VolumeControl(PlayerSystemToJsonData.playerData.bgmVolume, PlayerSystemToJsonData.playerData.seVolume);
 

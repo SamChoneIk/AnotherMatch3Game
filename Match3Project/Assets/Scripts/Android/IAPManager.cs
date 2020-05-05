@@ -17,20 +17,10 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
     public bool isInitialized => storeController != null && storeExtensionProvider != null;
 
-	public void GoogleLogin(bool success)
-    {
-		if (success)
-            InitializeUnityIAP();
-
-        GameManager.Instance.admobMgr.IAPInitializeDelay(success);
-    }
-
     public void InitializeUnityIAP()
     {
         if (isInitialized)
             return;
-
-		//GameManager.Instance.WriteLog("IAP 초기화를 실행합니다.\n");
 
         // 인앱결제 설정을 빌드할 수있는 설정       // 유니티가 제공하는 스토어 설정
         var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
@@ -42,11 +32,12 @@ public class IAPManager : MonoBehaviour, IStoreListener
             });
 
         UnityPurchasing.Initialize(this, builder);
+
+        Debug.Log($"IAP 초기화 결과 : {isInitialized}");
     }
 
     public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
     {
-		//GameManager.Instance.WriteLog("유니티 IAP 초기화 성공\n");
         Debug.Log("유니티 IAP 초기화 성공");
 
         storeController = controller;
@@ -55,17 +46,16 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
     public void OnInitializeFailed(InitializationFailureReason error)
     {
-		//GameManager.Instance.WriteLog($"유니티 IAP 초기화 실패{error}\n");
         Debug.LogError($"유니티 IAP 초기화 실패{error}");
     }
 
     public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs e)
     {
-       //Debug.Log($"구매 성공 - ID : {e.purchasedProduct.definition.id}"); // 구매한 상품의 아이디
+       Debug.Log($"구매 성공 - ID : {e.purchasedProduct.definition.id}"); // 구매한 상품의 아이디
 
         if(e.purchasedProduct.definition.id == productAd)
         {
-            //GoogleAdmobManager.Instance.DestroyAd();
+            GameManager.Instance.admobMgr.DestroyAd();
         }
 
         return PurchaseProcessingResult.Complete;
@@ -73,7 +63,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
     public void OnPurchaseFailed(Product i, PurchaseFailureReason p)
     {
-        //Debug.LogWarning($"구매 실패 - {i.definition.id}, {p}");
+        Debug.LogWarning($"구매 실패 - {i.definition.id}, {p}");
     }
 
     public void Purchase(string productId)
@@ -86,14 +76,13 @@ public class IAPManager : MonoBehaviour, IStoreListener
         
         if(product != null && product.availableToPurchase)
         {
-            //Debug.Log($"구매 시도 - {product.definition.id}");
+            Debug.Log($"구매 시도 - {product.definition.id}");
             storeController.InitiatePurchase(product);
         }
 
         else
         {
-			//GameManager.Instance.WriteLog($"구매 시도 불가 - {productId}\n");
-            //Debug.Log($"구매 시도 불가 - {productId}");
+            Debug.Log($"구매 시도 불가 - {productId}");
         }
     }
 
@@ -110,7 +99,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
 				{
 					if (HadPurchased(productAd))
 					{
-						//GoogleAdmobManager.Instance.DestroyAd();
+						GameManager.Instance.admobMgr.DestroyAd();
 					}
 				}
             });
@@ -125,7 +114,9 @@ public class IAPManager : MonoBehaviour, IStoreListener
 
         var product = storeController.products.WithID(productId);
 
-        if(product != null)
+        Debug.Log($"구매 복구 시도 - {product.definition.id}");
+
+        if (product != null)
         {
             // 영수증이 있다.
             return product.hasReceipt;

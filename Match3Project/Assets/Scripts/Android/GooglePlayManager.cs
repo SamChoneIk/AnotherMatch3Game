@@ -19,7 +19,7 @@ public class GooglePlayManager : MonoBehaviour
         Social.localUser.Authenticate((success) =>
         {
             StaticVariables.LoginSuccess = success;
-            GameManager.Instance.iapMgr.GoogleLogin(success);
+            Debug.Log($"로그인 결과 : {StaticVariables.LoginSuccess}");
         });
     }
 
