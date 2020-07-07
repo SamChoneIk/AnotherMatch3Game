@@ -40,7 +40,6 @@ public class Board : MonoBehaviour
     private List<Piece> verifiedPieces;
     private List<Piece> hintPieces;
     private CamPivot camPivot;
-    private UIManager uIMgr;
     public GameStageManager gameStageMgr;
 
     [Header("Board Variables")]
@@ -59,31 +58,49 @@ public class Board : MonoBehaviour
 
     private float hintAccumTime;
 
+    /// <summary>
+    /// Board를 초기화합니다.
+    /// </summary>
+    /// <param name="gsm">스테이지의 상태를 검사하는 GameStageManager를 매개변수로 받습니다.</param>
     public void InitializeBoard(GameStageManager gsm)
     {
-        uIMgr = UImenu.manager;
+        // 게임 매니저를 할당합니다.
         gameStageMgr = gsm;
-
+        // 비활성화된 Piece을 저장합니다.
         disabledPieces = new Queue<Piece>();
+        // 매치된 Piece을 저장합니다.
         matchedPieces = new List<Piece>();
+        // 매치된 Piece 중 검사한 Piece을 저장합니다.
         verifiedPieces = new List<Piece>();
+        // 힌트로 표시된 Piece을 저장합니다.
         hintPieces = new List<Piece>();
 
+        // 스테이지의 정보를 가져옵니다.
         stageData = GameManager.Instance.GetStageDataWithLevel(StaticVariables.LoadLevel);
 
+        // 스테이지의 저장된 Piece 색깔 이미지를 저장합니다.
         pieceSprites = stageData.pieceSprites;
+        // 스테이지에 저장된 Piece 아이템 이미지를 저장합니다.
         itemSprites = stageData.itemSprites;
 
+        // Board의 세로 크기
         vertical = stageData.vertical;
+        // Board의 가로 크기
         horizontal = stageData.horizontal;
 
+        // 블럭을 Board 크기만큼 배열 크기를 정합니다.
         tiles = new Tile[horizontal, vertical];
 
+        // 카메라에 붙은 스크립트를 가져옵니다.
         camPivot = Camera.main.GetComponent<CamPivot>();
+        // 카메라의 위치를 크기에 비례해서 정합니다.
         camPivot.SetCameraPivot(horizontal, vertical, stageData.camPivotX, stageData.camPivotY, stageData.camPivotSize);
 
+        // Board에 Tile을 생성합니다.
         CreateBackgroundTile();
+        // Board에 Breakable Tile을 생성합니다.
         CreateBreakableTile();
+        // Board에 생성된 Tile에 Piece를 생성합니다.
         CreatePiece();
     }
 
@@ -115,8 +132,12 @@ public class Board : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Tile 위에 부서지기 전까지 Piece가 위치하는 것을 방지하는 BreakableTile을 생성합니다.
+    /// </summary>
     public void CreateBreakableTile()
     {
+        // 만일 스테이지에 설정한 BreakableTile이 없으면 그대로 반환합니다.
         if (stageData.breakableTile.Length <= 0)
             return;
 
@@ -124,14 +145,20 @@ public class Board : MonoBehaviour
         {
             for (int row = 0; row < horizontal; ++row)
             {
+                // BlankSpace이거나 BreakableTile이 아니면 다음 Tile로 이동합니다.
                 if (IsBlankSpace(row, column) || !IsBreakableTile(row, column, true))
                     continue;
 
+                // BreakableTile 객체를 위치에 생성합니다.
                 BreakableTile breakableTile = Instantiate(breakableTilePrefab, new Vector2(row, column), Quaternion.identity).GetComponent<BreakableTile>();
+                // BreakableTile을 초기화합니다.
                 breakableTile.InitializeBreakableTile();
+                // 해당 Tile 배열에 생성한 BreakableTile을 저장합니다.
                 tiles[row, column].breakableTile = breakableTile;
 
+                // BreakableTile의 이름을 BreakableTile[row, column]으로 변경합니다.
                 breakableTile.name = $"BreakableTile [{row} , {column}]";
+                // BreakableTile을 Parent 오브젝트의 Child로 만듭니다.
                 breakableTile.transform.SetParent(tiles[row, column].transform);
             }
         }

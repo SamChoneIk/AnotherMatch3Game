@@ -15,10 +15,13 @@ public class IAPManager : MonoBehaviour, IStoreListener
     private IStoreController storeController; // 구매 과정을 제어하는 함수를 제공
     private IExtensionProvider storeExtensionProvider; // 여러 플랫폼을 위한 확장 처리를 제공
 
-    public bool isInitialized => storeController != null && storeExtensionProvider != null;
+    public bool isInitialized = false;
 
-    public void InitializeUnityIAP()
+    public void InitializeUnityIAP(bool reInit =false)
     {
+        if (reInit && isInitialized)
+            isInitialized = false;
+
         if (isInitialized)
             return;
 
@@ -32,6 +35,8 @@ public class IAPManager : MonoBehaviour, IStoreListener
             });
 
         UnityPurchasing.Initialize(this, builder);
+
+        isInitialized = storeController != null && storeExtensionProvider != null;
 
         Debug.Log($"IAP 초기화 결과 : {isInitialized}");
     }

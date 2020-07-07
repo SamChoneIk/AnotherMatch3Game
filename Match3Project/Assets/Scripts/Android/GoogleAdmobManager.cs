@@ -7,9 +7,8 @@ public class GoogleAdmobManager : MonoBehaviour
 {
     private string appID = "ca-app-pub-4570069551723430~8341763913";
 
-    private string adBannerUnitID = "ca-app-pub-4570069551723430/8427138795";
+    private string adBannerUnitID = "ca-app-pub-4570069551723430/7277474857";
     private string adInterstitialUnitID = "ca-app-pub-4570069551723430/4093497335";
-
     //private string adBannerTestID = "ca-app-pub-3940256099942544/6300978111";
     //private string adInterstitialTestID = "ca-app-pub-3940256099942544/1033173712";
 
@@ -20,7 +19,7 @@ public class GoogleAdmobManager : MonoBehaviour
 
     public void InitializeAdmob()
     {
-		if (isInitialized)
+        if (isInitialized)
 			return;
 
         if (StaticVariables.DestroyAd)
@@ -77,8 +76,8 @@ public class GoogleAdmobManager : MonoBehaviour
 			StaticVariables.DestroyAd = true;
 
         bannerView.Hide();
-
         bannerView.Destroy();
+
         interstitialAd.Destroy();
     }
 }

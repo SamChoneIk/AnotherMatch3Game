@@ -52,8 +52,6 @@ public class GameManager : Singleton<GameManager>
         PlayerSystemToJsonData.LoadPlayerSystemData();
 
         googleMgr.InitializeGooglePlay();
-        iapMgr.InitializeUnityIAP();
-        admobMgr.InitializeAdmob();
 
         VolumeControl(PlayerSystemToJsonData.playerData.bgmVolume, PlayerSystemToJsonData.playerData.seVolume);
 
@@ -61,6 +59,12 @@ public class GameManager : Singleton<GameManager>
             stageData_SO = Resources.Load<StageDataScriptableObject>(StaticVariables.StageDataPath);
 
         SceneLoad("Main");
+    }
+
+    public void InitializeService()
+    {
+        iapMgr.InitializeUnityIAP();
+        admobMgr.InitializeAdmob();
     }
 
     public void VolumeControl(float bgm, float se)
@@ -108,6 +112,7 @@ public class GameManager : Singleton<GameManager>
                 messageBuilder.SetMessageText("다시 도전해보세요...");
                 messageBuilder.SetButtonsInfo(ButtonColor.YellowButton, StaticVariables.Replay, () => SceneLoad("Game"));
                 messageBuilder.SetButtonsInfo(ButtonColor.GreenButton, StaticVariables.Back, () => SceneLoad("StageSelect"));
+                admobMgr.Show();
                 break;
         }
         messageBuilder.SetMessageText(sb.ToString());

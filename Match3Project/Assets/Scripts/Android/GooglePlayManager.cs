@@ -20,6 +20,7 @@ public class GooglePlayManager : MonoBehaviour
         {
             StaticVariables.LoginSuccess = success;
             Debug.Log($"로그인 결과 : {StaticVariables.LoginSuccess}");
+            GameManager.Instance.InitializeService();
         });
     }
 
@@ -30,6 +31,7 @@ public class GooglePlayManager : MonoBehaviour
 
     public void GoogleLogInButton()
     {
+        LogOut();
         LogIn();
     }
 
